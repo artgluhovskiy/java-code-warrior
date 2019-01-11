@@ -1,0 +1,47 @@
+//buildscript {
+//    repositories { mavenCentral() }
+//}
+
+//plugins { id "io.spring.dependency-management" version "1.0.6.RELEASE" }
+
+//ext { springBootVersion = '2.0.5.RELEASE' }
+
+apply plugin: 'java'
+
+//apply plugin: 'eclipse'
+
+//jar {
+//    baseName = 'gs-multi-module-library'
+//    version = '0.0.1-SNAPSHOT'
+//}
+//sourceCompatibility = 1.8
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    compile 'org.apache.commons:commons-lang3:3.4'
+}
+
+//dependencies {
+//    compile('org.springframework.boot:spring-boot-starter')
+//    testCompile('org.springframework.boot:spring-boot-starter-test')
+//}
+
+//dependencyManagement {
+//    imports { mavenBom("org.springframework.boot:spring-boot-dependencies:${springBootVersion}") }
+//}
+
+task('hello') {
+    doLast {
+        println "hello!"
+    }
+}
+
+task('buy') {
+    dependsOn 'hello'
+    doLast {
+        println "buy!"
+    }
+}
