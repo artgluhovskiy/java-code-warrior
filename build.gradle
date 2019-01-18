@@ -1,7 +1,0 @@
-allprojects {
-    task('helloThere') { task -> println "I'm $task.project.name" } as String
-}
-
-subprojects {
-
-}
