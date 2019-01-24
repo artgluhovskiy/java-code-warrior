@@ -1,3 +1,5 @@
 rootProject.name = 'java-code-warrior'
 
-include ':hello-module'
+include 'compiler-service'
+include 'hello-module'
+include 'buildSrc'

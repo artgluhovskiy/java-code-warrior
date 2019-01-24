@@ -1,0 +1,12 @@
+allprojects {
+    group = 'org.art.web'
+    version = '0.1'
+}
+
+subprojects {
+    apply plugin: 'java'
+}
+
+project(':hello-module') {
+    
+}
