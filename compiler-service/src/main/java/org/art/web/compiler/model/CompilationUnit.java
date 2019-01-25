@@ -10,5 +10,6 @@ import lombok.*;
 public class CompilationUnit {
 
     private final String className;
+
     private final CharSequence srcCode;
 }

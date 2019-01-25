@@ -9,12 +9,14 @@ import org.art.web.compiler.service.CharSequenceJavaFileObject;
 import org.art.web.compiler.service.CompilationService;
 import org.art.web.compiler.service.CustomByteClassLoader;
 import org.art.web.compiler.service.MemoryClassFileManager;
+import org.springframework.stereotype.Service;
 
 import javax.lang.model.SourceVersion;
 import javax.tools.*;
 import java.util.*;
 import java.util.stream.Collectors;
 
+@Service
 public class InMemoryCompilationService implements CompilationService {
 
     private static final Logger LOG = LogManager.getLogger(InMemoryCompilationService.class);
@@ -113,7 +115,7 @@ public class InMemoryCompilationService implements CompilationService {
         Object instance = loadedClass.newInstance();
         System.out.println(instance);
 
-        MethodHandleInvoker invoker = new MethodHandleInvoker();
+        MethodHandleInvocationService invoker = new MethodHandleInvocationService();
         MethodDescriptor descriptor = new MethodDescriptor(instance, "printMessage");
         Class<?> returnType = String.class;
         descriptor.setReturnType(returnType);
