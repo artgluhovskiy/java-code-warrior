@@ -1,10 +1,10 @@
-public class TestClass1 {
+public class TestClass0 {
     public String echo(String message) {
         return "Response: " + message;
     }
 }
 $$$
-public class TestClass2 {
+public class TestClass1 {
     public void printMessage(String message) {
         System.out.println("Message: " + message);
     }
