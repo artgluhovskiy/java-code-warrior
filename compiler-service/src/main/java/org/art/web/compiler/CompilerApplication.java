@@ -1,6 +1,6 @@
 package org.art.web.compiler;
 
-import org.art.web.compiler.service.CompilationService;
+import org.art.web.compiler.service.api.CompilationService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;

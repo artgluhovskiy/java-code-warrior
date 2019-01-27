@@ -1,7 +1,7 @@
-package org.art.web.compiler.service.impl;
+package org.art.web.compiler.service;
 
-import org.art.web.compiler.model.MethodDescriptor;
-import org.art.web.compiler.service.MethodInvocationService;
+import org.art.web.compiler.model.CommonMethodDescriptor;
+import org.art.web.compiler.service.api.MethodInvocationService;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -23,9 +23,9 @@ class MethodHandleInvocationServiceTest {
     void test0() throws Throwable {
         String target = "hello";
         String result = "HELLO";
-        MethodDescriptor methodDescriptor = new MethodDescriptor(target, "toUpperCase");
+        CommonMethodDescriptor methodDescriptor = new CommonMethodDescriptor(target, "toUpperCase");
         Class<String> retType = String.class;
         methodDescriptor.setReturnType(retType);
-        assertEquals(result, retType.cast(invocationService.invokeVirtual(methodDescriptor)));
+        assertEquals(result, retType.cast(invocationService.invokeMethod(methodDescriptor)));
     }
 }

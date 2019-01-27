@@ -1,10 +1,11 @@
-package org.art.web.compiler.service.impl;
+package org.art.web.compiler.service;
 
 import org.apache.commons.lang3.tuple.Pair;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.art.web.compiler.model.MethodDescriptor;
-import org.art.web.compiler.service.MethodInvocationService;
+import org.art.web.compiler.exceptions.MethodInvocationException;
+import org.art.web.compiler.model.api.MethodDescriptor;
+import org.art.web.compiler.service.api.MethodInvocationService;
 import org.springframework.stereotype.Service;
 
 import java.lang.invoke.MethodHandle;
@@ -15,6 +16,12 @@ import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
 
+/**
+ * Method invocation service implementation.
+ * Provides java method invocation based on {@link MethodDescriptor},
+ * which encapsulates all necessary data.
+ * Current implementation is based on Java Method Handle API.
+ */
 @Service
 public class MethodHandleInvocationService implements MethodInvocationService {
 
@@ -23,7 +30,7 @@ public class MethodHandleInvocationService implements MethodInvocationService {
     private static final MethodHandles.Lookup PUBLIC_LOOKUP = MethodHandles.publicLookup();
 
     @Override
-    public Object invokeVirtual(MethodDescriptor descriptor) throws Throwable {
+    public Object invokeMethod(MethodDescriptor descriptor) throws MethodInvocationException {
         Objects.requireNonNull(descriptor, "Method descriptor should not be null!");
         Object instance = descriptor.getTargetInstance();
         Class<?> clazz = instance.getClass();
@@ -34,10 +41,15 @@ public class MethodHandleInvocationService implements MethodInvocationService {
                 clazz.getName(), methodName, retType, args);
         List<Class<?>> inTypes = retrieveInputTypes(args);
         List<Object> inArgValues = retrieveInputArgValues(args);
-        MethodType methodType = MethodType.methodType(retType, inTypes);
-        MethodHandle methodHan = PUBLIC_LOOKUP.findVirtual(clazz, methodName, methodType);
-        MethodHandle methodHandle = methodHan.bindTo(instance);
-        return methodHandle.invokeWithArguments(inArgValues);
+        try {
+            MethodType methodType = MethodType.methodType(retType, inTypes);
+            MethodHandle methodHan = PUBLIC_LOOKUP.findVirtual(clazz, methodName, methodType);
+            MethodHandle methodHandle = methodHan.bindTo(instance);
+            return methodHandle.invokeWithArguments(inArgValues);
+        } catch (Throwable t) {
+            LOG.warn("Internal invocation error. MethodInvocationException is thrown!");
+            throw new MethodInvocationException("Internal invocation error!", descriptor, t);
+        }
     }
 
     private List<Class<?>> retrieveInputTypes(List<Pair<Object, Class<?>>> args) {
