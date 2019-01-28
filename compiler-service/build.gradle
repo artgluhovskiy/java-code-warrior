@@ -7,11 +7,13 @@ buildscript {
     }
     dependencies {
         classpath("org.springframework.boot:spring-boot-gradle-plugin:${springBootVersion}")
+        classpath("org.junit.platform:junit-platform-gradle-plugin:1.1.0")
     }
 }
 
 plugins {
     id "io.spring.dependency-management" version "1.0.6.RELEASE"
+    id "net.saliman.cobertura" version "2.6.0"
 }
 
 ext {
@@ -19,6 +21,7 @@ ext {
 }
 
 apply plugin: 'java'
+apply plugin: 'org.junit.platform.gradle.plugin'
 
 jar {
     baseName = 'compiler-service'
@@ -30,6 +33,12 @@ sourceCompatibility = 1.8
 repositories {
     mavenCentral()
     mavenLocal()
+}
+
+test {
+    testLogging {
+        showStandardStreams = true
+    }
 }
 
 dependencies {

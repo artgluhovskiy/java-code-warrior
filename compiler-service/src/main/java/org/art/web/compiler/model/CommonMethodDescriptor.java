@@ -8,6 +8,7 @@ import org.apache.commons.lang3.tuple.Pair;
 import org.art.web.compiler.model.api.MethodDescriptor;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 /**
@@ -25,7 +26,7 @@ public class CommonMethodDescriptor implements MethodDescriptor {
 
     private Class<?> returnType;
 
-    private List<Pair<Object, Class<?>>> args;
+    private List<Pair<Object, Class<?>>> args = Collections.emptyList();
 
     @Override
     public Object getTargetInstance() {
@@ -44,6 +45,6 @@ public class CommonMethodDescriptor implements MethodDescriptor {
 
     @Override
     public List<Pair<Object, Class<?>>> getArgs() {
-        return new ArrayList<>(args);
+        return args != null ? new ArrayList<>(args) : Collections.emptyList();
     }
 }

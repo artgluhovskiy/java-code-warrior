@@ -1,14 +1,14 @@
 package org.art.web.compiler.service;
 
 import org.apache.commons.lang3.StringUtils;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.art.web.compiler.model.CharSeqCompilationUnit;
 import org.art.web.compiler.model.api.CompilationResult;
 import org.art.web.compiler.model.api.CompilationStatus;
 import org.art.web.compiler.service.api.CompilationService;
-import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.*;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.TestInfo;
 
 import java.io.BufferedReader;
 import java.io.InputStream;
@@ -25,6 +25,8 @@ import static org.junit.jupiter.api.Assertions.*;
 
 @DisplayName("InMemoryCompilationService Tests")
 class InMemoryCompilationServiceTest {
+
+    private static final Logger LOG = LogManager.getLogger(InMemoryCompilationServiceTest.class);
 
     private static final String TEST_DATA_PATH = "compilation-service/code-samples.txt";
 
