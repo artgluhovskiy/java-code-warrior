@@ -22,11 +22,11 @@ jar {
     }
 }
 
-task printVersion(group: 'versioning', description: 'Prints project version.') << {
-    println "Before reading the project version"
-    logger.quiet "Logger: Before reading the project version"
-    println "Version: $version"
-}
+//task printVersion(group: 'versioning', description: 'Prints project version.') << {
+//    println "Before reading the project version"
+//    logger.quiet "Logger: Before reading the project version"
+//    println "Version: $version"
+//}
 
 version = new ProjectVersion(0, 2)
 
