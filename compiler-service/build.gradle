@@ -24,7 +24,6 @@ ext {
 sourceCompatibility = 1.8
 
 jar {
-    baseName = 'compiler-service'
     version = '0.0.1-SNAPSHOT'
 }
 
@@ -45,13 +44,15 @@ dependencies {
 
     implementation('org.apache.commons:commons-lang3:3.1')
     implementation('org.apache.logging.log4j:log4j-core:2.8.2')
-    compileOnly('org.projectlombok:lombok:1.18.4')
-    annotationProcessor("org.projectlombok:lombok:1.18.4")
 
+    implementation('org.projectlombok:lombok:1.18.4')
+    annotationProcessor("org.projectlombok:lombok:1.18.4")
+    
     testImplementation('org.springframework.boot:spring-boot-starter-test')
 
     testImplementation('org.junit.jupiter:junit-jupiter-api:5.3.1')
     testRuntimeOnly('org.junit.jupiter:junit-jupiter-engine:5.3.1')
+    
     testImplementation "org.mockito:mockito-core:2.+"
     testImplementation('org.mockito:mockito-junit-jupiter:2.18.3')
 }

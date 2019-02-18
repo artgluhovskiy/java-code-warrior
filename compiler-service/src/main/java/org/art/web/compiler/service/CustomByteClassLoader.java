@@ -29,7 +29,7 @@ public class CustomByteClassLoader extends ClassLoader {
             return clazz;
         }
         LOG.debug("Class with the name {} wasn't found in the class files map. " +
-                "Delegating invocation to the super class.");
+                  "Delegating invocation to the super class.", className);
         return super.findClass(className);
     }
 }

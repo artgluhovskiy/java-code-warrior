@@ -23,7 +23,7 @@ public class CompilerApplication {
 
     @Bean
     public CommandLineRunner showInfo() {
-        return (args) -> {
+        return args -> {
             System.out.println(compilationService);
         };
     }

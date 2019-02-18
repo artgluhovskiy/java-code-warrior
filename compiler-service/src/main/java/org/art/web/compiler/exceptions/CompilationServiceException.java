@@ -26,6 +26,11 @@ public class CompilationServiceException extends Exception {
         super(message, cause);
     }
 
+    public CompilationServiceException(String message, CompilationUnit<?> unit) {
+        super(message);
+        this.unit = unit;
+    }
+
     public CompilationServiceException(String message, CompilationUnit<?> unit, Throwable cause) {
         super(message, cause);
         this.unit = unit;

@@ -3,6 +3,7 @@ package org.art.web.compiler.model;
 import lombok.EqualsAndHashCode;
 import lombok.RequiredArgsConstructor;
 import lombok.ToString;
+import org.apache.commons.lang3.StringUtils;
 import org.art.web.compiler.model.api.CompilationUnit;
 
 /**
@@ -26,5 +27,11 @@ public class CharSeqCompilationUnit implements CompilationUnit<CharSequence> {
     @Override
     public CharSequence getSrcCode() {
         return srcCode;
+    }
+
+    @Override
+    public boolean isValid() {
+        return StringUtils.isNotBlank(className)
+                && StringUtils.isNotBlank(srcCode);
     }
 }

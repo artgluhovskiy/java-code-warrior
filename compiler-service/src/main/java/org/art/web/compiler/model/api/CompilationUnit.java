@@ -11,4 +11,6 @@ public interface CompilationUnit<T> {
     String getClassName();
 
     T getSrcCode();
+
+    boolean isValid();
 }
