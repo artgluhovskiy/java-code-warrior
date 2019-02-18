@@ -1,21 +1,25 @@
 package org.art.web.compiler.service;
 
 import org.apache.commons.lang3.StringUtils;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+import org.art.web.compiler.exceptions.CompilationServiceException;
 import org.art.web.compiler.model.CharSeqCompilationUnit;
 import org.art.web.compiler.model.api.CompilationResult;
 import org.art.web.compiler.model.api.CompilationStatus;
+import org.art.web.compiler.model.api.CompilationUnit;
 import org.art.web.compiler.service.api.CompilationService;
-import org.junit.jupiter.api.*;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.TestInfo;
 
 import java.io.BufferedReader;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.lang.reflect.Method;
 import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Optional;
 import java.util.Scanner;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -26,15 +30,13 @@ import static org.junit.jupiter.api.Assertions.*;
 @DisplayName("InMemoryCompilationService Tests")
 class InMemoryCompilationServiceTest {
 
-    private static final Logger LOG = LogManager.getLogger(InMemoryCompilationServiceTest.class);
-
     private static final String TEST_DATA_PATH = "compilation-service/code-samples.txt";
 
     private static final String SCANNER_TOKEN_DELIMITER = "\\$\\$\\$";
 
     private static final Pattern CLASS_NAME_PATTERN = Pattern.compile("^public class (TestClass[\\d]{1,3}) \\{$", MULTILINE);
 
-    private static final Map<String, String> testData = new HashMap<>();
+    private static final Map<String, String> TEST_DATA = new HashMap<>();
 
     private final CompilationService compiler = new InMemoryCompilationService();
 
@@ -50,8 +52,9 @@ class InMemoryCompilationServiceTest {
             scanner.useDelimiter(SCANNER_TOKEN_DELIMITER);
             while (scanner.hasNext()) {
                 String srcCodeSample = scanner.next();
-                if (StringUtils.isNotBlank(srcCodeSample)) {
-                    testData.put(parseClassName(srcCodeSample), srcCodeSample);
+                String testClassName = parseClassName(srcCodeSample);
+                if (StringUtils.isNotBlank(srcCodeSample) && StringUtils.isNotBlank(testClassName)) {
+                    TEST_DATA.put(testClassName, srcCodeSample);
                 } else {
                     throw new RuntimeException("Cannot parse test class name for src: " + srcCodeSample);
                 }
@@ -69,16 +72,37 @@ class InMemoryCompilationServiceTest {
     }
 
     @Test
-    @DisplayName("Simple class compilation test (no error)")
+    @DisplayName("Compile null unit")
+    void test0() {
+        assertThrows(RuntimeException.class, () -> compiler.compileSource(null));
+    }
+
+    @Test
+    @DisplayName("Compile unit with blank class name")
+    void test1() {
+        CompilationUnit unit = new CharSeqCompilationUnit(null, "class T{}");
+        assertThrows(CompilationServiceException.class, () -> compiler.compileSource(unit));
+    }
+
+    @Test
+    @DisplayName("Compile unit with blank src")
+    void test2() {
+        CompilationUnit unit = new CharSeqCompilationUnit("TestClass0_0", null);
+        assertThrows(CompilationServiceException.class, () -> compiler.compileSource(unit));
+    }
+
+    @Test
+    @DisplayName("Compile unit with blank params")
+    void test3() {
+        CompilationUnit unit = new CharSeqCompilationUnit(null, null);
+        assertThrows(CompilationServiceException.class, () -> compiler.compileSource(unit));
+    }
+
+    @Test
+    @DisplayName("'TestClass0' compilation test (one method, no errors)")
     void testClass0(TestInfo testInfo) {
-        String testMethodName = testInfo.getTestMethod().get().getName();
-        String testClassName = StringUtils.capitalize(testMethodName);
-        assertTrue(StringUtils.isNotBlank(testClassName));
-
-        String srcCode = testData.get(testClassName);
-        assertTrue(StringUtils.isNotBlank(srcCode));
-
-        CharSeqCompilationUnit compilationUnit = new CharSeqCompilationUnit(testClassName, srcCode);
+        CompilationUnit compilationUnit = getCompilationUnit(testInfo);
+        assertNotNull(compilationUnit);
 
         CompilationResult compilationResult = assertDoesNotThrow(() -> compiler.compileSource(compilationUnit));
         assertNotNull(compilationResult);
@@ -86,6 +110,34 @@ class InMemoryCompilationServiceTest {
         Class<?> compiledClass = compilationResult.getCompiledClass();
 
         assertSame(CompilationStatus.SUCCESS, compilationResult.getStatus());
-        assertEquals(testClassName, compiledClass.getSimpleName());
+        assertEquals(compilationUnit.getClassName(), compiledClass.getSimpleName());
+    }
+
+    @Test
+    @DisplayName("'TestClass1' compilation test (one method, no errors)")
+    void testClass1(TestInfo testInfo) {
+        CompilationUnit compilationUnit = getCompilationUnit(testInfo);
+        assertNotNull(compilationUnit);
+
+        CompilationResult compilationResult = assertDoesNotThrow(() -> compiler.compileSource(compilationUnit));
+        assertNotNull(compilationResult);
+
+        Class<?> compiledClass = compilationResult.getCompiledClass();
+
+        assertSame(CompilationStatus.SUCCESS, compilationResult.getStatus());
+        assertEquals(compilationUnit.getClassName(), compiledClass.getSimpleName());
+    }
+
+    private CompilationUnit getCompilationUnit(TestInfo testInfo) {
+        Optional<Method> testMethodName = testInfo.getTestMethod();
+        assertTrue(testMethodName.isPresent());
+
+        String testClassName = StringUtils.capitalize(testMethodName.get().getName());
+        assertTrue(StringUtils.isNotBlank(testClassName));
+
+        String srcCode = TEST_DATA.get(testClassName);
+        assertTrue(StringUtils.isNotBlank(srcCode));
+
+        return new CharSeqCompilationUnit(testClassName, srcCode);
     }
 }

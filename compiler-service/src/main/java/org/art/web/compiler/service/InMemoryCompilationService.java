@@ -47,6 +47,7 @@ public class InMemoryCompilationService implements CompilationService {
     @Override
     public CompilationResult compileSource(CompilationUnit<?> unit) throws CompilationServiceException {
         Objects.requireNonNull(unit, "Compilation unit should not be null!");
+        if (!unit.isValid()) throw new CompilationServiceException("Failed to compile unit. Compilation unit is not valid!", unit);
         String className = unit.getClassName();
         LOG.debug("Compiling class from unit. Class name: {}", className);
         DiagnosticCollector<JavaFileObject> diagnostics = new DiagnosticCollector<>();
@@ -76,7 +77,7 @@ public class InMemoryCompilationService implements CompilationService {
         String className = unit.getClassName();
         Object srcCode = unit.getSrcCode();
         if (srcCode instanceof CharSequence) {
-            return new CharSequenceJavaFileObject(className, CharSequence.class.cast(srcCode));
+            return new CharSequenceJavaFileObject(className, (CharSequence) srcCode);
         } else {
             throw new UnknownJavaSourceException("Current source type is not supported by the service!", srcCode.getClass());
         }
