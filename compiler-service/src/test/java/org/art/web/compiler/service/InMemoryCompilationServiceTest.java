@@ -3,6 +3,7 @@ package org.art.web.compiler.service;
 import org.apache.commons.lang3.StringUtils;
 import org.art.web.compiler.exceptions.CompilationServiceException;
 import org.art.web.compiler.model.CharSeqCompilationUnit;
+import org.art.web.compiler.model.api.CompilationMessage;
 import org.art.web.compiler.model.api.CompilationResult;
 import org.art.web.compiler.model.api.CompilationStatus;
 import org.art.web.compiler.model.api.CompilationUnit;
@@ -80,14 +81,14 @@ class InMemoryCompilationServiceTest {
     @Test
     @DisplayName("Compile unit with blank class name")
     void test1() {
-        CompilationUnit unit = new CharSeqCompilationUnit(null, "class T{}");
+        CompilationUnit unit = new CharSeqCompilationUnit(null, "class TestClass0_0{}");
         assertThrows(CompilationServiceException.class, () -> compiler.compileSource(unit));
     }
 
     @Test
     @DisplayName("Compile unit with blank src")
     void test2() {
-        CompilationUnit unit = new CharSeqCompilationUnit("TestClass0_0", null);
+        CompilationUnit unit = new CharSeqCompilationUnit("TestClass0_1", null);
         assertThrows(CompilationServiceException.class, () -> compiler.compileSource(unit));
     }
 
@@ -96,6 +97,38 @@ class InMemoryCompilationServiceTest {
     void test3() {
         CompilationUnit unit = new CharSeqCompilationUnit(null, null);
         assertThrows(CompilationServiceException.class, () -> compiler.compileSource(unit));
+    }
+
+    @Test
+    @DisplayName("Compile empty class")
+    void test4() {
+        String className = "TestClass0_2";
+        String src = "class TestClass0_2{}";
+        CompilationUnit unit = new CharSeqCompilationUnit(className, src);
+        CompilationResult compilationResult = assertDoesNotThrow(() -> compiler.compileSource(unit));
+        assertNotNull(compilationResult);
+        assertSame(CompilationStatus.SUCCESS, compilationResult.getStatus());
+        Class<?> clazz = compilationResult.getCompiledClass();
+        assertNotNull(clazz);
+        assertEquals("TestClass0_2", clazz.getSimpleName());
+    }
+
+    @Test
+    @DisplayName("Compile unit with arbitrary text as src (no exception, ERROR status should be appeared)")
+    void test5() {
+        CompilationUnit unit = new CharSeqCompilationUnit("TestClass0_2", "Arbitrary text");
+        CompilationResult compilationResult = assertDoesNotThrow(() -> compiler.compileSource(unit));
+        assertNotNull(compilationResult);
+        assertSame(CompilationStatus.ERROR, compilationResult.getStatus());
+
+        CompilationMessage message = compilationResult.getMessage();
+        assertNotNull(message);
+
+        assertAll(
+                () -> assertEquals("class, interface, or enum expected", message.getCauseMessage()),
+                () -> assertSame(1L, message.getCodeLine()),
+                () -> assertSame(1L, message.getColumnNumber())
+        );
     }
 
     @Test
@@ -116,6 +149,21 @@ class InMemoryCompilationServiceTest {
     @Test
     @DisplayName("'TestClass1' compilation test (one method, no errors)")
     void testClass1(TestInfo testInfo) {
+        CompilationUnit compilationUnit = getCompilationUnit(testInfo);
+        assertNotNull(compilationUnit);
+
+        CompilationResult compilationResult = assertDoesNotThrow(() -> compiler.compileSource(compilationUnit));
+        assertNotNull(compilationResult);
+
+        Class<?> compiledClass = compilationResult.getCompiledClass();
+
+        assertSame(CompilationStatus.SUCCESS, compilationResult.getStatus());
+        assertEquals(compilationUnit.getClassName(), compiledClass.getSimpleName());
+    }
+
+    @Test
+    @DisplayName("'TestClass2' compilation test (one method with imports, no errors)")
+    void testClass2(TestInfo testInfo) {
         CompilationUnit compilationUnit = getCompilationUnit(testInfo);
         assertNotNull(compilationUnit);
 

@@ -1,15 +1,12 @@
 package org.art.web.compiler.service;
 
-import org.apache.commons.lang3.tuple.Pair;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.message.FormattedMessage;
 import org.art.web.compiler.exceptions.CompilationServiceException;
 import org.art.web.compiler.exceptions.UnknownJavaSourceException;
-import org.art.web.compiler.model.CharSeqCompilationUnit;
 import org.art.web.compiler.model.CommonCompilationMessage;
 import org.art.web.compiler.model.CommonCompilationResult;
-import org.art.web.compiler.model.CommonMethodDescriptor;
 import org.art.web.compiler.model.api.CompilationResult;
 import org.art.web.compiler.model.api.CompilationStatus;
 import org.art.web.compiler.model.api.CompilationUnit;
@@ -115,38 +112,5 @@ public class InMemoryCompilationService implements CompilationService {
                 .entrySet()
                 .stream()
                 .collect(Collectors.toMap(Map.Entry::getKey, entry -> entry.getValue().getBytes()));
-    }
-
-    private static final String testCase1ClassName = "Test";
-    private static final String testCase1Src =
-            "public class Test {\n" +
-                    "    static {\n" +
-                    "        System.out.println(\"Test class is loading!\");\n" +
-                    "    }\n" +
-                    "    public String printMessage(String msg) {\n" +
-                    "        System.out.println(\"Message: \" + msg);\n" +
-                    "        return msg;\n" +
-                    "    }\n" +
-                    "    public void sayHello() {\n" +
-                    "        System.out.println(\"Hello from compiled task!\");\n" +
-                    "    }\n" +
-                    "}";
-
-    public static void main(String[] args) throws Throwable {
-        InMemoryCompilationService compiler = new InMemoryCompilationService();
-        CompilationResult result = compiler.compileSource(new CharSeqCompilationUnit(testCase1ClassName, testCase1Src));
-        System.out.println(result.getMessage());
-        Class<?> loadedClass = result.getCompiledClass();
-        System.out.println(loadedClass.getSimpleName());
-        Object instance = loadedClass.newInstance();
-        System.out.println(instance);
-
-        MethodHandleInvocationService invoker = new MethodHandleInvocationService();
-        CommonMethodDescriptor descriptor = new CommonMethodDescriptor(instance, "printMessage");
-        Class<?> returnType = String.class;
-        descriptor.setReturnType(returnType);
-        descriptor.setArgs(Collections.singletonList(Pair.of("Hello New!", String.class)));
-
-        System.out.println(returnType.cast(invoker.invokeMethod(descriptor)));
     }
 }

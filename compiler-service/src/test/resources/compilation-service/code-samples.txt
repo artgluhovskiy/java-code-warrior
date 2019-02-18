@@ -1,11 +1,36 @@
+//No errors
 public class TestClass0 {
     public String echo(String message) {
         return "Response: " + message;
     }
 }
 $$$
+//No errors
 public class TestClass1 {
     public void printMessage(String message) {
         System.out.println("Message: " + message);
+    }
+}
+$$$
+//No errors
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+import java.util.function.UnaryOperator;
+public class TestClass2 {
+    List<String> processStringsAndStoreInList(UnaryOperator<String> stringProcessor, String... strings) {
+        if (strings == null) {
+            throw new IllegalArgumentException("Invalid argument");
+        }
+        if (strings.length == 0) {
+            return Collections.emptyList();
+        }
+        List<String> processedStr = new ArrayList<>();
+        for (String str : strings) {
+            if (!str.isEmpty()) {
+                processedStr.add(stringProcessor.apply(str));
+            }
+        }
+        return processedStr;
     }
 }
