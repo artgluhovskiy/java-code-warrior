@@ -14,11 +14,6 @@ public class UnknownJavaSourceException extends RuntimeException {
         this.srcType = srcType;
     }
 
-    public UnknownJavaSourceException(String message, Class<?> srcType, Throwable cause) {
-        super(message, cause);
-        this.srcType = srcType;
-    }
-
     @Override
     public String getMessage() {
         return super.getMessage() + " Source type: " + this.srcType;

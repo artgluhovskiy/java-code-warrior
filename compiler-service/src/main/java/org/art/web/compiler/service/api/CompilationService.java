@@ -10,5 +10,5 @@ import org.art.web.compiler.model.api.CompilationUnit;
  */
 public interface CompilationService {
 
-    CompilationResult compileSource(CompilationUnit<?> unit) throws CompilationServiceException;
+    CompilationResult compileUnit(CompilationUnit<?> unit) throws CompilationServiceException;
 }

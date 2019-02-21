@@ -3,8 +3,8 @@ package org.art.web.compiler.service;
 import javax.tools.SimpleJavaFileObject;
 import java.net.URI;
 
-import static org.art.web.compiler.service.ServiceConstants.DOT_CH;
-import static org.art.web.compiler.service.ServiceConstants.SLASH_CH;
+import static org.art.web.compiler.service.ServiceCommonConstants.DOT_CH;
+import static org.art.web.compiler.service.ServiceCommonConstants.SLASH_CH;
 
 /**
  * Provides a simple implementation of a Java source file based on character sequence.

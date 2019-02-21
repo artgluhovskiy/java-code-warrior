@@ -1,6 +1,5 @@
 package org.art.web.compiler.model;
 
-import lombok.EqualsAndHashCode;
 import lombok.Setter;
 import lombok.ToString;
 import org.art.web.compiler.model.api.CompilationMessage;
@@ -11,7 +10,6 @@ import org.art.web.compiler.model.api.CompilationStatus;
  * Represents a model for compilation result.
  * Contains information related to status, diagnostics and compiled class.
  */
-@EqualsAndHashCode
 @ToString
 @Setter
 public class CommonCompilationResult implements CompilationResult {

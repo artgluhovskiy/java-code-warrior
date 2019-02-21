@@ -2,8 +2,8 @@ package org.art.web.compiler.exceptions;
 
 import org.art.web.compiler.model.api.MethodDescriptor;
 
-import static org.art.web.compiler.service.ServiceConstants.DOT_CH;
-import static org.art.web.compiler.service.ServiceConstants.NEW_LINE_CH;
+import static org.art.web.compiler.service.ServiceCommonConstants.DOT_CH;
+import static org.art.web.compiler.service.ServiceCommonConstants.NEW_LINE_CH;
 
 /**
  * Thrown to indicate that {@link org.art.web.compiler.service.api.MethodInvocationService}
@@ -12,10 +12,6 @@ import static org.art.web.compiler.service.ServiceConstants.NEW_LINE_CH;
 public class MethodInvocationException extends Exception {
 
     private MethodDescriptor mDescriptor;
-
-    public MethodInvocationException(String message, Throwable cause) {
-        super(message, cause);
-    }
 
     public MethodInvocationException(String message, MethodDescriptor mDescriptor, Throwable cause) {
         super(message, cause);

@@ -44,7 +44,7 @@ public class InMemoryCompilationService implements CompilationService {
     }
 
     @Override
-    public CompilationResult compileSource(CompilationUnit<?> unit) throws CompilationServiceException {
+    public CompilationResult compileUnit(CompilationUnit<?> unit) throws CompilationServiceException {
         Objects.requireNonNull(unit, "Compilation unit should not be null!");
         if (!unit.isValid()) throw new CompilationServiceException("Failed to compile the unit. Compilation unit is not valid!", unit);
         String className = unit.getClassName();

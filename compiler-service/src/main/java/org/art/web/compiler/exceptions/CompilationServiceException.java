@@ -3,8 +3,8 @@ package org.art.web.compiler.exceptions;
 import org.art.web.compiler.model.api.CompilationUnit;
 import org.art.web.compiler.service.api.CompilationService;
 
-import static org.art.web.compiler.service.ServiceConstants.DOT_CH;
-import static org.art.web.compiler.service.ServiceConstants.NEW_LINE_CH;
+import static org.art.web.compiler.service.ServiceCommonConstants.DOT_CH;
+import static org.art.web.compiler.service.ServiceCommonConstants.NEW_LINE_CH;
 
 /**
  * Thrown to indicate that {@link CompilationService}
@@ -13,18 +13,6 @@ import static org.art.web.compiler.service.ServiceConstants.NEW_LINE_CH;
 public class CompilationServiceException extends Exception {
 
     private CompilationUnit<?> unit;
-
-    public CompilationServiceException(Throwable cause) {
-        super(cause);
-    }
-
-    public CompilationServiceException(String message) {
-        super(message);
-    }
-
-    public CompilationServiceException(String message, Throwable cause) {
-        super(message, cause);
-    }
 
     public CompilationServiceException(String message, CompilationUnit<?> unit) {
         super(message);

@@ -1,6 +1,5 @@
 package org.art.web.compiler.model;
 
-import lombok.EqualsAndHashCode;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
@@ -14,7 +13,6 @@ import java.util.List;
 /**
  * Represents a model, which contains all the information related to method to invoke.
  */
-@EqualsAndHashCode
 @ToString
 @RequiredArgsConstructor
 @Setter

@@ -5,13 +5,12 @@ import org.art.web.compiler.model.api.CompilationMessage;
 
 import javax.tools.Diagnostic;
 
-import static org.art.web.compiler.service.ServiceConstants.*;
+import static org.art.web.compiler.service.ServiceCommonConstants.*;
 
 /**
  * Contains information related to the java source unit compilation.
  */
 @Builder
-@EqualsAndHashCode
 @NoArgsConstructor
 @AllArgsConstructor
 @Setter
