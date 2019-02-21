@@ -35,7 +35,7 @@ class InMemoryCompilationServiceTest {
 
     private static final String SCANNER_TOKEN_DELIMITER = "\\$\\$\\$";
 
-    private static final Pattern CLASS_NAME_PATTERN = Pattern.compile("^public class (TestClass[\\d]{1,3}) \\{$", MULTILINE);
+    private static final Pattern CLASS_NAME_PATTERN = Pattern.compile("^public class (TestClass[\\d]{1,3}|TestClassFailed[\\d]{1,3}) \\{$", MULTILINE);
 
     private static final Map<String, String> TEST_DATA = new HashMap<>();
 
@@ -53,11 +53,11 @@ class InMemoryCompilationServiceTest {
             scanner.useDelimiter(SCANNER_TOKEN_DELIMITER);
             while (scanner.hasNext()) {
                 String srcCodeSample = scanner.next();
-                String testClassName = parseClassName(srcCodeSample);
-                if (StringUtils.isNotBlank(srcCodeSample) && StringUtils.isNotBlank(testClassName)) {
-                    TEST_DATA.put(testClassName, srcCodeSample);
-                } else {
-                    throw new RuntimeException("Cannot parse test class name for src: " + srcCodeSample);
+                if (StringUtils.isNotBlank(srcCodeSample)) {
+                    String testClassName = parseClassName(srcCodeSample);
+                    if (StringUtils.isNotBlank(testClassName)) {
+                        TEST_DATA.put(testClassName, srcCodeSample);
+                    }
                 }
             }
         }
@@ -75,28 +75,32 @@ class InMemoryCompilationServiceTest {
     @Test
     @DisplayName("Compile null unit")
     void test0() {
-        assertThrows(RuntimeException.class, () -> compiler.compileSource(null));
+        RuntimeException exception = assertThrows(RuntimeException.class, () -> compiler.compileSource(null));
+        assertTrue(StringUtils.containsIgnoreCase(exception.getMessage(), "Compilation unit should not be null"));
     }
 
     @Test
     @DisplayName("Compile unit with blank class name")
     void test1() {
         CompilationUnit unit = new CharSeqCompilationUnit(null, "class TestClass0_0{}");
-        assertThrows(CompilationServiceException.class, () -> compiler.compileSource(unit));
+        CompilationServiceException exception = assertThrows(CompilationServiceException.class, () -> compiler.compileSource(unit));
+        assertTrue(StringUtils.containsIgnoreCase(exception.getMessage(), "Compilation unit is not valid"));
     }
 
     @Test
     @DisplayName("Compile unit with blank src")
     void test2() {
         CompilationUnit unit = new CharSeqCompilationUnit("TestClass0_1", null);
-        assertThrows(CompilationServiceException.class, () -> compiler.compileSource(unit));
+        CompilationServiceException exception = assertThrows(CompilationServiceException.class, () -> compiler.compileSource(unit));
+        assertTrue(StringUtils.containsIgnoreCase(exception.getMessage(), "Compilation unit is not valid"));
     }
 
     @Test
     @DisplayName("Compile unit with blank params")
     void test3() {
         CompilationUnit unit = new CharSeqCompilationUnit(null, null);
-        assertThrows(CompilationServiceException.class, () -> compiler.compileSource(unit));
+        CompilationServiceException exception = assertThrows(CompilationServiceException.class, () -> compiler.compileSource(unit));
+        assertTrue(StringUtils.containsIgnoreCase(exception.getMessage(), "Compilation unit is not valid"));
     }
 
     @Test
@@ -105,27 +109,33 @@ class InMemoryCompilationServiceTest {
         String className = "TestClass0_2";
         String src = "class TestClass0_2{}";
         CompilationUnit unit = new CharSeqCompilationUnit(className, src);
-        CompilationResult compilationResult = assertDoesNotThrow(() -> compiler.compileSource(unit));
-        assertNotNull(compilationResult);
-        assertSame(CompilationStatus.SUCCESS, compilationResult.getStatus());
-        Class<?> clazz = compilationResult.getCompiledClass();
+
+        CompilationResult result = assertDoesNotThrow(() -> compiler.compileSource(unit));
+        assertNotNull(result);
+        assertSame(CompilationStatus.SUCCESS, result.getStatus());
+        Class<?> clazz = result.getCompiledClass();
         assertNotNull(clazz);
-        assertEquals("TestClass0_2", clazz.getSimpleName());
+        assertEquals(className, clazz.getSimpleName());
     }
 
     @Test
     @DisplayName("Compile unit with arbitrary text as src (no exception, ERROR status should be appeared)")
     void test5() {
-        CompilationUnit unit = new CharSeqCompilationUnit("TestClass0_2", "Arbitrary text");
-        CompilationResult compilationResult = assertDoesNotThrow(() -> compiler.compileSource(unit));
-        assertNotNull(compilationResult);
-        assertSame(CompilationStatus.ERROR, compilationResult.getStatus());
+        String className = "TestClass0_3";
+        String src = "Arbitrary text";
+        CompilationUnit unit = new CharSeqCompilationUnit(className, src);
 
-        CompilationMessage message = compilationResult.getMessage();
+        CompilationResult result = assertDoesNotThrow(() -> compiler.compileSource(unit));
+        assertNotNull(result);
+        assertNull(result.getCompiledClass());
+        assertSame(CompilationStatus.ERROR, result.getStatus());
+
+        CompilationMessage message = result.getMessage();
         assertNotNull(message);
 
-        assertAll(
-                () -> assertEquals("class, interface, or enum expected", message.getCauseMessage()),
+        assertAll("Validate message state",
+                () -> assertTrue(StringUtils.isNotBlank(message.getCauseMessage())),
+                () -> assertTrue(message.getCauseMessage().contains("class, interface, or enum expected")),
                 () -> assertSame(1L, message.getCodeLine()),
                 () -> assertSame(1L, message.getColumnNumber())
         );
@@ -134,46 +144,75 @@ class InMemoryCompilationServiceTest {
     @Test
     @DisplayName("'TestClass0' compilation test (one method, no errors)")
     void testClass0(TestInfo testInfo) {
-        CompilationUnit compilationUnit = getCompilationUnit(testInfo);
-        assertNotNull(compilationUnit);
-
-        CompilationResult compilationResult = assertDoesNotThrow(() -> compiler.compileSource(compilationUnit));
-        assertNotNull(compilationResult);
-
-        Class<?> compiledClass = compilationResult.getCompiledClass();
-
-        assertSame(CompilationStatus.SUCCESS, compilationResult.getStatus());
-        assertEquals(compilationUnit.getClassName(), compiledClass.getSimpleName());
+        CompilationUnit unit = getCompilationUnit(testInfo);
+        assertNotNull(unit);
+        compileWithoutErrors(unit);
     }
 
     @Test
     @DisplayName("'TestClass1' compilation test (one method, no errors)")
     void testClass1(TestInfo testInfo) {
-        CompilationUnit compilationUnit = getCompilationUnit(testInfo);
-        assertNotNull(compilationUnit);
-
-        CompilationResult compilationResult = assertDoesNotThrow(() -> compiler.compileSource(compilationUnit));
-        assertNotNull(compilationResult);
-
-        Class<?> compiledClass = compilationResult.getCompiledClass();
-
-        assertSame(CompilationStatus.SUCCESS, compilationResult.getStatus());
-        assertEquals(compilationUnit.getClassName(), compiledClass.getSimpleName());
+        CompilationUnit unit = getCompilationUnit(testInfo);
+        assertNotNull(unit);
+        compileWithoutErrors(unit);
     }
 
     @Test
     @DisplayName("'TestClass2' compilation test (one method with imports, no errors)")
     void testClass2(TestInfo testInfo) {
-        CompilationUnit compilationUnit = getCompilationUnit(testInfo);
-        assertNotNull(compilationUnit);
+        CompilationUnit unit = getCompilationUnit(testInfo);
+        assertNotNull(unit);
+        compileWithoutErrors(unit);
+    }
 
-        CompilationResult compilationResult = assertDoesNotThrow(() -> compiler.compileSource(compilationUnit));
-        assertNotNull(compilationResult);
+    @Test
+    @DisplayName("'TestClass3' compilation test (two methods, no errors)")
+    void testClass3(TestInfo testInfo) {
+        CompilationUnit unit = getCompilationUnit(testInfo);
+        assertNotNull(unit);
+        compileWithoutErrors(unit);
+    }
 
-        Class<?> compiledClass = compilationResult.getCompiledClass();
+    @Test
+    @DisplayName("'TestClass4' compilation test (inner class, no errors)")
+    void testClass4(TestInfo testInfo) {
+        CompilationUnit unit = getCompilationUnit(testInfo);
+        assertNotNull(unit);
+        compileWithoutErrors(unit);
+    }
 
-        assertSame(CompilationStatus.SUCCESS, compilationResult.getStatus());
-        assertEquals(compilationUnit.getClassName(), compiledClass.getSimpleName());
+    @Test
+    @DisplayName("'TestClass5' compilation test (static nested class, no errors)")
+    void testClass5(TestInfo testInfo) {
+        CompilationUnit unit = getCompilationUnit(testInfo);
+        assertNotNull(unit);
+        compileWithoutErrors(unit);
+    }
+
+    @Test
+    @DisplayName("'TestClass6' compilation test (recursive method invocation, no errors)")
+    void testClass6(TestInfo testInfo) {
+        CompilationUnit unit = getCompilationUnit(testInfo);
+        assertNotNull(unit);
+        compileWithoutErrors(unit);
+    }
+
+    @Test
+    @DisplayName("'TestClassFailed1' compilation test (with errors, missed return type)")
+    void testClassFailed1(TestInfo testInfo) {
+        String errorMessage = "return type required";
+        CompilationUnit unit = getCompilationUnit(testInfo);
+        assertNotNull(unit);
+        compileWithErrors(unit, errorMessage);
+    }
+
+    @Test
+    @DisplayName("'TestClassFailed2' compilation test (with errors, missed class import)")
+    void testClassFailed2(TestInfo testInfo) {
+        String errorMessage = "cannot find symbol";
+        CompilationUnit unit = getCompilationUnit(testInfo);
+        assertNotNull(unit);
+        compileWithErrors(unit, errorMessage);
     }
 
     private CompilationUnit getCompilationUnit(TestInfo testInfo) {
@@ -187,5 +226,33 @@ class InMemoryCompilationServiceTest {
         assertTrue(StringUtils.isNotBlank(srcCode));
 
         return new CharSeqCompilationUnit(testClassName, srcCode);
+    }
+
+    private void compileWithoutErrors(CompilationUnit unit) {
+        CompilationResult result = assertDoesNotThrow(() -> compiler.compileSource(unit));
+        assertNotNull(result);
+
+        assertSame(CompilationStatus.SUCCESS, result.getStatus());
+        assertNull(result.getMessage());
+
+        Class<?> compiledClass = result.getCompiledClass();
+        assertNotNull(compiledClass);
+        assertEquals(unit.getClassName(), compiledClass.getSimpleName());
+    }
+
+    private void compileWithErrors(CompilationUnit unit, String errorMessage) {
+        CompilationResult result = assertDoesNotThrow(() -> compiler.compileSource(unit));
+        assertNotNull(result);
+
+        assertSame(CompilationStatus.ERROR, result.getStatus());
+
+        assertNull(result.getCompiledClass());
+
+        CompilationMessage message = result.getMessage();
+        assertNotNull(message);
+
+        String causeMessage = message.getCauseMessage();
+        assertTrue(StringUtils.isNotBlank(causeMessage));
+        assertTrue(StringUtils.containsIgnoreCase(causeMessage,errorMessage));
     }
 }

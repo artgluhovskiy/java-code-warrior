@@ -19,11 +19,13 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 /**
- * Compilation service implementation.
- * Provides task compilation from {@link CompilationUnit} based on Java Compiler API.
- * The result of compilation is contained in {@link CommonCompilationResult}, which includes
- * status, diagnostics and compiled class.
- * Internally uses custom class loader in order to define a compiled class.
+ * Compilation service implementation, based on Java Compiler API.
+ * Provides compilation of {@link CompilationUnit}, which represents
+ * a service task, containing java source code and corresponding class name.
+ * The result of compilation is contained in {@link CommonCompilationResult},
+ * which includes status, some diagnostic info and compiled class itself.
+ * Internally uses custom class loader for every compilation task
+ * in order to define a compiled class.
  */
 @Service
 public class InMemoryCompilationService implements CompilationService {
@@ -44,9 +46,9 @@ public class InMemoryCompilationService implements CompilationService {
     @Override
     public CompilationResult compileSource(CompilationUnit<?> unit) throws CompilationServiceException {
         Objects.requireNonNull(unit, "Compilation unit should not be null!");
-        if (!unit.isValid()) throw new CompilationServiceException("Failed to compile unit. Compilation unit is not valid!", unit);
+        if (!unit.isValid()) throw new CompilationServiceException("Failed to compile the unit. Compilation unit is not valid!", unit);
         String className = unit.getClassName();
-        LOG.debug("Compiling class from unit. Class name: {}", className);
+        LOG.debug("Compiling the unit. Target class name: {}", className);
         DiagnosticCollector<JavaFileObject> diagnostics = new DiagnosticCollector<>();
         StandardJavaFileManager stdFileManager = compiler.getStandardFileManager(diagnostics, null, null);
         MemoryClassFileManager fileManager = new MemoryClassFileManager(stdFileManager);
@@ -55,18 +57,18 @@ public class InMemoryCompilationService implements CompilationService {
         try {
             JavaCompiler.CompilationTask task = compiler.getTask(null, fileManager, diagnostics, null, null, compilationUnits);
             boolean compilationResult = task.call();
-            CustomByteClassLoader classLoader = new CustomByteClassLoader(retrieveByteClassFilesFromFm(fileManager));
             if (compilationResult) {
+                CustomByteClassLoader classLoader = new CustomByteClassLoader(retrieveByteClassFilesFromFm(fileManager));
                 Class<?> compiledClass = classLoader.loadClass(className);
                 LOG.debug("Class with name {} was successfully compiled", className);
                 return buildCompilationResult(true, diagnostics.getDiagnostics(), compiledClass);
             } else {
-                LOG.info("Compilation failed. Class name: {}", className);
+                LOG.warn("Compilation failed. Class name: {}", className);
                 return buildCompilationResult(false, diagnostics.getDiagnostics(), null);
             }
         } catch (Exception e) {
-            LOG.error("Internal compilation exception! CompilationServiceException is thrown.");
-            throw new CompilationServiceException("Internal compilation exception!", unit, e);
+            LOG.error("Unexpected error occurred while unit compilation!");
+            throw new CompilationServiceException("Unexpected error occurred while unit compilation!", unit, e);
         }
     }
 

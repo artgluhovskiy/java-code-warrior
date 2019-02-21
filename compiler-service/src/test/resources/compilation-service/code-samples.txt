@@ -1,18 +1,18 @@
-//No errors
+//No errors (one method)
 public class TestClass0 {
     public String echo(String message) {
         return "Response: " + message;
     }
 }
 $$$
-//No errors
+//No errors (one method)
 public class TestClass1 {
     public void printMessage(String message) {
         System.out.println("Message: " + message);
     }
 }
 $$$
-//No errors
+//No errors (imports are used)
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -32,5 +32,63 @@ public class TestClass2 {
             }
         }
         return processedStr;
+    }
+}
+$$$
+//No errors (two methods)
+public class TestClass3 {
+    public void invokePrivate() {
+        System.out.println(getMessage());
+    }
+    private String getMessage() {
+        return "Hello from private method!";
+    }
+}
+$$$
+//No errors (inner class)
+public class TestClass4 {
+    private String string;
+    private void invokeHello() {
+        System.out.println("Hello!");
+    }
+    class InnerClass {
+        private String innerString;
+        private void invokeOuter() {
+            invokeHello();
+        }
+    }
+}
+$$$
+//No errors (static nested class)
+public class TestClass5 {
+    private void invokeHello() {
+        System.out.println("Hello!");
+    }
+    private static class Nested {
+        private void invokeOuter() {
+            invokeOuter();
+        }
+    }
+}
+$$$
+//No errors (recursive method invocation)
+public class TestClass6 {
+    private void invokeRecursive() {
+        invokeRecursive();
+    }
+}
+$$$
+//With errors (missed return type)
+public class TestClassFailed1 {
+    public invokeMethod() {
+        System.out.println("Hello!");
+    }
+}
+$$$
+//With errors (import missed)
+import java.util.ArrayList;
+public class TestClassFailed2 {
+    public List<String> invokeMethod(List<String> list) {
+        return new ArrayList<>(list);
     }
 }
