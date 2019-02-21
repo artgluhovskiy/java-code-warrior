@@ -75,28 +75,32 @@ class InMemoryCompilationServiceTest {
     @Test
     @DisplayName("Compile null unit")
     void test0() {
-        assertThrows(RuntimeException.class, () -> compiler.compileSource(null));
+        RuntimeException exception = assertThrows(RuntimeException.class, () -> compiler.compileSource(null));
+        assertTrue(StringUtils.containsIgnoreCase(exception.getMessage(), "Compilation unit should not be null"));
     }
 
     @Test
     @DisplayName("Compile unit with blank class name")
     void test1() {
         CompilationUnit unit = new CharSeqCompilationUnit(null, "class TestClass0_0{}");
-        assertThrows(CompilationServiceException.class, () -> compiler.compileSource(unit));
+        CompilationServiceException exception = assertThrows(CompilationServiceException.class, () -> compiler.compileSource(unit));
+        assertTrue(StringUtils.containsIgnoreCase(exception.getMessage(), "Compilation unit is not valid"));
     }
 
     @Test
     @DisplayName("Compile unit with blank src")
     void test2() {
         CompilationUnit unit = new CharSeqCompilationUnit("TestClass0_1", null);
-        assertThrows(CompilationServiceException.class, () -> compiler.compileSource(unit));
+        CompilationServiceException exception = assertThrows(CompilationServiceException.class, () -> compiler.compileSource(unit));
+        assertTrue(StringUtils.containsIgnoreCase(exception.getMessage(), "Compilation unit is not valid"));
     }
 
     @Test
     @DisplayName("Compile unit with blank params")
     void test3() {
         CompilationUnit unit = new CharSeqCompilationUnit(null, null);
-        assertThrows(CompilationServiceException.class, () -> compiler.compileSource(unit));
+        CompilationServiceException exception = assertThrows(CompilationServiceException.class, () -> compiler.compileSource(unit));
+        assertTrue(StringUtils.containsIgnoreCase(exception.getMessage(), "Compilation unit is not valid"));
     }
 
     @Test
@@ -129,7 +133,7 @@ class InMemoryCompilationServiceTest {
         CompilationMessage message = result.getMessage();
         assertNotNull(message);
 
-        assertAll(
+        assertAll("Validate message state",
                 () -> assertTrue(StringUtils.isNotBlank(message.getCauseMessage())),
                 () -> assertTrue(message.getCauseMessage().contains("class, interface, or enum expected")),
                 () -> assertSame(1L, message.getCodeLine()),

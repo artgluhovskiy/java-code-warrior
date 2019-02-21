@@ -41,7 +41,7 @@ public class CompilationServiceException extends Exception {
         String message = super.getMessage();
         if (this.unit != null) {
             StringBuilder sb = new StringBuilder(message);
-            sb.append("Compilation unit: class name - ").append(this.unit.getClassName()).append(NEW_LINE_CH)
+            sb.append(" Compilation unit: class name - ").append(this.unit.getClassName()).append(NEW_LINE_CH)
                     .append("source code - ").append(this.unit.getSrcCode()).append(DOT_CH).append(NEW_LINE_CH);
             message = sb.toString();
         }
