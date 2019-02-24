@@ -32,4 +32,13 @@ public class CustomByteClassLoader extends ClassLoader {
                   "Delegating invocation to the super class.", className);
         return super.findClass(className);
     }
+
+    public byte[] getClassBinData(String className) {
+        LOG.debug("Getting class binary data for class with name: {}", className);
+        byte[] classBinData = new byte[0];
+        if (classFiles.containsKey(className)) {
+            classBinData = classFiles.get(className);
+        }
+        return classBinData;
+    }
 }

@@ -6,9 +6,11 @@ import org.art.web.compiler.model.api.CompilationMessage;
 import org.art.web.compiler.model.api.CompilationResult;
 import org.art.web.compiler.model.api.CompilationStatus;
 
+import java.util.Map;
+
 /**
  * Represents a model for compilation result.
- * Contains information related to status, diagnostics and compiled class.
+ * Contains information related to status, diagnostics and compiled class data.
  */
 @ToString
 @Setter
@@ -18,7 +20,7 @@ public class CommonCompilationResult implements CompilationResult {
 
     private CompilationMessage message;
 
-    private Class<?> compiledClass;
+    private Map<String, byte[]> compiledClassData;
 
     public CommonCompilationResult(CompilationStatus status) {
         this.status = status;
@@ -35,7 +37,7 @@ public class CommonCompilationResult implements CompilationResult {
     }
 
     @Override
-    public Class<?> getCompiledClass() {
-        return compiledClass;
+    public Map<String, byte[]> getCompiledClassData() {
+        return compiledClassData;
     }
 }

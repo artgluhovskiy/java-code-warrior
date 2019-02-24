@@ -58,10 +58,8 @@ public class InMemoryCompilationService implements CompilationService {
             JavaCompiler.CompilationTask task = compiler.getTask(null, fileManager, diagnostics, null, null, compilationUnits);
             boolean compilationResult = task.call();
             if (compilationResult) {
-                CustomByteClassLoader classLoader = new CustomByteClassLoader(retrieveByteClassFilesFromFm(fileManager));
-                Class<?> compiledClass = classLoader.loadClass(className);
                 LOG.debug("Class with name {} was successfully compiled", className);
-                return buildCompilationResult(true, diagnostics.getDiagnostics(), compiledClass);
+                return buildCompilationResult(true, diagnostics.getDiagnostics(), retrieveClassBinData(fileManager));
             } else {
                 LOG.warn("Compilation failed. Class name: {}", className);
                 return buildCompilationResult(false, diagnostics.getDiagnostics(), null);
@@ -84,11 +82,11 @@ public class InMemoryCompilationService implements CompilationService {
 
     private CommonCompilationResult buildCompilationResult(boolean result,
                                                            List<Diagnostic<? extends JavaFileObject>> diagnostics,
-                                                           Class<?> compiledClass) {
+                                                           Map<String, byte[]> compiledClassData) {
         CommonCompilationResult compilationResult;
         if (result) {
             compilationResult = new CommonCompilationResult(CompilationStatus.SUCCESS);
-            compilationResult.setCompiledClass(compiledClass);
+            compilationResult.setCompiledClassData(compiledClassData);
         } else {
             compilationResult = new CommonCompilationResult(CompilationStatus.ERROR);
             if (!diagnostics.isEmpty()) {
@@ -109,7 +107,7 @@ public class InMemoryCompilationService implements CompilationService {
         return compilationResult;
     }
 
-    private Map<String, byte[]> retrieveByteClassFilesFromFm(MemoryClassFileManager fileManager) {
+    private Map<String, byte[]> retrieveClassBinData(MemoryClassFileManager fileManager) {
         return fileManager.getClassFiles()
                 .entrySet()
                 .stream()
