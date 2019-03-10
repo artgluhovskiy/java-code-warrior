@@ -43,10 +43,14 @@ dependencies {
     
     /* *** Spring *** */
     implementation('org.springframework.boot:spring-boot-starter')
+    implementation("org.springframework.boot:spring-boot-starter-web")
     testImplementation('org.springframework.boot:spring-boot-starter-test')
+
+    implementation('com.esotericsoftware:kryo:4.0.0')
 
     /* *** Common Libs *** */
     implementation('org.apache.commons:commons-lang3:3.1')
+    implementation('org.apache.commons:commons-collections4:4.0')
     
     implementation('org.apache.logging.log4j:log4j-core:2.8.2')
 

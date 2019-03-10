@@ -9,7 +9,9 @@ import java.util.Map;
  */
 public interface CompilationResult {
 
-    CompilationStatus getStatus();
+    String getClassName();
+
+    CompilationStatus getCompStatus();
 
     CompilationMessage getMessage();
 

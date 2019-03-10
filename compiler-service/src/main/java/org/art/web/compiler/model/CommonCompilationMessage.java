@@ -16,13 +16,10 @@ import static org.art.web.compiler.service.ServiceCommonConstants.*;
 @Setter
 public class CommonCompilationMessage implements CompilationMessage {
 
-    @NonNull
     private Diagnostic.Kind kind;
 
-    @NonNull
     private String errorCode;
 
-    @NonNull
     private String causeMessage;
 
     private long codeLine;
@@ -31,7 +28,7 @@ public class CommonCompilationMessage implements CompilationMessage {
 
     private long position;
 
-    public CommonCompilationMessage(@NonNull Diagnostic.Kind kind, @NonNull String errorCode, @NonNull String causeMessage) {
+    public CommonCompilationMessage(Diagnostic.Kind kind, String errorCode, String causeMessage) {
         this.kind = kind;
         this.errorCode = errorCode;
         this.causeMessage = causeMessage;

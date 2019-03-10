@@ -7,16 +7,22 @@ import org.art.web.compiler.service.api.CompilationService;
  */
 public enum CompilationStatus {
 
-    SUCCESS("Success"),
-    ERROR("Error");
+    SUCCESS("Success", 1),
+    ERROR("Error", -1);
 
+    private int statusCode;
     private String status;
 
-    CompilationStatus(String status) {
+    CompilationStatus(String status, int statusCode) {
         this.status = status;
+        this.statusCode = statusCode;
     }
 
     public String getStatus() {
         return status;
+    }
+
+    public int getStatusCode() {
+        return statusCode;
     }
 }

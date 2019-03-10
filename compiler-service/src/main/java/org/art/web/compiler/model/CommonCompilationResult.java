@@ -16,6 +16,8 @@ import java.util.Map;
 @Setter
 public class CommonCompilationResult implements CompilationResult {
 
+    private String className;
+
     private final CompilationStatus status;
 
     private CompilationMessage message;
@@ -27,7 +29,12 @@ public class CommonCompilationResult implements CompilationResult {
     }
 
     @Override
-    public CompilationStatus getStatus() {
+    public String getClassName() {
+        return className;
+    }
+
+    @Override
+    public CompilationStatus getCompStatus() {
         return status;
     }
 

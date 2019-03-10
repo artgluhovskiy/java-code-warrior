@@ -61,7 +61,7 @@ public class InMemoryCompilationService implements CompilationService {
                 LOG.debug("Class with name {} was successfully compiled", className);
                 return buildCompilationResult(true, diagnostics.getDiagnostics(), retrieveClassBinData(fileManager));
             } else {
-                LOG.warn("Compilation failed. Class name: {}", className);
+                LOG.warn("Compilation failed. Class name: {}, source code: {}", className, unit.getSrcCode());
                 return buildCompilationResult(false, diagnostics.getDiagnostics(), null);
             }
         } catch (Exception e) {
