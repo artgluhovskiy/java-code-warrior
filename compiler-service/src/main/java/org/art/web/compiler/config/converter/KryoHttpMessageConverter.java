@@ -1,9 +1,10 @@
-package org.art.web.compiler.config;
+package org.art.web.compiler.config.converter;
 
 import com.esotericsoftware.kryo.Kryo;
 import com.esotericsoftware.kryo.io.Input;
 import com.esotericsoftware.kryo.io.Output;
 import org.art.web.compiler.dto.ServiceResponseDto;
+import org.art.web.compiler.model.Entity;
 import org.springframework.http.HttpInputMessage;
 import org.springframework.http.HttpOutputMessage;
 import org.springframework.http.MediaType;
@@ -19,7 +20,8 @@ public class KryoHttpMessageConverter extends AbstractHttpMessageConverter<Objec
 
     private static final ThreadLocal<Kryo> kryoThreadLocal = ThreadLocal.withInitial(() -> {
         Kryo kryo = new Kryo();
-        kryo.register(ServiceResponseDto.class, 1);
+//        kryo.register(ServiceResponseDto.class);
+        kryo.register(Entity.class, 10);
         return kryo;
     });
 

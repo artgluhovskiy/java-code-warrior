@@ -24,7 +24,7 @@ public class ServiceResponseUtils {
         return builder.build();
     }
 
-    public static ServiceResponseDto buildServiceResponse(CompilationResult result) {
+    public static ServiceResponseDto buildCompErrorServiceResponse(CompilationResult result) {
         ServiceResponseDto.ServiceResponseDtoBuilder builder = ServiceResponseDto.builder();
         builder.serverResponseStatus(HttpStatus.OK.value());
         if (result != null) {
