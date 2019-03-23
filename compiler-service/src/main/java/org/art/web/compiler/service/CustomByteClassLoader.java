@@ -1,8 +1,11 @@
 package org.art.web.compiler.service;
 
+import org.apache.commons.lang3.ArrayUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import java.util.HashMap;
 import java.util.Map;
 
 /**
@@ -13,32 +16,24 @@ public class CustomByteClassLoader extends ClassLoader {
 
     private static final Logger LOG = LogManager.getLogger(CustomByteClassLoader.class);
 
-    private final Map<String, byte[]> classFiles;
-
-    public CustomByteClassLoader(Map<String, byte[]> classFiles) {
-        this.classFiles = classFiles;
-    }
+    private final Map<String, byte[]> classData = new HashMap<>();
 
     @Override
     protected Class<?> findClass(String className) throws ClassNotFoundException {
         LOG.debug("Finding class with name: {}", className);
-        if (classFiles.containsKey(className)) {
-            byte[] classFile = classFiles.get(className);
+        if (classData.containsKey(className)) {
+            byte[] classFile = classData.get(className);
             Class<?> clazz = defineClass(className, classFile, 0, classFile.length);
-            classFiles.remove(className);
+            classData.remove(className);
             return clazz;
         }
-        LOG.debug("Class with the name {} wasn't found in the class files map. " +
-                  "Delegating invocation to the super class.", className);
-        return super.findClass(className);
+        LOG.info("Class with the name {} wasn't found in the class files map. Returning null.", className);
+        return null;
     }
 
-    public byte[] getClassBinData(String className) {
-        LOG.debug("Getting class binary data for class with name: {}", className);
-        byte[] classBinData = new byte[0];
-        if (classFiles.containsKey(className)) {
-            classBinData = classFiles.get(className);
+    public void addClassData(String className, byte[] compiledClass) {
+        if (StringUtils.isNotBlank(className) && ArrayUtils.isNotEmpty(compiledClass)) {
+            classData.put(className, compiledClass);
         }
-        return classBinData;
     }
 }

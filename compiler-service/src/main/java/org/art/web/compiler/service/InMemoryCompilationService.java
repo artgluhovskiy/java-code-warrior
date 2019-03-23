@@ -1,5 +1,6 @@
 package org.art.web.compiler.service;
 
+import org.apache.commons.collections4.MapUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.message.FormattedMessage;
@@ -59,10 +60,12 @@ public class InMemoryCompilationService implements CompilationService {
             boolean compilationResult = task.call();
             if (compilationResult) {
                 LOG.debug("Class with name {} was successfully compiled", className);
-                return buildCompilationResult(true, diagnostics.getDiagnostics(), retrieveClassBinData(fileManager));
+                return buildCompilationResult(true, diagnostics.getDiagnostics(), className,
+                        unit.getSrcCode(), retrieveClassBinData(fileManager));
             } else {
                 LOG.warn("Compilation failed. Class name: {}, source code: {}", className, unit.getSrcCode());
-                return buildCompilationResult(false, diagnostics.getDiagnostics(), null);
+                return buildCompilationResult(false, diagnostics.getDiagnostics(), className,
+                        unit.getSrcCode(), null);
             }
         } catch (Exception e) {
             LOG.error("Unexpected error occurred while unit compilation!");
@@ -82,11 +85,15 @@ public class InMemoryCompilationService implements CompilationService {
 
     private CommonCompilationResult buildCompilationResult(boolean result,
                                                            List<Diagnostic<? extends JavaFileObject>> diagnostics,
+                                                           String className,
+                                                           Object srcCode,
                                                            Map<String, byte[]> compiledClassData) {
         CommonCompilationResult compilationResult;
         if (result) {
             compilationResult = new CommonCompilationResult(CompilationStatus.SUCCESS);
-            compilationResult.setCompiledClassData(compiledClassData);
+            if (MapUtils.isNotEmpty(compiledClassData)) {
+                compilationResult.setCompiledClassBytes(compiledClassData.get(className));
+            }
         } else {
             compilationResult = new CommonCompilationResult(CompilationStatus.ERROR);
             if (!diagnostics.isEmpty()) {
@@ -104,6 +111,8 @@ public class InMemoryCompilationService implements CompilationService {
                 compilationResult.setMessage(message);
             }
         }
+        compilationResult.setClassName(className);
+        compilationResult.setSrcCode(srcCode);
         return compilationResult;
     }
 

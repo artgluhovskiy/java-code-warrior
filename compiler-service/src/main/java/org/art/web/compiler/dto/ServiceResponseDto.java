@@ -1,19 +1,13 @@
 package org.art.web.compiler.dto;
 
-import com.fasterxml.jackson.annotation.JsonInclude;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 @Getter
 @Builder
+@ToString
 @NoArgsConstructor
 @AllArgsConstructor
-@JsonInclude(JsonInclude.Include.NON_NULL)
 public class ServiceResponseDto {
-
-    private int serverResponseStatus;
 
     private int compilerStatusCode;
 

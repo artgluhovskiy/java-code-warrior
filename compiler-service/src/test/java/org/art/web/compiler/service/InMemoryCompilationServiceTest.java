@@ -110,9 +110,8 @@ class InMemoryCompilationServiceTest {
         CompilationResult result = assertDoesNotThrow(() -> compiler.compileUnit(unit));
         assertNotNull(result);
         assertSame(CompilationStatus.SUCCESS, result.getCompStatus());
-        Map<String, byte[]> compiledClassData = result.getCompiledClassData();
-        assertNotNull(compiledClassData);
-        assertNotNull(compiledClassData.get(className));
+        assertNotNull(result.getClassName());
+        assertNotNull(result.getCompiledClassBytes());
     }
 
     @Test
@@ -124,7 +123,7 @@ class InMemoryCompilationServiceTest {
 
         CompilationResult result = assertDoesNotThrow(() -> compiler.compileUnit(unit));
         assertNotNull(result);
-        assertNull(result.getCompiledClassData());
+        assertNull(result.getCompiledClassBytes());
         assertSame(CompilationStatus.ERROR, result.getCompStatus());
 
         CompilationMessage message = result.getMessage();
@@ -259,9 +258,8 @@ class InMemoryCompilationServiceTest {
         assertSame(CompilationStatus.SUCCESS, result.getCompStatus());
         assertNull(result.getMessage());
 
-        Map<String, byte[]> compiledClassData = result.getCompiledClassData();
-        assertNotNull(compiledClassData);
-        assertNotNull(compiledClassData.get(unit.getClassName()));
+        assertNotNull(result.getCompiledClassBytes());
+        assertEquals(unit.getClassName(), result.getClassName());
     }
 
     private void compileWithErrors(CompilationUnit unit, String errorMessage) {
@@ -270,7 +268,7 @@ class InMemoryCompilationServiceTest {
 
         assertSame(CompilationStatus.ERROR, result.getCompStatus());
 
-        assertNull(result.getCompiledClassData());
+        assertNull(result.getCompiledClassBytes());
 
         CompilationMessage message = result.getMessage();
         assertNotNull(message);
