@@ -16,15 +16,22 @@ plugins {
 }
 
 apply plugin: 'java'
+apply plugin: 'org.springframework.boot'
 
 ext {
     springBootVersion = '2.1.2.RELEASE'
 }
 
 sourceCompatibility = 1.8
+targetCompatibility = 1.8
+
+bootJar {
+    baseName = 'compiler-service-boot'
+    version = '0.0.1-SNAPSHOT'
+}
 
 jar {
-    version = '0.0.1-SNAPSHOT'
+    enabled = true
 }
 
 repositories {
@@ -45,14 +52,14 @@ dependencies {
     implementation('org.springframework.boot:spring-boot-starter')
     implementation("org.springframework.boot:spring-boot-starter-web")
     testImplementation('org.springframework.boot:spring-boot-starter-test')
-
+    
     implementation('com.esotericsoftware:kryo:4.0.0')
 
     /* *** Common Libs *** */
     implementation('org.apache.commons:commons-lang3:3.1')
     implementation('org.apache.commons:commons-collections4:4.0')
     
-    implementation('org.apache.logging.log4j:log4j-core:2.8.2')
+    implementation('org.apache.logging.log4j:log4j-core:2.11.1')
 
     implementation('org.projectlombok:lombok:1.18.4')
     annotationProcessor("org.projectlombok:lombok:1.18.4")

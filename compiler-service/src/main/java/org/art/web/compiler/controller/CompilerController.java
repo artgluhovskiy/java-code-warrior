@@ -23,7 +23,7 @@ import static org.art.web.compiler.service.ServiceCommonConstants.COMPILER_SERVI
 import static org.art.web.compiler.service.ServiceCommonConstants.KRYO_CONTENT_TYPE;
 
 @RestController
-@RequestMapping(value = "/compile", produces = {KRYO_CONTENT_TYPE, MediaType.APPLICATION_JSON_UTF8_VALUE})
+@RequestMapping(value = "/compile", produces = {MediaType.APPLICATION_JSON_UTF8_VALUE, KRYO_CONTENT_TYPE})
 public class CompilerController {
 
     private static final Logger LOG = LogManager.getLogger(CompilerController.class);
