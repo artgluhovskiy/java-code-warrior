@@ -11,32 +11,33 @@ buildscript {
 }
 
 plugins {
-    id "io.spring.dependency-management" version "1.0.6.RELEASE"
-    id "net.saliman.cobertura" version "2.6.0"
+    id 'net.saliman.cobertura' version '2.6.0'
+}
+
+ext {
+    springBootVersion = '2.1.2.RELEASE'
+    targetResourceDir = '/docker'
 }
 
 apply plugin: 'java'
 apply plugin: 'org.springframework.boot'
-
-ext {
-    springBootVersion = '2.1.2.RELEASE'
-}
+apply plugin: 'io.spring.dependency-management'
 
 sourceCompatibility = 1.8
 targetCompatibility = 1.8
 
 bootJar {
     baseName = 'compiler-service-boot'
-    version = '0.0.1-SNAPSHOT'
-}
-
-jar {
-    enabled = true
 }
 
 repositories {
     mavenCentral()
     mavenLocal()
+}
+
+buildScan {
+    termsOfServiceUrl = 'https://gradle.com/terms-of-service'
+    termsOfServiceAgree = 'yes'
 }
 
 test {
@@ -47,33 +48,41 @@ test {
 }
 
 dependencies {
-    
+
     /* *** Spring *** */
     implementation('org.springframework.boot:spring-boot-starter')
-    implementation("org.springframework.boot:spring-boot-starter-web")
+    implementation('org.springframework.boot:spring-boot-starter-web')
     testImplementation('org.springframework.boot:spring-boot-starter-test')
-    
+
     implementation('com.esotericsoftware:kryo:4.0.0')
 
     /* *** Common Libs *** */
     implementation('org.apache.commons:commons-lang3:3.1')
     implementation('org.apache.commons:commons-collections4:4.0')
-    
+
     implementation('org.apache.logging.log4j:log4j-core:2.11.1')
 
     implementation('org.projectlombok:lombok:1.18.4')
     annotationProcessor("org.projectlombok:lombok:1.18.4")
-    
+
     /* *** TDD *** */
     testImplementation('org.junit.jupiter:junit-jupiter-api:5.3.1')
     testRuntimeOnly('org.junit.jupiter:junit-jupiter-engine:5.3.1')
-    
+
     testImplementation('org.mockito:mockito-junit-jupiter:2.18.3')
-    testImplementation "org.mockito:mockito-core:2.+"
+    testImplementation('org.mockito:mockito-core:2.+')
 }
 
-dependencyManagement {
-    imports {
-        mavenBom("org.springframework.boot:spring-boot-dependencies:${springBootVersion}")
-    }
+task collectResourcesToDir(type: Copy, dependsOn: build) {
+    println "Copying project resources to the directory '$targetResourceDir'"
+    from "$buildDir/libs"
+    into "$projectDir$targetResourceDir"
+}
+
+task runBuild(dependsOn: collectResourcesToDir) {
+    println 'Running build!'
+}
+
+task cleanProject(type: Delete, dependsOn: clean) {
+    delete "$projectDir$targetResourceDir"
 }

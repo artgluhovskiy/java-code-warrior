@@ -1,6 +1,10 @@
+plugins {
+    id 'com.gradle.build-scan' version '2.1'
+}
+
 allprojects {
     group = 'org.art.web'
-    version = '0.1'
+    version = '0.0.1-SNAPSHOT'
 }
 
 subprojects {
