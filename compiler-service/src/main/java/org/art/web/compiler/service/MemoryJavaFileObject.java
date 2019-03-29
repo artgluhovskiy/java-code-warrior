@@ -1,10 +1,11 @@
 package org.art.web.compiler.service;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.tools.SimpleJavaFileObject;
-import java.io.*;
+import java.io.ByteArrayOutputStream;
+import java.io.OutputStream;
 import java.net.URI;
 
 import static org.art.web.compiler.service.ServiceCommonConstants.DOT_CH;
@@ -16,7 +17,7 @@ import static org.art.web.compiler.service.ServiceCommonConstants.SLASH_CH;
  */
 public final class MemoryJavaFileObject extends SimpleJavaFileObject {
 
-    private static final Logger LOG = LogManager.getLogger(MemoryJavaFileObject.class);
+    private static final Logger LOG = LoggerFactory.getLogger(MemoryJavaFileObject.class);
 
     private static final String JAVA_STRING_SCHEME = "string:///";
 

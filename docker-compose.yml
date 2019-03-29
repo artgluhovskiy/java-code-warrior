@@ -1,0 +1,11 @@
+version: '3'
+
+services:
+
+  # Compiler Service
+  compiler-service:
+    container_name: compiler-service
+    build:
+      context: ./compiler-service
+    ports:
+      - "18080:8080"

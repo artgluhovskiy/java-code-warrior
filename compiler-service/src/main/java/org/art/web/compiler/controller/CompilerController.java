@@ -1,8 +1,6 @@
 package org.art.web.compiler.controller;
 
 import org.apache.commons.lang3.StringUtils;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 import org.art.web.compiler.dto.ServiceResponseDto;
 import org.art.web.compiler.exceptions.CompilationServiceException;
 import org.art.web.compiler.model.CharSeqCompilationUnit;
@@ -10,6 +8,8 @@ import org.art.web.compiler.model.api.CompilationResult;
 import org.art.web.compiler.model.api.CompilationUnit;
 import org.art.web.compiler.service.api.CompilationService;
 import org.art.web.compiler.util.ServiceResponseUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -26,7 +26,7 @@ import static org.art.web.compiler.service.ServiceCommonConstants.KRYO_CONTENT_T
 @RequestMapping(value = "/compile", produces = {MediaType.APPLICATION_JSON_UTF8_VALUE, KRYO_CONTENT_TYPE})
 public class CompilerController {
 
-    private static final Logger LOG = LogManager.getLogger(CompilerController.class);
+    private static final Logger LOG = LoggerFactory.getLogger(CompilerController.class);
 
     private CompilationService compilationService;
 

@@ -1,11 +1,11 @@
 package org.art.web.compiler.service;
 
 import org.apache.commons.lang3.tuple.Pair;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 import org.art.web.compiler.exceptions.MethodInvocationException;
 import org.art.web.compiler.model.api.MethodDescriptor;
 import org.art.web.compiler.service.api.MethodInvocationService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
 import java.lang.invoke.MethodHandle;
@@ -25,7 +25,7 @@ import java.util.stream.Collectors;
 @Service
 public class MethodHandleInvocationService implements MethodInvocationService {
 
-    private static final Logger LOG = LogManager.getLogger(MethodHandleInvocationService.class);
+    private static final Logger LOG = LoggerFactory.getLogger(MethodHandleInvocationService.class);
 
     private static final MethodHandles.Lookup PUBLIC_LOOKUP = MethodHandles.publicLookup();
 

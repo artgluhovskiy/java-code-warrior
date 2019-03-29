@@ -1,7 +1,7 @@
 package org.art.web.compiler.service;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.tools.FileObject;
 import javax.tools.ForwardingJavaFileManager;
@@ -16,7 +16,7 @@ import java.util.Map;
  */
 public final class MemoryClassFileManager extends ForwardingJavaFileManager<StandardJavaFileManager> {
 
-    private static final Logger LOG = LogManager.getLogger(MemoryClassFileManager.class);
+    private static final Logger LOG = LoggerFactory.getLogger(MemoryClassFileManager.class);
 
     private final Map<String, MemoryJavaFileObject> classFiles;
 
