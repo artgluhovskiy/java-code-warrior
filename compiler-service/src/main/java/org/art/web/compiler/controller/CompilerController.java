@@ -40,8 +40,8 @@ public class CompilerController {
                                   @RequestParam(value = "src", required = false) String src) {
         CompilationUnit unit = null;
         if (StringUtils.isBlank(className) || StringUtils.isBlank(src)) {
-            ServiceResponseDto unpocessEntityResponse = ServiceResponseUtils.buildUnpocessableEntityResponse(className, src);
-            return ResponseEntity.unprocessableEntity().body(unpocessEntityResponse);
+            ServiceResponseDto unprocessedEntityResponse = ServiceResponseUtils.buildUnprocessableEntityResponse(className, src);
+            return ResponseEntity.unprocessableEntity().body(unprocessedEntityResponse);
         }
         try {
             className = URLDecoder.decode(className, StandardCharsets.UTF_8.name());

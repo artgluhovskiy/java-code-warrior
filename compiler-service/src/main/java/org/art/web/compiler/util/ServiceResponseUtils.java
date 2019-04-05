@@ -37,7 +37,7 @@ public class ServiceResponseUtils {
         return builder.build();
     }
 
-    public static ServiceResponseDto buildUnpocessableEntityResponse(String className, String src) {
+    public static ServiceResponseDto buildUnprocessableEntityResponse(String className, String src) {
         ServiceResponseDto.ServiceResponseDtoBuilder builder = ServiceResponseDto.builder();
         builder.className(className)
                 .srcCode(src)

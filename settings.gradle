@@ -1,5 +1,6 @@
 rootProject.name = 'java-code-warrior'
 
 include 'compiler-service'
+include 'method-invocation-service'
 include 'hello-module'
 include 'buildSrc'
