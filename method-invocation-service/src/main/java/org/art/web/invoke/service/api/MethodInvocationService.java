@@ -1,7 +1,7 @@
-package org.art.web.compiler.service.api;
+package org.art.web.invoke.service.api;
 
-import org.art.web.compiler.exceptions.MethodInvocationException;
-import org.art.web.compiler.model.api.MethodDescriptor;
+import org.art.web.invoke.exceptions.MethodInvocationException;
+import org.art.web.invoke.model.api.MethodDescriptor;
 
 /**
  * Method Invocation Service API.

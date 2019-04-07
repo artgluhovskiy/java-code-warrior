@@ -1,6 +1,6 @@
-package org.art.web.compiler.config;
+package org.art.web.invoke.config;
 
-import org.art.web.compiler.config.converter.KryoHttpMessageConverter;
+import org.art.web.invoke.config.converter.KryoHttpMessageConverter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.annotation.Configuration;

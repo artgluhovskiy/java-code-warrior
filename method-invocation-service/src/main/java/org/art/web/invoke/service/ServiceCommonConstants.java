@@ -1,4 +1,4 @@
-package org.art.web.compiler.service;
+package org.art.web.invoke.service;
 
 import org.springframework.http.MediaType;
 

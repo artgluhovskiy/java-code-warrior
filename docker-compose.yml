@@ -9,3 +9,5 @@ services:
       context: ./compiler-service
     ports:
       - "18080:8080"
+    volumes:
+      - "./logs:/app/logs"

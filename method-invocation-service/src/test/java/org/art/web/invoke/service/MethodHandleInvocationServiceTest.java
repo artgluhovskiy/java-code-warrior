@@ -1,7 +1,7 @@
-package org.art.web.compiler.service;
+package org.art.web.invoke.service;
 
-import org.art.web.compiler.model.CommonMethodDescriptor;
-import org.art.web.compiler.service.api.MethodInvocationService;
+import org.art.web.invoke.model.CommonMethodDescriptor;
+import org.art.web.invoke.service.api.MethodInvocationService;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;

@@ -1,4 +1,4 @@
-package org.art.web.compiler.config.converter;
+package org.art.web.invoke.config.converter;
 
 import com.esotericsoftware.kryo.Kryo;
 import com.esotericsoftware.kryo.io.Input;

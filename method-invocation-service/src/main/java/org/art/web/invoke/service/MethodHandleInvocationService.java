@@ -1,9 +1,9 @@
-package org.art.web.compiler.service;
+package org.art.web.invoke.service;
 
 import org.apache.commons.lang3.tuple.Pair;
-import org.art.web.compiler.exceptions.MethodInvocationException;
-import org.art.web.compiler.model.api.MethodDescriptor;
-import org.art.web.compiler.service.api.MethodInvocationService;
+import org.art.web.invoke.exceptions.MethodInvocationException;
+import org.art.web.invoke.model.api.MethodDescriptor;
+import org.art.web.invoke.service.api.MethodInvocationService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;

@@ -1,7 +1,7 @@
-package org.art.web.compiler.model.api;
+package org.art.web.invoke.model.api;
 
 import org.apache.commons.lang3.tuple.Pair;
-import org.art.web.compiler.service.api.MethodInvocationService;
+import org.art.web.invoke.service.api.MethodInvocationService;
 
 import java.util.List;
 

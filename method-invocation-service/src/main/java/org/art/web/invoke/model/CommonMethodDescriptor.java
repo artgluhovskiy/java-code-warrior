@@ -1,10 +1,10 @@
-package org.art.web.compiler.model;
+package org.art.web.invoke.model;
 
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
 import org.apache.commons.lang3.tuple.Pair;
-import org.art.web.compiler.model.api.MethodDescriptor;
+import org.art.web.invoke.model.api.MethodDescriptor;
 
 import java.util.ArrayList;
 import java.util.Collections;
