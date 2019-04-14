@@ -1,0 +1,11 @@
+.submit-code {
+    margin-top: 10px;
+}
+
+.success {
+    color: green;
+}
+
+.error {
+    color: red;
+}

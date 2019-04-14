@@ -27,7 +27,7 @@ sourceCompatibility = 1.8
 targetCompatibility = 1.8
 
 bootJar {
-    baseName = 'compiler-service-boot'
+    baseName = 'client-service-boot'
 }
 
 repositories {
@@ -52,6 +52,11 @@ dependencies {
     /* *** Spring *** */
     implementation('org.springframework.boot:spring-boot-starter')
     implementation('org.springframework.boot:spring-boot-starter-web')
+    implementation('org.springframework.boot:spring-boot-starter-thymeleaf')
+    
+    implementation('org.springframework.boot:spring-boot-devtools')
+    implementation('org.springframework.boot:spring-boot-starter-actuator')
+    
     testImplementation('org.springframework.boot:spring-boot-starter-test')
 
     implementation('com.esotericsoftware:kryo:4.0.0')
@@ -59,7 +64,7 @@ dependencies {
     /* *** Common Libs *** */
     implementation('org.apache.commons:commons-lang3:3.1')
     implementation('org.apache.commons:commons-collections4:4.0')
-    
+
     implementation('ch.qos.logback:logback-core:1.2.3')
     implementation('org.slf4j:slf4j-api:1.7.26')
 

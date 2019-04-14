@@ -80,7 +80,7 @@ class CompilerControllerTest {
         when(compilationService.compileUnit(unit)).thenReturn(compResult);
 
         MvcResult result = mockMvc.perform(
-                post("/compile/src")
+                post("/compile/src/params")
                         .param("src", src)
                         .param("classname", className)
                         .accept(KRYO_CONTENT_TYPE))
@@ -106,7 +106,7 @@ class CompilerControllerTest {
         String className = "TestClass4";
 
         MvcResult result = mockMvc.perform(
-                post("/compile/src")
+                post("/compile/src/params")
                         .param("classname", className)
                         .accept(KRYO_CONTENT_TYPE))
                 .andExpect(status().isUnprocessableEntity())
