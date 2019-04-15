@@ -1,5 +1,6 @@
 rootProject.name = 'java-code-warrior'
 
+include 'common'
 include 'client-service'
 include 'compiler-service'
 include 'method-invocation-service'
