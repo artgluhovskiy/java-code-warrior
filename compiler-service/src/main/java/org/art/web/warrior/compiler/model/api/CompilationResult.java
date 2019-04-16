@@ -1,6 +1,6 @@
 package org.art.web.warrior.compiler.model.api;
 
-import org.art.web.warrior.common.compiler.CompilationStatus;
+import org.art.web.warrior.compiler.model.CompilationStatus;
 import org.art.web.warrior.compiler.service.api.CompilationService;
 
 /**

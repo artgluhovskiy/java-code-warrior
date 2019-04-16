@@ -1,9 +1,9 @@
-package org.art.web.warrior.common.config.converter;
+package org.art.web.warrior.client.config.converter;
 
 import com.esotericsoftware.kryo.Kryo;
 import com.esotericsoftware.kryo.io.Input;
 import com.esotericsoftware.kryo.io.Output;
-import org.art.web.warrior.common.dto.CompServiceResponse;
+import org.art.web.warrior.client.dto.CompServiceResponse;
 import org.springframework.http.HttpInputMessage;
 import org.springframework.http.HttpOutputMessage;
 import org.springframework.http.MediaType;

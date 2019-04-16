@@ -20,7 +20,7 @@ import org.springframework.test.web.servlet.MvcResult;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
 
-import static org.art.web.warrior.common.ServiceCommonConstants.KRYO_CONTENT_TYPE;
+import static org.art.web.warrior.compiler.service.ServiceCommonConstants.KRYO_CONTENT_TYPE;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;

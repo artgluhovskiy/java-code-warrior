@@ -1,4 +1,4 @@
-package org.art.web.warrior.common.dto;
+package org.art.web.warrior.client.dto;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;

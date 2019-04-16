@@ -2,7 +2,7 @@ package org.art.web.warrior.compiler.controller;
 
 import com.esotericsoftware.kryo.Kryo;
 import com.esotericsoftware.kryo.io.Input;
-import org.art.web.warrior.common.compiler.CompilationStatus;
+import org.art.web.warrior.compiler.model.CompilationStatus;
 import org.art.web.warrior.compiler.dto.ServiceResponseDto;
 import org.art.web.warrior.compiler.model.CharSeqCompilationUnit;
 import org.art.web.warrior.compiler.model.CommonCompilationResult;
@@ -20,8 +20,8 @@ import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
 
-import static org.art.web.warrior.common.ServiceCommonConstants.COMPILER_SERVICE_OK_MESSAGE;
-import static org.art.web.warrior.common.ServiceCommonConstants.KRYO_CONTENT_TYPE;
+import static org.art.web.warrior.compiler.service.ServiceCommonConstants.COMPILER_SERVICE_OK_MESSAGE;
+import static org.art.web.warrior.compiler.service.ServiceCommonConstants.KRYO_CONTENT_TYPE;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;

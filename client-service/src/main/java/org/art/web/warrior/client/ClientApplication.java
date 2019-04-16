@@ -1,4 +1,4 @@
-package org.art.web.warrior.common;
+package org.art.web.warrior.client;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;

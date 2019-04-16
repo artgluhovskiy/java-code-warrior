@@ -1,4 +1,4 @@
-package org.art.web.warrior.common;
+package org.art.web.warrior.compiler.service;
 
 import org.springframework.http.MediaType;
 

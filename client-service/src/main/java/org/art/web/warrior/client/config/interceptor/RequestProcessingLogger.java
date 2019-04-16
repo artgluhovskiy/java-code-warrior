@@ -1,4 +1,4 @@
-package org.art.web.warrior.common.config.interceptor;
+package org.art.web.warrior.client.config.interceptor;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpRequest;

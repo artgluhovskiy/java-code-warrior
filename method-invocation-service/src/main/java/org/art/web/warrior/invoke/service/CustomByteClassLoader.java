@@ -1,4 +1,4 @@
-package org.art.web.warrior.common.classloading;
+package org.art.web.warrior.invoke.service;
 
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.StringUtils;

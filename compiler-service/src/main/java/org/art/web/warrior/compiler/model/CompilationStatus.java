@@ -1,4 +1,4 @@
-package org.art.web.warrior.common.compiler;
+package org.art.web.warrior.compiler.model;
 
 /**
  * Compilation status, which represents a basic result of unit compilation by a Compilation Service.

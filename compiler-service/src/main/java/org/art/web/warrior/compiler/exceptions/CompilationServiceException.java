@@ -1,11 +1,10 @@
 package org.art.web.warrior.compiler.exceptions;
 
-import org.art.web.warrior.common.ServiceCommonConstants;
 import org.art.web.warrior.compiler.model.api.CompilationUnit;
 import org.art.web.warrior.compiler.service.api.CompilationService;
 
-import static org.art.web.warrior.common.ServiceCommonConstants.DOT_CH;
-import static org.art.web.warrior.common.ServiceCommonConstants.NEW_LINE_CH;
+import static org.art.web.warrior.compiler.service.ServiceCommonConstants.DOT_CH;
+import static org.art.web.warrior.compiler.service.ServiceCommonConstants.NEW_LINE_CH;
 
 /**
  * Thrown to indicate that {@link CompilationService}

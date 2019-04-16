@@ -1,4 +1,4 @@
-package org.art.web.warrior.common.config;
+package org.art.web.warrior.client.config;
 
 import org.springframework.web.servlet.config.annotation.ViewControllerRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;

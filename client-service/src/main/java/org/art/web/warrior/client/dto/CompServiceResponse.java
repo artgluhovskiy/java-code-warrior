@@ -1,7 +1,7 @@
-package org.art.web.warrior.common.dto;
+package org.art.web.warrior.client.dto;
 
 import lombok.*;
-import org.art.web.warrior.common.compiler.CompilationStatus;
+import org.art.web.warrior.client.util.CompilationStatus;
 
 @Getter
 @Builder

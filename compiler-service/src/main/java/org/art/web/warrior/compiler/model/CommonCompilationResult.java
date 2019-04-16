@@ -4,7 +4,6 @@ import lombok.Setter;
 import lombok.ToString;
 import org.art.web.warrior.compiler.model.api.CompilationMessage;
 import org.art.web.warrior.compiler.model.api.CompilationResult;
-import org.art.web.warrior.common.compiler.CompilationStatus;
 
 /**
  * Represents a model for compilation result.

@@ -1,7 +1,7 @@
-package org.art.web.warrior.common.util;
+package org.art.web.warrior.client.util;
 
-import org.art.web.warrior.common.dto.ClientServiceRequest;
-import org.art.web.warrior.common.dto.CompServiceResponse;
+import org.art.web.warrior.client.dto.ClientServiceRequest;
+import org.art.web.warrior.client.dto.CompServiceResponse;
 
 public class CompServiceResponseUtil {
 

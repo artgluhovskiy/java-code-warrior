@@ -6,7 +6,7 @@ import org.art.web.warrior.compiler.exceptions.UnknownJavaSourceException;
 import org.art.web.warrior.compiler.model.CommonCompilationMessage;
 import org.art.web.warrior.compiler.model.CommonCompilationResult;
 import org.art.web.warrior.compiler.model.api.CompilationResult;
-import org.art.web.warrior.common.compiler.CompilationStatus;
+import org.art.web.warrior.compiler.model.CompilationStatus;
 import org.art.web.warrior.compiler.model.api.CompilationUnit;
 import org.art.web.warrior.compiler.service.api.CompilationService;
 import org.slf4j.Logger;

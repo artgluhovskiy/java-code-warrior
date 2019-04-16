@@ -21,8 +21,8 @@ import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
 import java.nio.charset.StandardCharsets;
 
-import static org.art.web.warrior.common.ServiceCommonConstants.COMPILER_SERVICE_OK_MESSAGE;
-import static org.art.web.warrior.common.ServiceCommonConstants.KRYO_CONTENT_TYPE;
+import static org.art.web.warrior.compiler.service.ServiceCommonConstants.COMPILER_SERVICE_OK_MESSAGE;
+import static org.art.web.warrior.compiler.service.ServiceCommonConstants.KRYO_CONTENT_TYPE;
 
 @RestController
 @RequestMapping(value = "/compile", produces = {MediaType.APPLICATION_JSON_UTF8_VALUE, KRYO_CONTENT_TYPE})

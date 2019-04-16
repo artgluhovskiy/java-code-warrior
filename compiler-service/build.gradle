@@ -48,10 +48,7 @@ test {
 }
 
 dependencies {
-    
-    /* Project Dependencies */
-    implementation project(':common')
-    
+        
     /* *** Spring *** */
     implementation('org.springframework.boot:spring-boot-starter')
     implementation('org.springframework.boot:spring-boot-starter-web')

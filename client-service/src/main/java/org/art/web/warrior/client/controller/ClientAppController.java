@@ -1,13 +1,13 @@
-package org.art.web.warrior.common.controller;
+package org.art.web.warrior.client.controller;
 
 import lombok.extern.slf4j.Slf4j;
-import org.art.web.warrior.common.config.converter.KryoHttpMessageConverter;
-import org.art.web.warrior.common.config.interceptor.RequestProcessingLogger;
-import org.art.web.warrior.common.dto.ClientServiceRequest;
-import org.art.web.warrior.common.dto.ClientServiceResponse;
-import org.art.web.warrior.common.dto.CompServiceRequest;
-import org.art.web.warrior.common.dto.CompServiceResponse;
-import org.art.web.warrior.common.classloading.CustomByteClassLoader;
+import org.art.web.warrior.client.config.converter.KryoHttpMessageConverter;
+import org.art.web.warrior.client.config.interceptor.RequestProcessingLogger;
+import org.art.web.warrior.client.dto.ClientServiceRequest;
+import org.art.web.warrior.client.dto.ClientServiceResponse;
+import org.art.web.warrior.client.dto.CompServiceRequest;
+import org.art.web.warrior.client.dto.CompServiceResponse;
+import org.art.web.warrior.client.service.CustomByteClassLoader;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.web.client.RestTemplateBuilder;
 import org.springframework.http.HttpEntity;

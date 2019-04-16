@@ -6,7 +6,7 @@ import org.art.web.warrior.compiler.exceptions.UnknownJavaSourceException;
 import org.art.web.warrior.compiler.model.CharSeqCompilationUnit;
 import org.art.web.warrior.compiler.model.api.CompilationMessage;
 import org.art.web.warrior.compiler.model.api.CompilationResult;
-import org.art.web.warrior.common.compiler.CompilationStatus;
+import org.art.web.warrior.compiler.model.CompilationStatus;
 import org.art.web.warrior.compiler.model.api.CompilationUnit;
 import org.art.web.warrior.compiler.service.api.CompilationService;
 import org.junit.jupiter.api.*;
