@@ -5,8 +5,8 @@ package org.art.web.warrior.compiler.model;
  */
 public enum CompilationStatus {
 
-    SUCCESS("Success", 1),
-    ERROR("Error", -1);
+    SUCCESS("success", 1),
+    ERROR("comp_error", -1);
 
     private int statusCode;
     private String status;

@@ -9,7 +9,7 @@ $(function () {
 
         var srcCode = codeArea.val();
         var className = classNameField.val();
-        var formData = JSON.stringify({code: srcCode, className: className});
+        var formData = JSON.stringify({srcCode: srcCode, className: className});
 
         $.ajax({
             type: 'POST',

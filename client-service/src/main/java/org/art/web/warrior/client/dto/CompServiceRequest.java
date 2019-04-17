@@ -13,6 +13,7 @@ import org.apache.commons.lang3.StringUtils;
 public class CompServiceRequest {
 
     private String className;
+
     private String src;
 
     public boolean isValid() {

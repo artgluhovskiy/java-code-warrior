@@ -12,5 +12,6 @@ import lombok.ToString;
 public class ClientServiceRequest {
 
     private String className;
-    private String code;
+
+    private String srcCode;
 }

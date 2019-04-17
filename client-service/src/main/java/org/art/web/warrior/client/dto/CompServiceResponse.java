@@ -1,7 +1,7 @@
 package org.art.web.warrior.client.dto;
 
 import lombok.*;
-import org.art.web.warrior.client.util.CompilationStatus;
+import org.art.web.warrior.client.model.ClientResponseStatus;
 
 @Getter
 @Builder
@@ -12,7 +12,7 @@ public class CompServiceResponse {
 
     private int compilerStatusCode;
 
-    private CompilationStatus compilerStatus;
+    private String compilerStatus;
 
     private String message;
 
@@ -33,10 +33,10 @@ public class CompServiceResponse {
     private byte[] compiledClass;
 
     public boolean isCompError() {
-        return compilerStatus == CompilationStatus.ERROR;
+        return ClientResponseStatus.COMPILATION_ERROR.getStatusId().equals(compilerStatus);
     }
 
     public boolean isCompOk() {
-        return compilerStatus == CompilationStatus.SUCCESS;
+        return ClientResponseStatus.SUCCESS.getStatusId().equals(compilerStatus);
     }
 }
