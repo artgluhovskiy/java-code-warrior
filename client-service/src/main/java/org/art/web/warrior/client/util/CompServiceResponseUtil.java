@@ -13,7 +13,7 @@ public class CompServiceResponseUtil {
 
     public static ClientServiceResponse buildEmptyBodyResponse(ClientServiceRequest clientReqData) {
         return ClientServiceResponse.builder()
-                .respStatus(ClientResponseStatus.INTERNAL_SERVICE_ERROR)
+                .respStatus(ClientResponseStatus.INTERNAL_SERVICE_ERROR.getStatusId())
                 .message("Internal service error occurred! Compilation service responded with empty body.")
                 .className(clientReqData.getClassName())
                 .srcCode(clientReqData.getSrcCode())
@@ -28,7 +28,7 @@ public class CompServiceResponseUtil {
                 .errorPosition(serviceResp.getErrorPosition())
                 .build();
         return ClientServiceResponse.builder()
-                .respStatus(ClientResponseStatus.COMPILATION_ERROR)
+                .respStatus(ClientResponseStatus.COMPILATION_ERROR.getStatusId())
                 .message("Compilation errors occurred while compiling client source code!")
                 .className(serviceResp.getClassName())
                 .srcCode((String) serviceResp.getSrcCode())
@@ -38,7 +38,7 @@ public class CompServiceResponseUtil {
 
     public static ClientServiceResponse buildCompOkResponse(CompServiceResponse serviceResp) {
         return ClientServiceResponse.builder()
-                .respStatus(ClientResponseStatus.SUCCESS)
+                .respStatus(ClientResponseStatus.SUCCESS.getStatusId())
                 .message("Client source code was successfully compiled!")
                 .className(serviceResp.getClassName())
                 .srcCode((String) serviceResp.getSrcCode())

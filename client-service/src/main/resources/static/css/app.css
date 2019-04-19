@@ -2,10 +2,14 @@
     margin: 15px 0;
 }
 
-.success {
+.cell {
+    margin-top: 20px;
+}
+
+.submit-result .success {
     color: green;
 }
 
-.error {
+.submit-result .error {
     color: red;
 }

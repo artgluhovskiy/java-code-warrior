@@ -16,10 +16,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
 
+import static org.art.web.warrior.compiler.CommonTestConstants.*;
 import static org.art.web.warrior.compiler.service.ServiceCommonConstants.COMPILER_SERVICE_OK_MESSAGE;
 import static org.art.web.warrior.compiler.service.ServiceCommonConstants.KRYO_CONTENT_TYPE;
 import static org.junit.jupiter.api.Assertions.*;
@@ -40,12 +42,12 @@ class CompilerControllerTest {
     @MockBean
     private CompilationService compilationService;
 
-    private static Kryo KRYO;
+    private static Kryo kryo;
 
     @BeforeAll
     static void initAll() {
-        KRYO = new Kryo();
-        KRYO.register(ServiceResponseDto.class, 10);
+        kryo = new Kryo();
+        kryo.register(ServiceResponseDto.class, 10);
     }
 
     @Test
@@ -54,7 +56,7 @@ class CompilerControllerTest {
         MvcResult result = mockMvc.perform(get("/compile/ping")
                 .accept(MediaType.APPLICATION_JSON_UTF8))
                 .andExpect(status().isOk())
-                .andExpect(header().string("Content-Type", MediaType.APPLICATION_JSON_UTF8_VALUE))
+                .andExpect(header().string(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_UTF8_VALUE))
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8_VALUE))
                 .andReturn();
         String response = result.getResponse().getContentAsString();
@@ -80,19 +82,19 @@ class CompilerControllerTest {
         when(compilationService.compileUnit(unit)).thenReturn(compResult);
 
         MvcResult result = mockMvc.perform(
-                post("/compile/src/params")
-                        .param("src", src)
-                        .param("classname", className)
+                post(COMP_PARAM_ENDPOINT)
+                        .param(SRC_PARAM, src)
+                        .param(CLASSNAME_PARAM, className)
                         .accept(KRYO_CONTENT_TYPE))
                 .andExpect(status().isOk())
-                .andExpect(header().string("Content-Type", KRYO_CONTENT_TYPE))
+                .andExpect(header().string(HttpHeaders.CONTENT_TYPE, KRYO_CONTENT_TYPE))
                 .andExpect(content().contentType(KRYO_CONTENT_TYPE))
                 .andReturn();
         byte[] binResponseData = result.getResponse().getContentAsByteArray();
         assertNotNull(binResponseData);
-        ServiceResponseDto compResponse = (ServiceResponseDto) KRYO.readClassAndObject(new Input(binResponseData));
+        ServiceResponseDto compResponse = (ServiceResponseDto) kryo.readClassAndObject(new Input(binResponseData));
         assertNotNull(compResponse);
-        assertAll(() -> assertEquals("Success", compResponse.getCompilerStatus()),
+        assertAll(() -> assertEquals(CompilationStatus.SUCCESS.getStatus(), compResponse.getCompilerStatus()),
                 () -> assertEquals(className, compResponse.getClassName()),
                 () -> assertEquals(src, compResponse.getSrcCode()),
                 () -> assertArrayEquals(mockCompiledData, compResponse.getCompiledClass()));
@@ -106,16 +108,16 @@ class CompilerControllerTest {
         String className = "TestClass4";
 
         MvcResult result = mockMvc.perform(
-                post("/compile/src/params")
-                        .param("classname", className)
+                post(COMP_PARAM_ENDPOINT)
+                        .param(CLASSNAME_PARAM, className)
                         .accept(KRYO_CONTENT_TYPE))
                 .andExpect(status().isUnprocessableEntity())
-                .andExpect(header().string("Content-Type", KRYO_CONTENT_TYPE))
+                .andExpect(header().string(HttpHeaders.CONTENT_TYPE, KRYO_CONTENT_TYPE))
                 .andExpect(content().contentType(KRYO_CONTENT_TYPE))
                 .andReturn();
         byte[] binResponseData = result.getResponse().getContentAsByteArray();
         assertNotNull(binResponseData);
-        ServiceResponseDto compResponse = (ServiceResponseDto) KRYO.readClassAndObject(new Input(binResponseData));
+        ServiceResponseDto compResponse = (ServiceResponseDto) kryo.readClassAndObject(new Input(binResponseData));
         assertNotNull(compResponse);
         assertEquals(className, compResponse.getClassName());
         assertEquals("Invalid request data!", compResponse.getMessage());

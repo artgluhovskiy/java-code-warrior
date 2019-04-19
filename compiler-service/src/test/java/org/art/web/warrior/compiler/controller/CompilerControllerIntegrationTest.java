@@ -5,6 +5,7 @@ import com.esotericsoftware.kryo.io.Input;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.art.web.warrior.compiler.dto.ServiceRequestDto;
 import org.art.web.warrior.compiler.dto.ServiceResponseDto;
+import org.art.web.warrior.compiler.model.CompilationStatus;
 import org.art.web.warrior.compiler.service.CustomByteClassLoader;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.DisplayName;
@@ -13,6 +14,7 @@ import org.junit.jupiter.api.TestInstance;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
@@ -20,6 +22,7 @@ import org.springframework.test.web.servlet.MvcResult;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
 
+import static org.art.web.warrior.compiler.CommonTestConstants.*;
 import static org.art.web.warrior.compiler.service.ServiceCommonConstants.KRYO_CONTENT_TYPE;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
@@ -34,15 +37,15 @@ class CompilerControllerIntegrationTest {
     @Autowired
     private MockMvc mockMvc;
 
-    private static Kryo KRYO;
+    private static Kryo kryo;
 
-    private static ObjectMapper MAPPER;
+    private static ObjectMapper mapper;
 
     @BeforeAll
     static void initAll() {
-        KRYO = new Kryo();
-        KRYO.register(ServiceResponseDto.class, 10);
-        MAPPER = new ObjectMapper();
+        kryo = new Kryo();
+        kryo.register(ServiceResponseDto.class, 10);
+        mapper = new ObjectMapper();
     }
 
     @Test
@@ -56,14 +59,14 @@ class CompilerControllerIntegrationTest {
                         URLEncoder.encode(className, StandardCharsets.UTF_8.name()))
                         .accept(KRYO_CONTENT_TYPE))
                 .andExpect(status().isOk())
-                .andExpect(header().string("Content-Type", KRYO_CONTENT_TYPE))
+                .andExpect(header().string(HttpHeaders.CONTENT_TYPE, KRYO_CONTENT_TYPE))
                 .andExpect(content().contentType(KRYO_CONTENT_TYPE))
                 .andReturn();
         byte[] binResponseData = result.getResponse().getContentAsByteArray();
         assertNotNull(binResponseData);
-        ServiceResponseDto compResponse = (ServiceResponseDto) KRYO.readClassAndObject(new Input(binResponseData));
+        ServiceResponseDto compResponse = (ServiceResponseDto) kryo.readClassAndObject(new Input(binResponseData));
         assertNotNull(compResponse);
-        assertEquals("Success", compResponse.getCompilerStatus());
+        assertEquals(CompilationStatus.SUCCESS.getStatus(), compResponse.getCompilerStatus());
         CustomByteClassLoader loader = new CustomByteClassLoader();
         loader.addClassData(className, compResponse.getCompiledClass());
         Class<?> clazz = loader.loadClass(className);
@@ -77,19 +80,19 @@ class CompilerControllerIntegrationTest {
         String className = "TestClass2";
         String src = "class TestClass2{}";
         MvcResult result = mockMvc.perform(
-                post("/compile/src/params")
-                        .param("src", src)
-                        .param("classname", className)
+                post(COMP_PARAM_ENDPOINT)
+                        .param(SRC_PARAM, src)
+                        .param(CLASSNAME_PARAM, className)
                         .accept(KRYO_CONTENT_TYPE))
                 .andExpect(status().isOk())
-                .andExpect(header().string("Content-Type", KRYO_CONTENT_TYPE))
+                .andExpect(header().string(HttpHeaders.CONTENT_TYPE, KRYO_CONTENT_TYPE))
                 .andExpect(content().contentType(KRYO_CONTENT_TYPE))
                 .andReturn();
         byte[] binResponseData = result.getResponse().getContentAsByteArray();
         assertNotNull(binResponseData);
-        ServiceResponseDto compResponse = (ServiceResponseDto) KRYO.readClassAndObject(new Input(binResponseData));
+        ServiceResponseDto compResponse = (ServiceResponseDto) kryo.readClassAndObject(new Input(binResponseData));
         assertNotNull(compResponse);
-        assertEquals("Success", compResponse.getCompilerStatus());
+        assertEquals(CompilationStatus.SUCCESS.getStatus(), compResponse.getCompilerStatus());
         CustomByteClassLoader loader = new CustomByteClassLoader();
         loader.addClassData(className, compResponse.getCompiledClass());
         Class<?> clazz = loader.loadClass(className);
@@ -103,19 +106,19 @@ class CompilerControllerIntegrationTest {
         String className = "TestClass3";
         String src = "private class TestClass3{}";
         MvcResult result = mockMvc.perform(
-                post("/compile/src/params")
-                        .param("src", src)
-                        .param("classname", className)
+                post(COMP_PARAM_ENDPOINT)
+                        .param(SRC_PARAM, src)
+                        .param(CLASSNAME_PARAM, className)
                         .accept(KRYO_CONTENT_TYPE))
                 .andExpect(status().isOk())
-                .andExpect(header().string("Content-Type", KRYO_CONTENT_TYPE))
+                .andExpect(header().string(HttpHeaders.CONTENT_TYPE, KRYO_CONTENT_TYPE))
                 .andExpect(content().contentType(KRYO_CONTENT_TYPE))
                 .andReturn();
         byte[] binResponseData = result.getResponse().getContentAsByteArray();
         assertNotNull(binResponseData);
-        ServiceResponseDto compResponse = (ServiceResponseDto) KRYO.readClassAndObject(new Input(binResponseData));
+        ServiceResponseDto compResponse = (ServiceResponseDto) kryo.readClassAndObject(new Input(binResponseData));
         assertNotNull(compResponse);
-        assertAll(() -> assertEquals("Error", compResponse.getCompilerStatus()),
+        assertAll(() -> assertEquals(CompilationStatus.ERROR.getStatus(), compResponse.getCompilerStatus()),
                 () -> assertEquals(src, compResponse.getSrcCode()),
                 () -> assertEquals(-1, compResponse.getCompilerStatusCode()),
                 () -> assertEquals("modifier private not allowed here", compResponse.getCompilerMessage()),
@@ -130,16 +133,16 @@ class CompilerControllerIntegrationTest {
     void test3() throws Exception {
         String className = "TestClass4";
         MvcResult result = mockMvc.perform(
-                post("/compile/src/params")
-                        .param("classname", className)
+                post(COMP_PARAM_ENDPOINT)
+                        .param(CLASSNAME_PARAM, className)
                         .accept(KRYO_CONTENT_TYPE))
                 .andExpect(status().isUnprocessableEntity())
-                .andExpect(header().string("Content-Type", KRYO_CONTENT_TYPE))
+                .andExpect(header().string(HttpHeaders.CONTENT_TYPE, KRYO_CONTENT_TYPE))
                 .andExpect(content().contentType(KRYO_CONTENT_TYPE))
                 .andReturn();
         byte[] binResponseData = result.getResponse().getContentAsByteArray();
         assertNotNull(binResponseData);
-        ServiceResponseDto compResponse = (ServiceResponseDto) KRYO.readClassAndObject(new Input(binResponseData));
+        ServiceResponseDto compResponse = (ServiceResponseDto) kryo.readClassAndObject(new Input(binResponseData));
         assertNotNull(compResponse);
         assertEquals(className, compResponse.getClassName());
         assertEquals("Invalid request data!", compResponse.getMessage());
@@ -151,19 +154,19 @@ class CompilerControllerIntegrationTest {
         String className = "TestClass5";
         String src = "class TestClass6{}";
         MvcResult result = mockMvc.perform(
-                post("/compile/src/params")
-                        .param("src", src)
-                        .param("classname", className)
+                post(COMP_PARAM_ENDPOINT)
+                        .param(SRC_PARAM, src)
+                        .param(CLASSNAME_PARAM, className)
                         .accept(KRYO_CONTENT_TYPE))
                 .andExpect(status().isOk())
-                .andExpect(header().string("Content-Type", KRYO_CONTENT_TYPE))
+                .andExpect(header().string(HttpHeaders.CONTENT_TYPE, KRYO_CONTENT_TYPE))
                 .andExpect(content().contentType(KRYO_CONTENT_TYPE))
                 .andReturn();
         byte[] binResponseData = result.getResponse().getContentAsByteArray();
         assertNotNull(binResponseData);
-        ServiceResponseDto compResponse = (ServiceResponseDto) KRYO.readClassAndObject(new Input(binResponseData));
+        ServiceResponseDto compResponse = (ServiceResponseDto) kryo.readClassAndObject(new Input(binResponseData));
         assertNotNull(compResponse);
-        assertEquals("Success", compResponse.getCompilerStatus());
+        assertEquals(CompilationStatus.SUCCESS.getStatus(), compResponse.getCompilerStatus());
         CustomByteClassLoader loader = new CustomByteClassLoader();
         loader.addClassData(className, compResponse.getCompiledClass());
         Class<?> clazz = loader.loadClass(className);
@@ -176,19 +179,19 @@ class CompilerControllerIntegrationTest {
         String className = "TestClass7";
         String src = "class TestClass7{}";
         MvcResult result = mockMvc.perform(
-                post("/compile/src/entity")
+                post(COMP_ENTITY_ENDPOINT)
                         .contentType(MediaType.APPLICATION_JSON_UTF8)
-                        .content(MAPPER.writeValueAsString(new ServiceRequestDto(className, src)))
+                        .content(mapper.writeValueAsString(new ServiceRequestDto(className, src)))
                         .accept(KRYO_CONTENT_TYPE))
                 .andExpect(status().isOk())
-                .andExpect(header().string("Content-Type", KRYO_CONTENT_TYPE))
+                .andExpect(header().string(HttpHeaders.CONTENT_TYPE, KRYO_CONTENT_TYPE))
                 .andExpect(content().contentType(KRYO_CONTENT_TYPE))
                 .andReturn();
         byte[] binResponseData = result.getResponse().getContentAsByteArray();
         assertNotNull(binResponseData);
-        ServiceResponseDto compResponse = (ServiceResponseDto) KRYO.readClassAndObject(new Input(binResponseData));
+        ServiceResponseDto compResponse = (ServiceResponseDto) kryo.readClassAndObject(new Input(binResponseData));
         assertNotNull(compResponse);
-        assertEquals("Success", compResponse.getCompilerStatus());
+        assertEquals(CompilationStatus.SUCCESS.getStatus(), compResponse.getCompilerStatus());
         CustomByteClassLoader loader = new CustomByteClassLoader();
         loader.addClassData(className, compResponse.getCompiledClass());
         Class<?> clazz = loader.loadClass(className);

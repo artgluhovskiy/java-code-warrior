@@ -2,12 +2,36 @@ version: '3'
 
 services:
 
+  # Client Service
+  client-service:
+    container_name: client-service
+    depends_on:
+      - compiler-service
+    build:
+      context: ./client-service
+    environment:
+      COMPILER_SERVICE_HOST: compiler-service
+      COMPILER_SERVICE_PORT: 8080
+
+      INVOCATION_SERVICE_HOST: invocation-service
+      INVOCATION_SERVICE_PORT: 8081
+    ports:
+      - "8082:8082"
+
   # Compiler Service
   compiler-service:
     container_name: compiler-service
     build:
       context: ./compiler-service
     ports:
-      - "18080:8080"
+      - "8080:8080"
     volumes:
       - "./logs:/app/logs"
+
+  # Invocation Service
+  invocation-service:
+    container_name: invocation-service
+    build:
+      context: ./method-invocation-service
+    ports:
+      - "8081:8081"

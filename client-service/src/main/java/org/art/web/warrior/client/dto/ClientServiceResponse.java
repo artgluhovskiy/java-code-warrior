@@ -1,7 +1,6 @@
 package org.art.web.warrior.client.dto;
 
 import lombok.*;
-import org.art.web.warrior.client.model.ClientResponseStatus;
 import org.art.web.warrior.client.model.CompErrorDetails;
 
 @Getter
@@ -17,7 +16,7 @@ public class ClientServiceResponse {
 
     private String message;
 
-    private ClientResponseStatus respStatus;
+    private String respStatus;
 
     private CompErrorDetails compErrorDetails;
 }

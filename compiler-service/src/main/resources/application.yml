@@ -1,2 +1,7 @@
+spring:
+  application:
+    name: compiler-service
 server:
   port: 8080
+  servlet:
+    context-path: /compiler

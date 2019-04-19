@@ -1,6 +1,7 @@
 package org.art.web.warrior.client.controller;
 
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
 import org.art.web.warrior.client.config.converter.KryoHttpMessageConverter;
 import org.art.web.warrior.client.config.interceptor.RequestProcessingLogger;
 import org.art.web.warrior.client.dto.ClientServiceRequest;
@@ -11,6 +12,7 @@ import org.art.web.warrior.client.service.CustomByteClassLoader;
 import org.art.web.warrior.client.util.CompServiceResponseUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.web.client.RestTemplateBuilder;
+import org.springframework.core.env.Environment;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
@@ -22,17 +24,20 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.client.RestTemplate;
 
+import static org.art.web.warrior.client.service.CommonServiceConstants.*;
+
 @Slf4j
 @Controller
 @RequestMapping("/submit")
 public class ClientAppController {
 
-    private static final String COMP_SERVICE_ENDPOINT = "http://localhost:8080/compile/src/entity";
+    private Environment env;
 
     private RestTemplate restTemplate;
 
     @Autowired
-    public ClientAppController(RestTemplateBuilder restTemplateBuilder) {
+    public ClientAppController(Environment env, RestTemplateBuilder restTemplateBuilder) {
+        this.env = env;
         this.restTemplate = restTemplateBuilder
                 .additionalInterceptors(new RequestProcessingLogger())
                 .additionalMessageConverters(new KryoHttpMessageConverter())
@@ -60,14 +65,26 @@ public class ClientAppController {
     }
 
     private ResponseEntity<CompServiceResponse> callCompilationService(ClientServiceRequest clientReqData) {
+        String compServiceEndpoint = getCompServiceEndpoint();
         HttpHeaders headers = new HttpHeaders();
         headers.set(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_UTF8_VALUE);
         String className = clientReqData.getClassName();
         String code = clientReqData.getSrcCode();
         CompServiceRequest serviceReqData = new CompServiceRequest(className, code);
         HttpEntity<CompServiceRequest> reqEntity = new HttpEntity<>(serviceReqData, headers);
-        log.debug("Making the request to the Compilation service. Endpoint: {}, request data: {}", COMP_SERVICE_ENDPOINT, serviceReqData);
-        return restTemplate.postForEntity(COMP_SERVICE_ENDPOINT, reqEntity, CompServiceResponse.class);
+        log.debug("Making the request to the Compilation service. Endpoint: {}, request data: {}", compServiceEndpoint, serviceReqData);
+        return restTemplate.postForEntity(compServiceEndpoint, reqEntity, CompServiceResponse.class);
+    }
+
+    private String getCompServiceEndpoint() {
+        String activeProfile = env.getProperty(SPRING_ACTIVE_PROFILE_ENV_PROP_NAME);
+        if (StringUtils.isNotBlank(activeProfile) && ACTIVE_PROFILE_CONTAINER.equals(activeProfile)) {
+            String compHostName = env.getProperty(COMPILER_SERVICE_HOST_ENV_PROP_NAME);
+            String compHostPort = env.getProperty(COMPILER_SERVICE_PORT_ENV_PROP_NAME);
+            return COMPILATION_SERVICE_ENDPOINT_FORMAT.format(new Object[]{compHostName, compHostPort});
+        } else {
+            return COMPILATION_SERVICE_ENDPOINT_FORMAT.format(new Object[]{LOCALHOST, COMP_SERVICE_PORT_NO_PROFILE});
+        }
     }
 
     private Class<?> loadCompiledClass(String className, byte[] classData) {

@@ -10,7 +10,3 @@ allprojects {
 subprojects {
     apply plugin: 'java'
 }
-
-project(':hello-module') {
-    
-}
