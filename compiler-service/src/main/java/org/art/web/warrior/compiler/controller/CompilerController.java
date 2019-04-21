@@ -20,6 +20,7 @@ import org.springframework.web.bind.annotation.*;
 import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
 import java.nio.charset.StandardCharsets;
+import java.util.Arrays;
 
 import static org.art.web.warrior.compiler.service.ServiceCommonConstants.COMPILER_SERVICE_OK_MESSAGE;
 import static org.art.web.warrior.compiler.service.ServiceCommonConstants.KRYO_CONTENT_TYPE;
@@ -72,7 +73,7 @@ public class CompilerController {
         CharSequence src = unit.getSrcCode();
         LOG.debug("Compiling unit. Class name: {}, source code: {}", className, src);
         try {
-            CompilationResult result = compilationService.compileUnit(unit);
+            CompilationResult result = compilationService.compileUnit(Arrays.asList(unit));
             if (result.getCompStatus().getStatusCode() > 0) {
                 ServiceResponseDto compOkResponse = ServiceResponseUtils.buildCompServiceResponse(result);
                 return ResponseEntity.ok(compOkResponse);

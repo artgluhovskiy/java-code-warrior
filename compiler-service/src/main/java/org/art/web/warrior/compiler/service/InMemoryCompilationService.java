@@ -5,8 +5,8 @@ import org.art.web.warrior.compiler.exceptions.CompilationServiceException;
 import org.art.web.warrior.compiler.exceptions.UnknownJavaSourceException;
 import org.art.web.warrior.compiler.model.CommonCompilationMessage;
 import org.art.web.warrior.compiler.model.CommonCompilationResult;
-import org.art.web.warrior.compiler.model.api.CompilationResult;
 import org.art.web.warrior.compiler.model.CompilationStatus;
+import org.art.web.warrior.compiler.model.api.CompilationResult;
 import org.art.web.warrior.compiler.model.api.CompilationUnit;
 import org.art.web.warrior.compiler.service.api.CompilationService;
 import org.slf4j.Logger;
@@ -44,43 +44,50 @@ public class InMemoryCompilationService implements CompilationService {
     }
 
     @Override
-    public CompilationResult compileUnit(CompilationUnit<?> unit) throws CompilationServiceException {
+    public CompilationResult compileUnit(List<CompilationUnit<?>> unit) throws CompilationServiceException {
         Objects.requireNonNull(unit, "Compilation unit should not be null!");
-        if (!unit.isValid())
-            throw new CompilationServiceException("Failed to compile the unit. Compilation unit is not valid!", unit);
-        String className = unit.getClassName();
-        LOG.debug("Compiling the unit. Target class name: {}", className);
+//        if (!unit.isValid())
+//            throw new CompilationServiceException("Failed to compile the unit. Compilation unit is not valid!", unit);
+//        String className = unit.getClassName();
+//        LOG.debug("Compiling the unit. Target class name: {}", className);
         DiagnosticCollector<JavaFileObject> diagnostics = new DiagnosticCollector<>();
         StandardJavaFileManager stdFileManager = compiler.getStandardFileManager(diagnostics, null, null);
         MemoryClassFileManager fileManager = new MemoryClassFileManager(stdFileManager);
         List<JavaFileObject> compilationUnits = new ArrayList<>();
-        compilationUnits.add(generateUnitFileObject(unit));
+        compilationUnits.addAll(generateUnitFileObject(unit));
         try {
             JavaCompiler.CompilationTask task = compiler.getTask(null, fileManager, diagnostics, null, null, compilationUnits);
             boolean compilationResult = task.call();
             if (compilationResult) {
-                LOG.debug("Class with name {} was successfully compiled", className);
-                return buildCompilationResult(true, diagnostics.getDiagnostics(), className,
-                        unit.getSrcCode(), retrieveClassBinData(fileManager));
+//                LOG.debug("Class with name {} was successfully compiled", className);
+//                return buildCompilationResult(true, diagnostics.getDiagnostics(), className,
+//                        unit.getSrcCode(), retrieveClassBinData(fileManager));
+                System.out.println("OK!!!");
             } else {
-                LOG.warn("Compilation failed. Class name: {}, source code: {}", className, unit.getSrcCode());
-                return buildCompilationResult(false, diagnostics.getDiagnostics(), className,
-                        unit.getSrcCode(), null);
+//                LOG.warn("Compilation failed. Class name: {}, source code: {}", className, unit.getSrcCode());
+//                return buildCompilationResult(false, diagnostics.getDiagnostics(), className,
+//                        unit.getSrcCode(), null);
+                System.out.println("FAIL!!!");
             }
         } catch (Exception e) {
             LOG.error("Unexpected error occurred while unit compilation!");
-            throw new CompilationServiceException("Unexpected error occurred while unit compilation!", unit, e);
+//            throw new CompilationServiceException("Unexpected error occurred while unit compilation!", unit, e);
         }
+        return null;
     }
 
-    private JavaFileObject generateUnitFileObject(CompilationUnit<?> unit) {
-        String className = unit.getClassName();
-        Object srcCode = unit.getSrcCode();
-        if (srcCode instanceof CharSequence) {
-            return new CharSequenceJavaFileObject(className, (CharSequence) srcCode);
-        } else {
-            throw new UnknownJavaSourceException("Current source type is not supported by the service!", srcCode.getClass());
-        }
+    private List<JavaFileObject> generateUnitFileObject(List<CompilationUnit<?>> units) {
+        List<JavaFileObject> javaFileObjects = new ArrayList<>();
+        units.forEach(unit -> {
+            String className = unit.getClassName();
+            Object srcCode = unit.getSrcCode();
+            if (srcCode instanceof CharSequence) {
+                javaFileObjects.add(new CharSeqJavaSourceFileObject(className, (CharSequence) srcCode));
+            } else {
+                throw new UnknownJavaSourceException("Current source type is not supported by the service!", srcCode.getClass());
+            }
+        });
+        return javaFileObjects;
     }
 
     private CommonCompilationResult buildCompilationResult(boolean result,

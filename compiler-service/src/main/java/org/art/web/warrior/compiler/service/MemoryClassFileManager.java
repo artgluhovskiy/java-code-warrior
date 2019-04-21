@@ -18,25 +18,25 @@ public final class MemoryClassFileManager extends ForwardingJavaFileManager<Stan
 
     private static final Logger LOG = LoggerFactory.getLogger(MemoryClassFileManager.class);
 
-    private final Map<String, MemoryJavaFileObject> classFiles;
+    private final Map<String, OutputJavaClassFileObject> classFiles;
 
     public MemoryClassFileManager(StandardJavaFileManager fileManager) {
         super(fileManager);
-        classFiles = new HashMap<>();
+        this.classFiles = new HashMap<>();
     }
 
     @Override
-    public MemoryJavaFileObject getJavaFileForOutput(Location location,
-                                                     String className,
-                                                     MemoryJavaFileObject.Kind kind,
-                                                     FileObject sibling) {
-        MemoryJavaFileObject classFileObject = new MemoryJavaFileObject(className, kind);
+    public OutputJavaClassFileObject getJavaFileForOutput(Location location,
+                                                          String className,
+                                                          OutputJavaClassFileObject.Kind kind,
+                                                          FileObject sibling) {
+        OutputJavaClassFileObject classFileObject = new OutputJavaClassFileObject(className, kind);
         LOG.debug("Java class file object was instantiated: class name - {}", className);
         classFiles.put(className, classFileObject);
         return classFileObject;
     }
 
-    public Map<String, MemoryJavaFileObject> getClassFiles() {
+    public Map<String, OutputJavaClassFileObject> getClassFiles() {
         return Collections.unmodifiableMap(this.classFiles);
     }
 }
