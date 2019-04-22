@@ -1,7 +1,9 @@
 package org.art.web.warrior.client.dto;
 
 import lombok.*;
-import org.art.web.warrior.client.model.ClientResponseStatus;
+import org.art.web.warrior.client.domain.ClientResponseStatus;
+
+import java.util.Map;
 
 @Getter
 @Builder
@@ -26,11 +28,7 @@ public class CompServiceResponse {
 
     private long errorPosition;
 
-    private String className;
-
-    private Object srcCode;
-
-    private byte[] compiledClass;
+    Map<String, UnitResult> compUnitResults;
 
     public boolean isCompError() {
         return ClientResponseStatus.COMPILATION_ERROR.getStatusId().equals(compilerStatus);

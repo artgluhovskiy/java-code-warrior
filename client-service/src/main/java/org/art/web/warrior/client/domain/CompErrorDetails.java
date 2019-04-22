@@ -1,4 +1,4 @@
-package org.art.web.warrior.client.model;
+package org.art.web.warrior.client.domain;
 
 import lombok.*;
 

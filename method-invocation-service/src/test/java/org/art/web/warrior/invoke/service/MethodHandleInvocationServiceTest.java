@@ -1,6 +1,6 @@
 package org.art.web.warrior.invoke.service;
 
-import org.art.web.warrior.invoke.model.CommonMethodDescriptor;
+import org.art.web.warrior.invoke.domain.CommonMethodDescriptor;
 import org.art.web.warrior.invoke.service.api.MethodInvocationService;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;

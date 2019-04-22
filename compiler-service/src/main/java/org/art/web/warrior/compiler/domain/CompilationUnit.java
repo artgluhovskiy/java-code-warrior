@@ -1,37 +1,47 @@
-package org.art.web.warrior.compiler.model;
+package org.art.web.warrior.compiler.domain;
 
 import lombok.EqualsAndHashCode;
 import lombok.RequiredArgsConstructor;
 import lombok.ToString;
 import org.apache.commons.lang3.StringUtils;
-import org.art.web.warrior.compiler.model.api.CompilationUnit;
+
+import java.util.regex.Matcher;
+
+import static org.art.web.warrior.compiler.ServiceCommonConstants.CLASS_NAME_REG_EXP;
 
 /**
  * Represents a model for compilation task, which contains all necessary information.
  * Contains java source code with a character sequence type.
  */
-@EqualsAndHashCode
 @ToString
+@EqualsAndHashCode
 @RequiredArgsConstructor
-public class CharSeqCompilationUnit implements CompilationUnit<CharSequence> {
+public class CompilationUnit {
 
     private final String className;
 
     private final CharSequence srcCode;
 
-    @Override
     public String getClassName() {
         return className;
     }
 
-    @Override
     public CharSequence getSrcCode() {
         return srcCode;
     }
 
-    @Override
+    private String parseClassNameFromSrc() {
+        String parsedClassName = StringUtils.EMPTY;
+        Matcher matcher = CLASS_NAME_REG_EXP.matcher(srcCode);
+        if (matcher.find()) {
+            parsedClassName = matcher.group(0);
+        }
+        return parsedClassName;
+    }
+
     public boolean isValid() {
         return StringUtils.isNotBlank(className)
-                && StringUtils.isNotBlank(srcCode);
+                && StringUtils.isNotBlank(srcCode)
+                && className.equals(parseClassNameFromSrc());
     }
 }

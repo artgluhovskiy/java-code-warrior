@@ -1,7 +1,7 @@
 package org.art.web.warrior.client.dto;
 
 import lombok.*;
-import org.art.web.warrior.client.model.CompErrorDetails;
+import org.art.web.warrior.client.domain.CompErrorDetails;
 
 @Getter
 @Builder

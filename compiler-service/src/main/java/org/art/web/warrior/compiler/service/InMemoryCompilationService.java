@@ -1,13 +1,7 @@
 package org.art.web.warrior.compiler.service;
 
-import org.apache.commons.collections4.MapUtils;
-import org.art.web.warrior.compiler.exceptions.CompilationServiceException;
-import org.art.web.warrior.compiler.exceptions.UnknownJavaSourceException;
-import org.art.web.warrior.compiler.model.CommonCompilationMessage;
-import org.art.web.warrior.compiler.model.CommonCompilationResult;
-import org.art.web.warrior.compiler.model.CompilationStatus;
-import org.art.web.warrior.compiler.model.api.CompilationResult;
-import org.art.web.warrior.compiler.model.api.CompilationUnit;
+import org.art.web.warrior.compiler.domain.*;
+import org.art.web.warrior.compiler.exception.CompilationServiceException;
 import org.art.web.warrior.compiler.service.api.CompilationService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -16,13 +10,17 @@ import org.springframework.stereotype.Service;
 import javax.lang.model.SourceVersion;
 import javax.tools.*;
 import java.util.*;
-import java.util.stream.Collectors;
+import java.util.function.Function;
+
+import static java.util.stream.Collectors.toList;
+import static java.util.stream.Collectors.toMap;
+import static org.art.web.warrior.compiler.ServiceCommonConstants.*;
 
 /**
  * Compilation service implementation, based on Java Compiler API.
  * Provides compilation of {@link CompilationUnit}, which represents
  * a service task, containing java source code and corresponding class name.
- * The result of compilation is contained in {@link CommonCompilationResult},
+ * The result of compilation is contained in {@link CompilationResult},
  * which includes status, some diagnostic info and compiled class itself.
  * Internally uses custom class loader for every compilation task
  * in order to define a compiled class.
@@ -32,7 +30,7 @@ public class InMemoryCompilationService implements CompilationService {
 
     private static final Logger LOG = LoggerFactory.getLogger(InMemoryCompilationService.class);
 
-    private JavaCompiler compiler;
+    private final JavaCompiler compiler;
 
     public InMemoryCompilationService() {
         LOG.info("Compilation service initialization...");
@@ -44,89 +42,103 @@ public class InMemoryCompilationService implements CompilationService {
     }
 
     @Override
-    public CompilationResult compileUnit(List<CompilationUnit<?>> unit) throws CompilationServiceException {
-        Objects.requireNonNull(unit, "Compilation unit should not be null!");
-//        if (!unit.isValid())
-//            throw new CompilationServiceException("Failed to compile the unit. Compilation unit is not valid!", unit);
-//        String className = unit.getClassName();
-//        LOG.debug("Compiling the unit. Target class name: {}", className);
+    public CompilationResult compileUnits(List<CompilationUnit> units) throws CompilationServiceException {
+        Objects.requireNonNull(units, COMP_UNITS_ARG_SHOULD_NOT_BE_NULL_MESSAGE);
+        validateUnits(units);
+        LOG.debug("Compiling units: {}", units);
         DiagnosticCollector<JavaFileObject> diagnostics = new DiagnosticCollector<>();
         StandardJavaFileManager stdFileManager = compiler.getStandardFileManager(diagnostics, null, null);
-        MemoryClassFileManager fileManager = new MemoryClassFileManager(stdFileManager);
-        List<JavaFileObject> compilationUnits = new ArrayList<>();
-        compilationUnits.addAll(generateUnitFileObject(unit));
+        CustomClassFileManager fileManager = new CustomClassFileManager(stdFileManager);
+        List<JavaFileObject> compilationUnits = new ArrayList<>(generateSourceFileObjects(units));
         try {
             JavaCompiler.CompilationTask task = compiler.getTask(null, fileManager, diagnostics, null, null, compilationUnits);
-            boolean compilationResult = task.call();
-            if (compilationResult) {
-//                LOG.debug("Class with name {} was successfully compiled", className);
-//                return buildCompilationResult(true, diagnostics.getDiagnostics(), className,
-//                        unit.getSrcCode(), retrieveClassBinData(fileManager));
-                System.out.println("OK!!!");
+            boolean compResult = task.call();
+            if (compResult) {
+                LOG.debug("Compilation units were successfully compiled!");
+                return buildCompilationResult(true, diagnostics.getDiagnostics(), units, retrieveClassBinData(fileManager));
             } else {
-//                LOG.warn("Compilation failed. Class name: {}, source code: {}", className, unit.getSrcCode());
-//                return buildCompilationResult(false, diagnostics.getDiagnostics(), className,
-//                        unit.getSrcCode(), null);
-                System.out.println("FAIL!!!");
+                LOG.warn("Compilation failed! Units: {}", units);
+                return buildCompilationResult(false, diagnostics.getDiagnostics(), units, null);
             }
         } catch (Exception e) {
-            LOG.error("Unexpected error occurred while unit compilation!");
-//            throw new CompilationServiceException("Unexpected error occurred while unit compilation!", unit, e);
+            throw new CompilationServiceException(UNEXPECTED_INTERNAL_ERROR_MESSAGE, units, e);
         }
-        return null;
     }
 
-    private List<JavaFileObject> generateUnitFileObject(List<CompilationUnit<?>> units) {
-        List<JavaFileObject> javaFileObjects = new ArrayList<>();
-        units.forEach(unit -> {
-            String className = unit.getClassName();
-            Object srcCode = unit.getSrcCode();
-            if (srcCode instanceof CharSequence) {
-                javaFileObjects.add(new CharSeqJavaSourceFileObject(className, (CharSequence) srcCode));
-            } else {
-                throw new UnknownJavaSourceException("Current source type is not supported by the service!", srcCode.getClass());
+    private void validateUnits(List<? extends CompilationUnit> units) throws CompilationServiceException {
+        List<CompilationUnit> notValidUnits = new ArrayList<>();
+        for (CompilationUnit unit : units) {
+            if (!unit.isValid()) {
+                notValidUnits.add(unit);
             }
-        });
-        return javaFileObjects;
+        }
+        if (!notValidUnits.isEmpty()) {
+            throw new CompilationServiceException(NOT_VALID_COMPILATION_UNITS_MESSAGE, notValidUnits);
+        }
     }
 
-    private CommonCompilationResult buildCompilationResult(boolean result,
-                                                           List<Diagnostic<? extends JavaFileObject>> diagnostics,
-                                                           String className,
-                                                           Object srcCode,
-                                                           Map<String, byte[]> compiledClassData) {
-        CommonCompilationResult compilationResult;
+    private List<JavaFileObject> generateSourceFileObjects(List<CompilationUnit> units) {
+        return units.stream()
+                .map(unit -> {
+                    String className = unit.getClassName();
+                    CharSequence srcCode = unit.getSrcCode();
+                    return new CharSeqJavaSourceFileObject(className, srcCode);
+                }).collect(toList());
+    }
+
+    private CompilationResult buildCompilationResult(boolean result,
+                                                     List<Diagnostic<? extends JavaFileObject>> diagnostics,
+                                                     List<? extends CompilationUnit> units,
+                                                     Map<String, byte[]> compiledClassData) {
+        CompilationResult compilationResult;
         if (result) {
-            compilationResult = new CommonCompilationResult(CompilationStatus.SUCCESS);
-            if (MapUtils.isNotEmpty(compiledClassData)) {
-                compilationResult.setCompiledClassBytes(compiledClassData.get(className));
-            }
+            compilationResult = new CompilationResult(CompilationStatus.SUCCESS);
+            Map<String, UnitResult> unitResults = units.stream()
+                    .map(unit -> mapToUnitResult(unit, compiledClassData))
+                    .collect(toMap(UnitResult::getClassName, Function.identity()));
+            compilationResult.setCompUnitResults(unitResults);
         } else {
-            compilationResult = new CommonCompilationResult(CompilationStatus.ERROR);
+            compilationResult = new CompilationResult(CompilationStatus.ERROR);
             if (!diagnostics.isEmpty()) {
-                //Reporting last diagnostic item
+                //Reporting the last diagnostic item
                 Diagnostic diagnostic = diagnostics.get(diagnostics.size() - 1);
-                CommonCompilationMessage message = CommonCompilationMessage
-                        .builder()
-                        .kind(diagnostic.getKind())
-                        .errorCode(diagnostic.getCode())
-                        .position(diagnostic.getPosition())
-                        .codeLine(diagnostic.getLineNumber())
-                        .columnNumber(diagnostic.getColumnNumber())
-                        .causeMessage(diagnostic.getMessage(Locale.US))
-                        .build();
-                compilationResult.setMessage(message);
+                compilationResult.setMessage(buildCompErrorMessage(diagnostic));
+                Map<String, UnitResult> unitResults = units.stream()
+                        .map(unit -> mapToUnitResult(unit, null))
+                        .collect(toMap(UnitResult::getClassName, Function.identity()));
+                compilationResult.setCompUnitResults(unitResults);
             }
         }
-        compilationResult.setClassName(className);
-        compilationResult.setSrcCode(srcCode);
         return compilationResult;
     }
 
-    private Map<String, byte[]> retrieveClassBinData(MemoryClassFileManager fileManager) {
+    private UnitResult mapToUnitResult(CompilationUnit unit, Map<String, byte[]> compClassData) {
+        UnitResult unitResult = new UnitResult();
+        String className = unit.getClassName();
+        unitResult.setClassName(className);
+        unitResult.setSrcCode(unit.getSrcCode());
+        if (compClassData != null) {
+            unitResult.setCompiledClassBytes(compClassData.get(className));
+        }
+        return unitResult;
+    }
+
+    private CompilationMessage buildCompErrorMessage(Diagnostic diagnostic) {
+        return CompilationMessage
+                .builder()
+                .kind(diagnostic.getKind())
+                .errorCode(diagnostic.getCode())
+                .position(diagnostic.getPosition())
+                .codeLine(diagnostic.getLineNumber())
+                .columnNumber(diagnostic.getColumnNumber())
+                .causeMessage(diagnostic.getMessage(Locale.US))
+                .build();
+    }
+
+    private Map<String, byte[]> retrieveClassBinData(CustomClassFileManager fileManager) {
         return fileManager.getClassFiles()
                 .entrySet()
                 .stream()
-                .collect(Collectors.toMap(Map.Entry::getKey, entry -> entry.getValue().getBytes()));
+                .collect(toMap(Map.Entry::getKey, entry -> entry.getValue().getBytes()));
     }
 }

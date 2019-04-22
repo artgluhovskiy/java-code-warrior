@@ -1,4 +1,4 @@
-package org.art.web.warrior.compiler.model;
+package org.art.web.warrior.compiler.domain;
 
 /**
  * Compilation status, which represents a basic result of unit compilation by a Compilation Service.

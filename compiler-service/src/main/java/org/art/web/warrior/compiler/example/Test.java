@@ -1,15 +1,17 @@
 package org.art.web.warrior.compiler.example;
 
-import org.art.web.warrior.compiler.exceptions.CompilationServiceException;
-import org.art.web.warrior.compiler.model.CharSeqCompilationUnit;
-import org.art.web.warrior.compiler.model.api.CompilationResult;
-import org.art.web.warrior.compiler.model.api.CompilationUnit;
+import org.art.web.warrior.compiler.exception.CompilationServiceException;
+import org.art.web.warrior.compiler.domain.CompilationResult;
+import org.art.web.warrior.compiler.domain.CompilationUnit;
+import org.art.web.warrior.compiler.domain.UnitResult;
 import org.art.web.warrior.compiler.service.CustomByteClassLoader;
 import org.art.web.warrior.compiler.service.InMemoryCompilationService;
 
-import javax.tools.JavaFileObject;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 public class Test {
 
@@ -35,6 +37,8 @@ public class Test {
             "    private Solution solution;\n" +
             "\n" +
             "    public void run() {\n" +
+            "        System.out.println(\"Hello from run method!\");" +
+            "        System.out.println(solution);" +
             "        test0();\n" +
             "        test1();\n" +
             "    }\n" +
@@ -58,22 +62,38 @@ public class Test {
             "    }\n" +
             "}";
 
-    public static void main(String[] args) throws CompilationServiceException, ClassNotFoundException, IllegalAccessException, InstantiationException {
+    public static void main(String[] args) throws CompilationServiceException, ClassNotFoundException, IllegalAccessException, InstantiationException, NoSuchMethodException, InvocationTargetException {
         InMemoryCompilationService compilationService = new InMemoryCompilationService();
-        CompilationUnit<?> solutionUnit = new CharSeqCompilationUnit("Solution", solutionSrcCode);
-        CompilationUnit<?> runnerUnit = new CharSeqCompilationUnit("SolutionRunner", runnerSrcCode);
-        List<CompilationUnit<?>> compilationUnits = new ArrayList<>();
+        String solutionClassName = "Solution";
+        String runnerClassName = "SolutionRunner";
+        CompilationUnit solutionUnit = new CompilationUnit(solutionClassName, solutionSrcCode);
+        CompilationUnit runnerUnit = new CompilationUnit(runnerClassName, runnerSrcCode);
+
+        List<CompilationUnit> compilationUnits = new ArrayList<>();
         compilationUnits.add(solutionUnit);
         compilationUnits.add(runnerUnit);
 
-        CompilationResult compilationResult = compilationService.compileUnit(compilationUnits);
+        CompilationResult compilationResult = compilationService.compileUnits(compilationUnits);
 
-//        CustomByteClassLoader customByteClassLoader = new CustomByteClassLoader();
-//        customByteClassLoader.addClassData("Solution", compilationResult.getCompiledClassBytes());
-//        Class<?> solution = customByteClassLoader.loadClass("Solution");
-//        System.out.println(solution.getSimpleName());
-//        System.out.println(solution.newInstance());
-//        System.out.println("Class for name: " + Class.forName("Solution", true, customByteClassLoader).getName());
+        Map<String, UnitResult> compUnitResults = compilationResult.getCompUnitResults();
+        byte[] solutionClassData = compUnitResults.get(solutionClassName).getCompiledClassBytes();
+        byte[] solutionRunnerClassData = compUnitResults.get(runnerClassName).getCompiledClassBytes();
 
+        CustomByteClassLoader customByteClassLoader = new CustomByteClassLoader();
+        customByteClassLoader.addClassData(solutionClassName, solutionClassData);
+        customByteClassLoader.addClassData(runnerClassName, solutionRunnerClassData);
+
+        Class<?> solutionClass = customByteClassLoader.loadClass(solutionClassName);
+        Class<?> solutionRunnerClass = customByteClassLoader.loadClass(runnerClassName);
+
+        Object runnerInstance = solutionRunnerClass.newInstance();
+
+        Method solutionSetter = solutionRunnerClass.getDeclaredMethod("setSolution", solutionClass);
+
+        solutionSetter.invoke(runnerInstance, solutionClass.cast(solutionClass.newInstance()));
+
+        Method runMethod = solutionRunnerClass.getDeclaredMethod("run");
+
+        runMethod.invoke(runnerInstance);
     }
 }

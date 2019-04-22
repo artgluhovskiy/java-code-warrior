@@ -1,4 +1,4 @@
-package org.art.web.warrior.client.dto;
+package org.art.web.warrior.compiler.dto;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -8,13 +8,13 @@ import org.apache.commons.lang3.StringUtils;
 
 import java.util.regex.Matcher;
 
-import static org.art.web.warrior.client.CommonServiceConstants.CLASS_NAME_REG_EXP;
+import static org.art.web.warrior.compiler.ServiceCommonConstants.CLASS_NAME_REG_EXP;
 
 @Getter
 @ToString
-@NoArgsConstructor
 @AllArgsConstructor
-public class ClientServiceRequest {
+@NoArgsConstructor
+public class ClientRequestData {
 
     private String className;
 

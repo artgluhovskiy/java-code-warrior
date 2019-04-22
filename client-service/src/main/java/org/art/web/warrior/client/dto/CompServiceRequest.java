@@ -14,10 +14,10 @@ public class CompServiceRequest {
 
     private String className;
 
-    private String src;
+    private String srcCode;
 
     public boolean isValid() {
         return StringUtils.isNotBlank(className)
-                && StringUtils.isNotBlank(src);
+                && StringUtils.isNotBlank(srcCode);
     }
 }

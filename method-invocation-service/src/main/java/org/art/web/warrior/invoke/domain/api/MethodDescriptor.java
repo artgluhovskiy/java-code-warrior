@@ -1,4 +1,4 @@
-package org.art.web.warrior.invoke.model.api;
+package org.art.web.warrior.invoke.domain.api;
 
 import org.apache.commons.lang3.tuple.Pair;
 import org.art.web.warrior.invoke.service.api.MethodInvocationService;

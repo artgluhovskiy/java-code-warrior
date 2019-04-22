@@ -14,13 +14,13 @@ import java.util.Map;
  * A simple implementation of a wrapper for {@link StandardJavaFileManager}.
  * Stores a Java file object as an output for compiled source code.
  */
-public final class MemoryClassFileManager extends ForwardingJavaFileManager<StandardJavaFileManager> {
+public final class CustomClassFileManager extends ForwardingJavaFileManager<StandardJavaFileManager> {
 
-    private static final Logger LOG = LoggerFactory.getLogger(MemoryClassFileManager.class);
+    private static final Logger LOG = LoggerFactory.getLogger(CustomClassFileManager.class);
 
     private final Map<String, OutputJavaClassFileObject> classFiles;
 
-    public MemoryClassFileManager(StandardJavaFileManager fileManager) {
+    public CustomClassFileManager(StandardJavaFileManager fileManager) {
         super(fileManager);
         this.classFiles = new HashMap<>();
     }

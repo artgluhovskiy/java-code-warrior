@@ -8,7 +8,6 @@ import org.art.web.warrior.client.dto.ClientServiceRequest;
 import org.art.web.warrior.client.dto.ClientServiceResponse;
 import org.art.web.warrior.client.dto.CompServiceRequest;
 import org.art.web.warrior.client.dto.CompServiceResponse;
-import org.art.web.warrior.client.service.CustomByteClassLoader;
 import org.art.web.warrior.client.util.CompServiceResponseUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.web.client.RestTemplateBuilder;
@@ -24,7 +23,10 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.client.RestTemplate;
 
-import static org.art.web.warrior.client.service.CommonServiceConstants.*;
+import java.util.List;
+
+import static java.util.Collections.singletonList;
+import static org.art.web.warrior.client.CommonServiceConstants.*;
 
 @Slf4j
 @Controller
@@ -46,21 +48,25 @@ public class ClientAppController {
 
     @PostMapping(consumes = MediaType.APPLICATION_JSON_UTF8_VALUE, produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
     @ResponseBody
-    public ClientServiceResponse submitClientCode(@RequestBody ClientServiceRequest clientReqData) {
-        String className = clientReqData.getClassName();
-        String srcCode = clientReqData.getSrcCode();
+    public ClientServiceResponse submitClientCode(@RequestBody ClientServiceRequest clientRequestData) {
+        String className = clientRequestData.getClassName();
+        String srcCode = clientRequestData.getSrcCode();
+        if (!clientRequestData.isValid()) {
+            log.debug("Client code cannot be processed: class name {}, source code {}", className, srcCode);
+            return CompServiceResponseUtil.buildUnprocessableEntityResponse(clientRequestData);
+        }
         log.debug("Client code submission request: class name {}, source code {}", className, srcCode);
-        ResponseEntity<CompServiceResponse> response = callCompilationService(clientReqData);
+        ResponseEntity<CompServiceResponse> response = callCompilationService(clientRequestData);
         CompServiceResponse serviceResp = response.getBody();
         if (serviceResp == null) {
             log.debug("Internal service error occurred! Compilation service responded with empty body.");
-            return CompServiceResponseUtil.buildEmptyBodyResponse(clientReqData);
+            return CompServiceResponseUtil.buildEmptyBodyResponse(clientRequestData);
         }
         if (serviceResp.isCompError()) {
             log.debug("Compilation errors occurred while compiling client source code!");
-            return CompServiceResponseUtil.buildCompErrorResponse(serviceResp);
+            return CompServiceResponseUtil.buildCompErrorResponse(serviceResp, className);
         } else {
-            return CompServiceResponseUtil.buildCompOkResponse(serviceResp);
+            return CompServiceResponseUtil.buildCompOkResponse(serviceResp, className);
         }
     }
 
@@ -71,7 +77,7 @@ public class ClientAppController {
         String className = clientReqData.getClassName();
         String code = clientReqData.getSrcCode();
         CompServiceRequest serviceReqData = new CompServiceRequest(className, code);
-        HttpEntity<CompServiceRequest> reqEntity = new HttpEntity<>(serviceReqData, headers);
+        HttpEntity<List<CompServiceRequest>> reqEntity = new HttpEntity<>(singletonList(serviceReqData), headers);
         log.debug("Making the request to the Compilation service. Endpoint: {}, request data: {}", compServiceEndpoint, serviceReqData);
         return restTemplate.postForEntity(compServiceEndpoint, reqEntity, CompServiceResponse.class);
     }
@@ -84,18 +90,6 @@ public class ClientAppController {
             return COMPILATION_SERVICE_ENDPOINT_FORMAT.format(new Object[]{compHostName, compHostPort});
         } else {
             return COMPILATION_SERVICE_ENDPOINT_FORMAT.format(new Object[]{LOCALHOST, COMP_SERVICE_PORT_NO_PROFILE});
-        }
-    }
-
-    private Class<?> loadCompiledClass(String className, byte[] classData) {
-        log.debug("Loading the compiled class. Class name: {}, class data byte array length: {}", className, classData.length);
-        try {
-            CustomByteClassLoader loader = new CustomByteClassLoader();
-            loader.addClassData(className, classData);
-            return loader.loadClass(className);
-        } catch (ClassNotFoundException e) {
-            log.info("Cannot find and load the compiled class. Class name: {}, class data byte array length: {}", className, classData.length);
-            return null;
         }
     }
 }

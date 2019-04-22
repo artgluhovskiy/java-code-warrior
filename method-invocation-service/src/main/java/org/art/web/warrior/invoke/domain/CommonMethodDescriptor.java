@@ -1,10 +1,10 @@
-package org.art.web.warrior.invoke.model;
+package org.art.web.warrior.invoke.domain;
 
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
 import org.apache.commons.lang3.tuple.Pair;
-import org.art.web.warrior.invoke.model.api.MethodDescriptor;
+import org.art.web.warrior.invoke.domain.api.MethodDescriptor;
 
 import java.util.ArrayList;
 import java.util.Collections;

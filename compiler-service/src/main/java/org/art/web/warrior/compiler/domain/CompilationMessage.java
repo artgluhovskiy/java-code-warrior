@@ -1,11 +1,13 @@
-package org.art.web.warrior.compiler.model;
+package org.art.web.warrior.compiler.domain;
 
-import lombok.*;
-import org.art.web.warrior.compiler.model.api.CompilationMessage;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 import javax.tools.Diagnostic;
 
-import static org.art.web.warrior.compiler.service.ServiceCommonConstants.*;
+import static org.art.web.warrior.compiler.ServiceCommonConstants.*;
 
 /**
  * Contains information related to the java source unit compilation.
@@ -14,7 +16,7 @@ import static org.art.web.warrior.compiler.service.ServiceCommonConstants.*;
 @NoArgsConstructor
 @AllArgsConstructor
 @Setter
-public class CommonCompilationMessage implements CompilationMessage {
+public class CompilationMessage {
 
     private Diagnostic.Kind kind;
 
@@ -28,38 +30,32 @@ public class CommonCompilationMessage implements CompilationMessage {
 
     private long position;
 
-    public CommonCompilationMessage(Diagnostic.Kind kind, String errorCode, String causeMessage) {
+    public CompilationMessage(Diagnostic.Kind kind, String errorCode, String causeMessage) {
         this.kind = kind;
         this.errorCode = errorCode;
         this.causeMessage = causeMessage;
     }
 
-    @Override
     public Diagnostic.Kind getKind() {
         return kind;
     }
 
-    @Override
     public String getErrorCode() {
         return errorCode;
     }
 
-    @Override
     public String getCauseMessage() {
         return causeMessage;
     }
 
-    @Override
     public long getCodeLine() {
         return codeLine;
     }
 
-    @Override
     public long getColumnNumber() {
         return columnNumber;
     }
 
-    @Override
     public long getPosition() {
         return position;
     }

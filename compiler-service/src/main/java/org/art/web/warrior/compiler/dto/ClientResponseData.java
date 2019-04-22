@@ -1,13 +1,16 @@
 package org.art.web.warrior.compiler.dto;
 
 import lombok.*;
+import org.art.web.warrior.compiler.domain.UnitResult;
+
+import java.util.Map;
 
 @Getter
 @Builder
 @ToString
 @NoArgsConstructor
 @AllArgsConstructor
-public class ServiceResponseDto {
+public class ClientResponseData {
 
     private int compilerStatusCode;
 
@@ -25,9 +28,5 @@ public class ServiceResponseDto {
 
     private long errorPosition;
 
-    private String className;
-
-    private Object srcCode;
-
-    private byte[] compiledClass;
+    Map<String, UnitResult> compUnitResults;
 }

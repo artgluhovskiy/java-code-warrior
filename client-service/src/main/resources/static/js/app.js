@@ -35,6 +35,9 @@ $(function () {
             $(targetArea).append('Compiler message: ' + response.compErrorDetails.compilerMessage + '\n');
             $(targetArea).append('Error code line: ' + response.compErrorDetails.errorColumnNumber + '\n');
             $(targetArea).append('Error position: ' + response.compErrorDetails.errorPosition + '\n');
+        } else if (response.respStatus === 'bad_request') {
+            setError(targetArea);
+            $(targetArea).text('Source code cannot be processed! Please, check the validity of the class names in the input fields!');
         } else {
             setError(targetArea);
             $(targetArea).text('Unexpected internal error occurred while processing the submission request!');

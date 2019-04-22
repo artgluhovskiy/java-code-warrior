@@ -2,7 +2,7 @@ package org.art.web.warrior.invoke.service;
 
 import org.apache.commons.lang3.tuple.Pair;
 import org.art.web.warrior.invoke.exceptions.MethodInvocationException;
-import org.art.web.warrior.invoke.model.api.MethodDescriptor;
+import org.art.web.warrior.invoke.domain.api.MethodDescriptor;
 import org.art.web.warrior.invoke.service.api.MethodInvocationService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

@@ -1,12 +1,10 @@
 package org.art.web.warrior.compiler.controller;
 
-import lombok.SneakyThrows;
-import org.art.web.warrior.compiler.dto.ServiceRequestDto;
-import org.art.web.warrior.compiler.dto.ServiceResponseDto;
-import org.art.web.warrior.compiler.exceptions.CompilationServiceException;
-import org.art.web.warrior.compiler.model.CharSeqCompilationUnit;
-import org.art.web.warrior.compiler.model.api.CompilationResult;
-import org.art.web.warrior.compiler.model.api.CompilationUnit;
+import org.art.web.warrior.compiler.domain.CompilationResult;
+import org.art.web.warrior.compiler.domain.CompilationUnit;
+import org.art.web.warrior.compiler.dto.ClientRequestData;
+import org.art.web.warrior.compiler.dto.ClientResponseData;
+import org.art.web.warrior.compiler.exception.CompilationServiceException;
 import org.art.web.warrior.compiler.service.api.CompilationService;
 import org.art.web.warrior.compiler.util.ServiceResponseUtils;
 import org.slf4j.Logger;
@@ -17,13 +15,11 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.io.UnsupportedEncodingException;
-import java.net.URLDecoder;
-import java.nio.charset.StandardCharsets;
-import java.util.Arrays;
+import java.util.List;
 
-import static org.art.web.warrior.compiler.service.ServiceCommonConstants.COMPILER_SERVICE_OK_MESSAGE;
-import static org.art.web.warrior.compiler.service.ServiceCommonConstants.KRYO_CONTENT_TYPE;
+import static java.util.stream.Collectors.toList;
+import static org.art.web.warrior.compiler.ServiceCommonConstants.COMPILER_SERVICE_OK_MESSAGE;
+import static org.art.web.warrior.compiler.ServiceCommonConstants.KRYO_CONTENT_TYPE;
 
 @RestController
 @RequestMapping(value = "/compile", produces = {MediaType.APPLICATION_JSON_UTF8_VALUE, KRYO_CONTENT_TYPE})
@@ -38,29 +34,18 @@ public class CompilerController {
         this.compilationService = compilationService;
     }
 
-    @SneakyThrows(UnsupportedEncodingException.class)
-    @RequestMapping(value = "/src/params", method = {RequestMethod.GET, RequestMethod.POST})
-    public ResponseEntity<ServiceResponseDto> compile(@RequestParam(value = "classname", required = false) String className,
-                                                      @RequestParam(value = "src", required = false) String src) {
-        LOG.debug("Compilation request (request params): classname {}, src {}", className, src);
-        ServiceRequestDto requestData = new ServiceRequestDto(className, src);
-        if (!requestData.isValid()) {
-            return cannotProcessRequestData(requestData);
+    @PostMapping(value = "/src/entity", consumes = MediaType.APPLICATION_JSON_UTF8_VALUE)
+    public ResponseEntity<ClientResponseData> compile(@RequestBody List<ClientRequestData> clientRequestData) {
+        LOG.debug("Compilation request. Client request data: {}", clientRequestData);
+        for (ClientRequestData requestUnit : clientRequestData) {
+            if (!requestUnit.isValid()) {
+                return cannotProcessRequestData(requestUnit);
+            }
         }
-        className = URLDecoder.decode(className, StandardCharsets.UTF_8.name());
-        src = URLDecoder.decode(src, StandardCharsets.UTF_8.name());
-        CompilationUnit<CharSequence> unit = new CharSeqCompilationUnit(className, src);
-        return compileCharSeqUnit(unit);
-    }
-
-    @RequestMapping(value = "/src/entity", method = RequestMethod.POST, consumes = MediaType.APPLICATION_JSON_UTF8_VALUE)
-    public ResponseEntity<ServiceResponseDto> compile(@RequestBody ServiceRequestDto requestData) {
-        LOG.debug("Compilation request (request entity): {}", requestData);
-        if (!requestData.isValid()) {
-            return cannotProcessRequestData(requestData);
-        }
-        CompilationUnit<CharSequence> unit = new CharSeqCompilationUnit(requestData.getClassName(), requestData.getSrc());
-        return compileCharSeqUnit(unit);
+        List<CompilationUnit> requestUnits = clientRequestData.stream()
+                .map(reqData -> new CompilationUnit(reqData.getClassName(), reqData.getSrcCode()))
+                .collect(toList());
+        return submitCompilationRequest(requestUnits);
     }
 
     @GetMapping(value = "/ping")
@@ -68,35 +53,32 @@ public class CompilerController {
         return COMPILER_SERVICE_OK_MESSAGE;
     }
 
-    private ResponseEntity<ServiceResponseDto> compileCharSeqUnit(CompilationUnit<CharSequence> unit) {
-        String className = unit.getClassName();
-        CharSequence src = unit.getSrcCode();
-        LOG.debug("Compiling unit. Class name: {}, source code: {}", className, src);
+    private ResponseEntity<ClientResponseData> submitCompilationRequest(List<CompilationUnit> units) {
         try {
-            CompilationResult result = compilationService.compileUnit(Arrays.asList(unit));
+            CompilationResult result = compilationService.compileUnits(units);
             if (result.getCompStatus().getStatusCode() > 0) {
-                ServiceResponseDto compOkResponse = ServiceResponseUtils.buildCompServiceResponse(result);
+                ClientResponseData compOkResponse = ServiceResponseUtils.buildClientResponse(result);
                 return ResponseEntity.ok(compOkResponse);
             } else {
-                ServiceResponseDto compErrorResponse = ServiceResponseUtils.buildCompServiceResponse(result);
+                ClientResponseData compErrorResponse = ServiceResponseUtils.buildClientResponse(result);
                 return ResponseEntity.ok(compErrorResponse);
             }
         } catch (CompilationServiceException e) {
-            LOG.info("Internal service error occurred while compiling unit with the class name - {}, src - {}", unit.getClassName(), unit.getSrcCode(), e);
-            ServiceResponseDto errorResponseDto = ServiceResponseUtils.buildInternalServiceErrorResponse(e, unit);
+            LOG.info("Internal service error occurred while compiling units: {}", units, e);
+            ClientResponseData errorResponseDto = ServiceResponseUtils.buildInternalServiceErrorResponse(e, units);
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(errorResponseDto);
         } catch (Exception e) {
-            LOG.info("Unexpected internal service error occurred while compiling unit with the class name - {}, src - {}", unit.getClassName(), unit.getSrcCode(), e);
-            ServiceResponseDto errorResponseDto = ServiceResponseUtils.buildInternalServiceErrorResponse(e, unit);
+            LOG.info("Unexpected internal service error occurred while compiling units: {}", units, e);
+            ClientResponseData errorResponseDto = ServiceResponseUtils.buildInternalServiceErrorResponse(e, units);
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(errorResponseDto);
         }
     }
 
-    private ResponseEntity<ServiceResponseDto> cannotProcessRequestData(ServiceRequestDto requestData) {
+    private ResponseEntity<ClientResponseData> cannotProcessRequestData(ClientRequestData requestData) {
         String className = requestData.getClassName();
-        String src = requestData.getSrc();
+        String src = requestData.getSrcCode();
         LOG.info("Cannot process request entity. Request data is not valid. Class name: {}, source code: {}", className, src);
-        ServiceResponseDto unprocessedEntityResponse = ServiceResponseUtils.buildUnprocessableEntityResponse(className, src);
+        ClientResponseData unprocessedEntityResponse = ServiceResponseUtils.buildUnprocessableEntityResponse(className, src);
         return ResponseEntity.unprocessableEntity().body(unprocessedEntityResponse);
     }
 }

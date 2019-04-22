@@ -1,17 +1,14 @@
 package org.art.web.warrior.compiler.service;
 
 import org.apache.commons.lang3.StringUtils;
-import org.art.web.warrior.compiler.exceptions.CompilationServiceException;
-import org.art.web.warrior.compiler.exceptions.UnknownJavaSourceException;
-import org.art.web.warrior.compiler.model.CharSeqCompilationUnit;
-import org.art.web.warrior.compiler.model.api.CompilationMessage;
-import org.art.web.warrior.compiler.model.api.CompilationResult;
-import org.art.web.warrior.compiler.model.CompilationStatus;
-import org.art.web.warrior.compiler.model.api.CompilationUnit;
+import org.art.web.warrior.compiler.domain.*;
+import org.art.web.warrior.compiler.exception.CompilationServiceException;
 import org.art.web.warrior.compiler.service.api.CompilationService;
 import org.junit.jupiter.api.*;
 
-import java.io.*;
+import java.io.BufferedReader;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.lang.reflect.Method;
 import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
@@ -21,6 +18,7 @@ import java.util.Scanner;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import static java.util.Collections.singletonList;
 import static java.util.regex.Pattern.MULTILINE;
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -72,32 +70,28 @@ class InMemoryCompilationServiceTest {
     @Test
     @DisplayName("Compile null unit")
     void test0() {
-        RuntimeException exception = assertThrows(RuntimeException.class, () -> compiler.compileUnit(null));
-        assertTrue(StringUtils.containsIgnoreCase(exception.getMessage(), "Compilation unit should not be null"));
+        assertThrows(RuntimeException.class, () -> compiler.compileUnits(null));
     }
 
     @Test
-    @DisplayName("Compile unit with blank class name")
+    @DisplayName("Compile unit with a blank class name")
     void test1() {
-        CompilationUnit unit = new CharSeqCompilationUnit(null, "class TestClass0_0{}");
-        CompilationServiceException exception = assertThrows(CompilationServiceException.class, () -> compiler.compileUnit(unit));
-        assertTrue(StringUtils.containsIgnoreCase(exception.getMessage(), "Compilation unit is not valid"));
+        CompilationUnit unit = new CompilationUnit(null, "class TestClass0_0{}");
+        assertThrows(CompilationServiceException.class, () -> compiler.compileUnits(singletonList(unit)));
     }
 
     @Test
-    @DisplayName("Compile unit with blank src")
+    @DisplayName("Compile unit with a blank src")
     void test2() {
-        CompilationUnit unit = new CharSeqCompilationUnit("TestClass0_1", null);
-        CompilationServiceException exception = assertThrows(CompilationServiceException.class, () -> compiler.compileUnit(unit));
-        assertTrue(StringUtils.containsIgnoreCase(exception.getMessage(), "Compilation unit is not valid"));
+        CompilationUnit unit = new CompilationUnit("TestClass0_1", null);
+        assertThrows(CompilationServiceException.class, () -> compiler.compileUnits(singletonList(unit)));
     }
 
     @Test
-    @DisplayName("Compile unit with blank params")
+    @DisplayName("Compile unit with a blank params")
     void test3() {
-        CompilationUnit unit = new CharSeqCompilationUnit(null, null);
-        CompilationServiceException exception = assertThrows(CompilationServiceException.class, () -> compiler.compileUnit(unit));
-        assertTrue(StringUtils.containsIgnoreCase(exception.getMessage(), "Compilation unit is not valid"));
+        CompilationUnit unit = new CompilationUnit(null, null);
+        assertThrows(CompilationServiceException.class, () -> compiler.compileUnits(singletonList(unit)));
     }
 
     @Test
@@ -105,13 +99,16 @@ class InMemoryCompilationServiceTest {
     void test4() {
         String className = "TestClass0_2";
         String src = "class TestClass0_2{}";
-        CompilationUnit unit = new CharSeqCompilationUnit(className, src);
+        CompilationUnit unit = new CompilationUnit(className, src);
 
-        CompilationResult result = assertDoesNotThrow(() -> compiler.compileUnit(unit));
+        CompilationResult result = assertDoesNotThrow(() -> compiler.compileUnits(singletonList(unit)));
         assertNotNull(result);
         assertSame(CompilationStatus.SUCCESS, result.getCompStatus());
-        assertNotNull(result.getClassName());
-        assertNotNull(result.getCompiledClassBytes());
+        assertEquals(1, result.getCompUnitResults().size());
+        UnitResult unitResult = result.getCompUnitResults().get(className);
+        assertNotNull(unitResult);
+        assertEquals(className, unitResult.getClassName());
+        assertNotNull(unitResult.getCompiledClassBytes());
     }
 
     @Test
@@ -119,49 +116,8 @@ class InMemoryCompilationServiceTest {
     void test5() {
         String className = "TestClass0_3";
         String src = "Arbitrary text";
-        CompilationUnit unit = new CharSeqCompilationUnit(className, src);
-
-        CompilationResult result = assertDoesNotThrow(() -> compiler.compileUnit(unit));
-        assertNotNull(result);
-        assertNull(result.getCompiledClassBytes());
-        assertSame(CompilationStatus.ERROR, result.getCompStatus());
-
-        CompilationMessage message = result.getMessage();
-        assertNotNull(message);
-
-        assertAll("Validate message state",
-                () -> assertTrue(StringUtils.isNotBlank(message.getCauseMessage())),
-                () -> assertTrue(message.getCauseMessage().contains("class, interface, or enum expected")),
-                () -> assertSame(1L, message.getCodeLine()),
-                () -> assertSame(1L, message.getColumnNumber())
-        );
-    }
-
-    @Test
-    @DisplayName("Trying to compile unit with unsupported src type")
-    void test6() {
-        //Creating compilation unit based on Reader src
-        CompilationUnit<Reader> unit = new CompilationUnit<Reader>() {
-            private String className = "TestClass";
-            private Reader reader = new StringReader("Src java code");
-
-            @Override
-            public String getClassName() {
-                return className;
-            }
-
-            @Override
-            public Reader getSrcCode() {
-                return reader;
-            }
-
-            @Override
-            public boolean isValid() {
-                return true;
-            }
-        };
-        UnknownJavaSourceException exception = assertThrows(UnknownJavaSourceException.class, () -> compiler.compileUnit(unit));
-        assertTrue(StringUtils.containsIgnoreCase(exception.getMessage(), "Current source type is not supported by the service!"));
+        CompilationUnit unit = new CompilationUnit(className, src);
+        assertThrows(CompilationServiceException.class, () -> compiler.compileUnits(singletonList(unit)));
     }
 
     @Test
@@ -248,27 +204,28 @@ class InMemoryCompilationServiceTest {
         String srcCode = TEST_DATA.get(testClassName);
         assertTrue(StringUtils.isNotBlank(srcCode));
 
-        return new CharSeqCompilationUnit(testClassName, srcCode);
+        return new CompilationUnit(testClassName, srcCode);
     }
 
     private void compileWithoutErrors(CompilationUnit unit) {
-        CompilationResult result = assertDoesNotThrow(() -> compiler.compileUnit(unit));
+        CompilationResult result = assertDoesNotThrow(() -> compiler.compileUnits(singletonList(unit)));
         assertNotNull(result);
 
         assertSame(CompilationStatus.SUCCESS, result.getCompStatus());
         assertNull(result.getMessage());
 
-        assertNotNull(result.getCompiledClassBytes());
-        assertEquals(unit.getClassName(), result.getClassName());
+        UnitResult unitResult = result.getCompUnitResults().get(unit.getClassName());
+        assertNotNull(unitResult.getCompiledClassBytes());
+        assertEquals(unit.getClassName(), unitResult.getClassName());
     }
 
     private void compileWithErrors(CompilationUnit unit, String errorMessage) {
-        CompilationResult result = assertDoesNotThrow(() -> compiler.compileUnit(unit));
+        CompilationResult result = assertDoesNotThrow(() -> compiler.compileUnits(singletonList(unit)));
         assertNotNull(result);
 
         assertSame(CompilationStatus.ERROR, result.getCompStatus());
-
-        assertNull(result.getCompiledClassBytes());
+        UnitResult unitResult = result.getCompUnitResults().get(unit.getClassName());
+        assertNull(unitResult.getCompiledClassBytes());
 
         CompilationMessage message = result.getMessage();
         assertNotNull(message);
