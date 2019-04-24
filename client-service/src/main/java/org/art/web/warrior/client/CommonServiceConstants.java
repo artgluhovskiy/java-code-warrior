@@ -11,8 +11,8 @@ public class CommonServiceConstants {
     public static final String COMPILER_SERVICE_HOST_ENV_PROP_NAME = "COMPILER_SERVICE_HOST";
     public static final String COMPILER_SERVICE_PORT_ENV_PROP_NAME = "COMPILER_SERVICE_PORT";
 
-    public static final String INVOCATION_SERVICE_HOST_ENV_PROP_NAME = "INVOCATION_SERVICE_HOST";
-    public static final String INVOCATION_SERVICE_PORT_ENV_PROP_NAME = "INVOCATION_SERVICE_PORT";
+    public static final String EXECUTION_SERVICE_HOST_ENV_PROP_NAME = "EXECUTION_SERVICE_HOST";
+    public static final String EXECUTION_SERVICE_PORT_ENV_PROP_NAME = "EXECUTION_SERVICE_PORT";
 
     public static final String SPRING_ACTIVE_PROFILE_ENV_PROP_NAME = "spring.profiles.active";
 
@@ -21,6 +21,7 @@ public class CommonServiceConstants {
     public static final String LOCALHOST = "localhost";
 
     public static final String COMP_SERVICE_PORT_NO_PROFILE = "8080";
+    public static final String EXEC_SERVICE_PORT_NO_PROFILE = "8081";
 
     public static final Pattern CLASS_NAME_REG_EXP = Pattern.compile("(?<=class[ \\n])(\\w+)");
 
@@ -31,4 +32,6 @@ public class CommonServiceConstants {
     public static final String INTERNAL_SERVICE_ERROR_MESSAGE = "Internal service error occurred! Compilation service responded with empty body.";
     public static final String COMPILATION_ERROR_MESSAGE = "Compilation errors occurred while compiling client source code!";
     public static final String COMPILATION_OK_MESSAGE = "Client source code was successfully compiled!";
+
+    public static final String KRYO_CONTENT_TYPE = "application/x-kryo";
 }

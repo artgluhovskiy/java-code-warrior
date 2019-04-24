@@ -27,7 +27,7 @@ sourceCompatibility = 1.8
 targetCompatibility = 1.8
 
 bootJar {
-    baseName = 'invocation-service-boot'
+    baseName = 'commons'
 }
 
 repositories {

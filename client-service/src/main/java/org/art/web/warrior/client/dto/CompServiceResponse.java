@@ -28,7 +28,7 @@ public class CompServiceResponse {
 
     private long errorPosition;
 
-    Map<String, UnitResult> compUnitResults;
+    Map<String, CompUnitResponse> compUnitResults;
 
     public boolean isCompError() {
         return ClientResponseStatus.COMPILATION_ERROR.getStatusId().equals(compilerStatus);

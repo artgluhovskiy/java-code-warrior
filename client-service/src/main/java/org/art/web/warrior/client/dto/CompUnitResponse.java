@@ -10,7 +10,7 @@ import org.springframework.lang.Nullable;
 @ToString(exclude = {"compiledClassBytes"})
 @AllArgsConstructor
 @NoArgsConstructor
-public class UnitResult {
+public class CompUnitResponse {
 
     private String className;
 

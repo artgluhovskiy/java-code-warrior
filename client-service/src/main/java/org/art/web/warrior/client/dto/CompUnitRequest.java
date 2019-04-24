@@ -14,7 +14,7 @@ import static org.art.web.warrior.client.CommonServiceConstants.CLASS_NAME_REG_E
 @ToString
 @NoArgsConstructor
 @AllArgsConstructor
-public class ClientServiceRequest {
+public class CompUnitRequest {
 
     private String className;
 

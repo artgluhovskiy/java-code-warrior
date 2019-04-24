@@ -1,5 +1,6 @@
 package org.art.web.warrior.compiler.controller;
 
+import org.art.web.warrior.commons.CommonEntity;
 import org.art.web.warrior.compiler.domain.CompilationResult;
 import org.art.web.warrior.compiler.domain.CompilationUnit;
 import org.art.web.warrior.compiler.dto.ClientRequestData;
@@ -50,7 +51,9 @@ public class CompilerController {
 
     @GetMapping(value = "/ping")
     public String ping() {
-        return COMPILER_SERVICE_OK_MESSAGE;
+        CommonEntity commonEntity = new CommonEntity();
+        commonEntity.setMessage("Hello from the Common Entity");
+        return COMPILER_SERVICE_OK_MESSAGE + commonEntity.getMessage();
     }
 
     private ResponseEntity<ClientResponseData> submitCompilationRequest(List<CompilationUnit> units) {

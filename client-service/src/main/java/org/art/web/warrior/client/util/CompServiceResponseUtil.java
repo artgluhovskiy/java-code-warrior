@@ -2,10 +2,10 @@ package org.art.web.warrior.client.util;
 
 import org.art.web.warrior.client.domain.ClientResponseStatus;
 import org.art.web.warrior.client.domain.CompErrorDetails;
-import org.art.web.warrior.client.dto.ClientServiceRequest;
+import org.art.web.warrior.client.dto.CompUnitRequest;
 import org.art.web.warrior.client.dto.ClientServiceResponse;
 import org.art.web.warrior.client.dto.CompServiceResponse;
-import org.art.web.warrior.client.dto.UnitResult;
+import org.art.web.warrior.client.dto.CompUnitResponse;
 
 import java.util.Map;
 
@@ -16,7 +16,7 @@ public class CompServiceResponseUtil {
     private CompServiceResponseUtil() {
     }
 
-    public static ClientServiceResponse buildUnprocessableEntityResponse(ClientServiceRequest clientReqData) {
+    public static ClientServiceResponse buildUnprocessableEntityResponse(CompUnitRequest clientReqData) {
         return ClientServiceResponse.builder()
                 .respStatus(ClientResponseStatus.BAD_REQUEST.getStatusId())
                 .message(UNPROCESSABLE_CLIENT_REQUEST_MESSAGE)
@@ -25,7 +25,7 @@ public class CompServiceResponseUtil {
                 .build();
     }
 
-    public static ClientServiceResponse buildEmptyBodyResponse(ClientServiceRequest clientReqData) {
+    public static ClientServiceResponse buildEmptyBodyResponse(CompUnitRequest clientReqData) {
         return ClientServiceResponse.builder()
                 .respStatus(ClientResponseStatus.INTERNAL_SERVICE_ERROR.getStatusId())
                 .message(INTERNAL_SERVICE_ERROR_MESSAGE)
@@ -41,8 +41,8 @@ public class CompServiceResponseUtil {
                 .errorCodeLine(serviceResp.getErrorCodeLine())
                 .errorPosition(serviceResp.getErrorPosition())
                 .build();
-        Map<String, UnitResult> compUnits = serviceResp.getCompUnitResults();
-        UnitResult unitResult = compUnits.get(className);
+        Map<String, CompUnitResponse> compUnits = serviceResp.getCompUnitResults();
+        CompUnitResponse unitResult = compUnits.get(className);
         return ClientServiceResponse.builder()
                 .respStatus(ClientResponseStatus.COMPILATION_ERROR.getStatusId())
                 .message(COMPILATION_ERROR_MESSAGE)
@@ -53,8 +53,8 @@ public class CompServiceResponseUtil {
     }
 
     public static ClientServiceResponse buildCompOkResponse(CompServiceResponse serviceResp, String className) {
-        Map<String, UnitResult> compUnits = serviceResp.getCompUnitResults();
-        UnitResult unitResult = compUnits.get(className);
+        Map<String, CompUnitResponse> compUnits = serviceResp.getCompUnitResults();
+        CompUnitResponse unitResult = compUnits.get(className);
         return ClientServiceResponse.builder()
                 .respStatus(ClientResponseStatus.SUCCESS.getStatusId())
                 .message(COMPILATION_OK_MESSAGE)

@@ -27,7 +27,7 @@ sourceCompatibility = 1.8
 targetCompatibility = 1.8
 
 bootJar {
-    baseName = 'compiler-service-boot'
+    baseName = 'execution-service-boot'
 }
 
 repositories {
@@ -48,9 +48,7 @@ test {
 }
 
 dependencies {
-    
-    implementation project(':commons')
-        
+
     /* *** Spring *** */
     implementation('org.springframework.boot:spring-boot-starter')
     implementation('org.springframework.boot:spring-boot-starter-web')
@@ -61,7 +59,7 @@ dependencies {
     /* *** Common Libs *** */
     implementation('org.apache.commons:commons-lang3:3.1')
     implementation('org.apache.commons:commons-collections4:4.0')
-    
+
     implementation('ch.qos.logback:logback-core:1.2.3')
     implementation('org.slf4j:slf4j-api:1.7.26')
 
