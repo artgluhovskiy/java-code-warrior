@@ -5,8 +5,8 @@ import org.art.web.warrior.compiler.service.api.CompilationService;
 
 import java.util.List;
 
-import static org.art.web.warrior.compiler.ServiceCommonConstants.DOT_CH;
-import static org.art.web.warrior.compiler.ServiceCommonConstants.NEW_LINE_CH;
+import static org.art.web.warrior.commons.CommonConstants.DOT_CH;
+import static org.art.web.warrior.commons.CommonConstants.NEW_LINE_CH;
 
 /**
  * Indicates that {@link CompilationService} failed to compile compilation unit for some internal reasons.

@@ -6,8 +6,10 @@ import org.art.web.warrior.client.config.converter.KryoHttpMessageConverter;
 import org.art.web.warrior.client.config.interceptor.RequestProcessingLogger;
 import org.art.web.warrior.client.dto.*;
 import org.art.web.warrior.client.util.CompServiceResponseUtil;
-import org.art.web.warrior.client.util.CustomByteClassLoader;
-import org.art.web.warrior.client.util.FileReaderUtil;
+import org.art.web.warrior.commons.util.FileReaderUtil;
+import org.art.web.warrior.commons.compiler.dto.CompServiceResponse;
+import org.art.web.warrior.commons.compiler.dto.CompServiceUnitRequest;
+import org.art.web.warrior.commons.compiler.dto.CompServiceUnitResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.web.client.RestTemplateBuilder;
 import org.springframework.core.env.Environment;
@@ -23,12 +25,12 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.client.RestTemplate;
 
 import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
 import java.util.Arrays;
 import java.util.List;
 
 import static java.util.Collections.singletonList;
 import static org.art.web.warrior.client.CommonServiceConstants.*;
+import static org.art.web.warrior.commons.CommonConstants.*;
 
 @Slf4j
 @Controller
@@ -50,7 +52,7 @@ public class ClientAppController {
 
     @PostMapping(consumes = MediaType.APPLICATION_JSON_UTF8_VALUE, produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
     @ResponseBody
-    public ClientServiceResponse submitClientCode(@RequestBody CompUnitRequest clientRequestData) throws ClassNotFoundException, IllegalAccessException, InstantiationException, NoSuchMethodException, InvocationTargetException {
+    public ClientServiceResponse submitClientCode(@RequestBody CompServiceUnitRequest clientRequestData) throws ClassNotFoundException, IllegalAccessException, InstantiationException, NoSuchMethodException, InvocationTargetException {
         String className = clientRequestData.getClassName();
         String srcCode = clientRequestData.getSrcCode();
         if (!clientRequestData.isValid()) {
@@ -72,19 +74,19 @@ public class ClientAppController {
         //request to the compiler service to compile the dummy solution with the test wrapper (maybe already compiled
         //test wrapper should be store in the database, need to check here)
 
-        String solutionClassName = "Solution";
-        String runnerClassName = "Runner";
-        String solutionFilePath = "/tasks/src/int-palindrom/Solution.java";
-        String runnerFilePath = "/tasks/src/int-palindrom/Runner.java";
-        String solutionSrc = FileReaderUtil.readFileIntoString(solutionFilePath);
-        String runnerSrc = FileReaderUtil.readFileIntoString(runnerFilePath);
-        CompUnitRequest solutionRequest = new CompUnitRequest(solutionClassName, solutionSrc);
-        CompUnitRequest runnerRequest = new CompUnitRequest(runnerClassName, runnerSrc);
-        CompServiceResponse serviceResponse = callCompilationService(Arrays.asList(solutionRequest, runnerRequest)).getBody();
-        CompUnitResponse runnerResponse = serviceResponse.getCompUnitResults().get(runnerClassName);
-
-        byte[] runnerClassBytes = runnerResponse.getCompiledClassBytes();
-        byte[] solutionClassBytes = serviceResp.getCompUnitResults().get(solutionClassName).getCompiledClassBytes();
+//        String solutionClassName = "Solution";
+//        String runnerClassName = "Runner";
+//        String solutionFilePath = "/tasks/src/int-palindrom/Solution.java";
+//        String runnerFilePath = "/tasks/src/int-palindrom/Runner.java";
+//        String solutionSrc = FileReaderUtil.readFileIntoString(solutionFilePath);
+//        String runnerSrc = FileReaderUtil.readFileIntoString(runnerFilePath);
+//        CompServiceUnitRequest solutionRequest = new CompServiceUnitRequest(solutionClassName, solutionSrc);
+//        CompServiceUnitRequest runnerRequest = new CompServiceUnitRequest(runnerClassName, runnerSrc);
+//        CompServiceResponse serviceResponse = callCompilationService(Arrays.asList(solutionRequest, runnerRequest)).getBody();
+//        CompServiceUnitResponse runnerResponse = serviceResponse.getCompUnitResults().get(runnerClassName);
+//
+//        byte[] runnerClassBytes = runnerResponse.getCompiledClassBytes();
+//        byte[] solutionClassBytes = serviceResp.getCompUnitResults().get(solutionClassName).getCompiledClassBytes();
 
 //        ExecServiceRequest execServiceRequest = new ExecServiceRequest(solutionClassName, solutionClassBytes, runnerClassName, runnerClassBytes);
 //        ResponseEntity<ExecServiceResponse> execServiceResponse = callExecutorService(execServiceRequest);
@@ -112,12 +114,12 @@ public class ClientAppController {
 
     }
 
-    private ResponseEntity<CompServiceResponse> callCompilationService(List<CompUnitRequest> compRequestData) {
+    private ResponseEntity<CompServiceResponse> callCompilationService(List<CompServiceUnitRequest> compRequestData) {
         String compServiceEndpoint = getCompServiceEndpoint();
         HttpHeaders headers = new HttpHeaders();
         headers.set(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_UTF8_VALUE);
         headers.set(HttpHeaders.ACCEPT, KRYO_CONTENT_TYPE);
-        HttpEntity<List<CompUnitRequest>> reqEntity = new HttpEntity<>(compRequestData, headers);
+        HttpEntity<List<CompServiceUnitRequest>> reqEntity = new HttpEntity<>(compRequestData, headers);
         log.debug("Making the request to the Compilation service. Endpoint: {}, request data: {}", compServiceEndpoint, compRequestData);
         return restTemplate.postForEntity(compServiceEndpoint, reqEntity, CompServiceResponse.class);
     }

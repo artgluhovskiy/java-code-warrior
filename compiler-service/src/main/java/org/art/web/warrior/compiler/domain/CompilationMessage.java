@@ -7,7 +7,7 @@ import lombok.Setter;
 
 import javax.tools.Diagnostic;
 
-import static org.art.web.warrior.compiler.ServiceCommonConstants.*;
+import static org.art.web.warrior.commons.CommonConstants.*;
 
 /**
  * Contains information related to the java source unit compilation.

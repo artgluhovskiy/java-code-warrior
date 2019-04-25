@@ -3,8 +3,8 @@ package org.art.web.warrior.invoke.exceptions;
 import org.art.web.warrior.invoke.domain.api.MethodDescriptor;
 import org.art.web.warrior.invoke.service.api.MethodInvocationService;
 
-import static org.art.web.warrior.invoke.ServiceCommonConstants.DOT_CH;
-import static org.art.web.warrior.invoke.ServiceCommonConstants.NEW_LINE_CH;
+import static org.art.web.warrior.commons.CommonConstants.DOT_CH;
+import static org.art.web.warrior.commons.CommonConstants.NEW_LINE_CH;
 
 /**
  * Thrown to indicate that {@link MethodInvocationService}

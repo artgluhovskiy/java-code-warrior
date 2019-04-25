@@ -1,6 +1,6 @@
-package org.art.web.warrior.client.domain;
+package org.art.web.warrior.commons.compiler;
 
-public enum ClientResponseStatus {
+public enum ServiceResponseStatus {
 
     SUCCESS("success", 1),
     BAD_REQUEST("bad_request", -1),
@@ -10,7 +10,7 @@ public enum ClientResponseStatus {
     private int statusCode;
     private String statusId;
 
-    ClientResponseStatus(String statusId, int statusCode) {
+    ServiceResponseStatus(String statusId, int statusCode) {
         this.statusId = statusId;
         this.statusCode = statusCode;
     }

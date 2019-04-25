@@ -7,7 +7,7 @@ import org.apache.commons.lang3.StringUtils;
 
 import java.util.regex.Matcher;
 
-import static org.art.web.warrior.compiler.ServiceCommonConstants.CLASS_NAME_REG_EXP;
+import static org.art.web.warrior.commons.CommonConstants.CLASS_NAME_REG_EXP;
 
 /**
  * Represents a model for compilation task, which contains all necessary information.

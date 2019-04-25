@@ -8,8 +8,8 @@ import java.io.ByteArrayOutputStream;
 import java.io.OutputStream;
 import java.net.URI;
 
-import static org.art.web.warrior.compiler.ServiceCommonConstants.DOT_CH;
-import static org.art.web.warrior.compiler.ServiceCommonConstants.SLASH_CH;
+import static org.art.web.warrior.commons.CommonConstants.DOT_CH;
+import static org.art.web.warrior.commons.CommonConstants.SLASH_CH;
 
 /**
  * Provides a simple implementation of a Java file object based on byte stream.

@@ -1,21 +1,19 @@
-package org.art.web.warrior.client.dto;
+package org.art.web.warrior.commons.compiler.dto;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
-import org.springframework.lang.Nullable;
 
 @Data
 @ToString(exclude = {"compiledClassBytes"})
 @AllArgsConstructor
 @NoArgsConstructor
-public class CompUnitResponse {
+public class CompServiceUnitResponse {
 
     private String className;
 
     private String srcCode;
 
-    @Nullable
     private byte[] compiledClassBytes;
 }

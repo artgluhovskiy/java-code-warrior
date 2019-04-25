@@ -1,4 +1,4 @@
-package org.art.web.warrior.client.util;
+package org.art.web.warrior.commons.util;
 
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.io.IOUtils;

@@ -1,6 +1,10 @@
 package org.art.web.warrior.compiler.service;
 
-import org.art.web.warrior.compiler.domain.*;
+import org.art.web.warrior.commons.compiler.ServiceResponseStatus;
+import org.art.web.warrior.commons.compiler.dto.CompServiceUnitResponse;
+import org.art.web.warrior.compiler.domain.CompilationMessage;
+import org.art.web.warrior.compiler.domain.CompilationResult;
+import org.art.web.warrior.compiler.domain.CompilationUnit;
 import org.art.web.warrior.compiler.exception.CompilationServiceException;
 import org.art.web.warrior.compiler.service.api.CompilationService;
 import org.slf4j.Logger;
@@ -92,31 +96,31 @@ public class InMemoryCompilationService implements CompilationService {
                                                      Map<String, byte[]> compiledClassData) {
         CompilationResult compilationResult;
         if (result) {
-            compilationResult = new CompilationResult(CompilationStatus.SUCCESS);
-            Map<String, UnitResult> unitResults = units.stream()
+            compilationResult = new CompilationResult(ServiceResponseStatus.SUCCESS);
+            Map<String, CompServiceUnitResponse> unitResults = units.stream()
                     .map(unit -> mapToUnitResult(unit, compiledClassData))
-                    .collect(toMap(UnitResult::getClassName, Function.identity()));
+                    .collect(toMap(CompServiceUnitResponse::getClassName, Function.identity()));
             compilationResult.setCompUnitResults(unitResults);
         } else {
-            compilationResult = new CompilationResult(CompilationStatus.ERROR);
+            compilationResult = new CompilationResult(ServiceResponseStatus.COMPILATION_ERROR);
             if (!diagnostics.isEmpty()) {
                 //Reporting the last diagnostic item
                 Diagnostic diagnostic = diagnostics.get(diagnostics.size() - 1);
                 compilationResult.setMessage(buildCompErrorMessage(diagnostic));
-                Map<String, UnitResult> unitResults = units.stream()
+                Map<String, CompServiceUnitResponse> unitResults = units.stream()
                         .map(unit -> mapToUnitResult(unit, null))
-                        .collect(toMap(UnitResult::getClassName, Function.identity()));
+                        .collect(toMap(CompServiceUnitResponse::getClassName, Function.identity()));
                 compilationResult.setCompUnitResults(unitResults);
             }
         }
         return compilationResult;
     }
 
-    private UnitResult mapToUnitResult(CompilationUnit unit, Map<String, byte[]> compClassData) {
-        UnitResult unitResult = new UnitResult();
+    private CompServiceUnitResponse mapToUnitResult(CompilationUnit unit, Map<String, byte[]> compClassData) {
+        CompServiceUnitResponse unitResult = new CompServiceUnitResponse();
         String className = unit.getClassName();
         unitResult.setClassName(className);
-        unitResult.setSrcCode(unit.getSrcCode());
+        unitResult.setSrcCode(unit.getSrcCode().toString());
         if (compClassData != null) {
             unitResult.setCompiledClassBytes(compClassData.get(className));
         }

@@ -1,20 +1,19 @@
-package org.art.web.warrior.compiler.dto;
+package org.art.web.warrior.commons.compiler.dto;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
 import org.apache.commons.lang3.StringUtils;
+import org.art.web.warrior.commons.CommonConstants;
 
 import java.util.regex.Matcher;
 
-import static org.art.web.warrior.compiler.ServiceCommonConstants.CLASS_NAME_REG_EXP;
-
 @Getter
 @ToString
-@AllArgsConstructor
 @NoArgsConstructor
-public class ClientRequestData {
+@AllArgsConstructor
+public class CompServiceUnitRequest {
 
     private String className;
 
@@ -22,7 +21,7 @@ public class ClientRequestData {
 
     private String parseClassNameFromSrc() {
         String parsedClassName = StringUtils.EMPTY;
-        Matcher matcher = CLASS_NAME_REG_EXP.matcher(srcCode);
+        Matcher matcher = CommonConstants.CLASS_NAME_REG_EXP.matcher(srcCode);
         if (matcher.find()) {
             parsedClassName = matcher.group(0);
         }

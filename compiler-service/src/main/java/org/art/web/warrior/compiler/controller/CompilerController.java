@@ -1,10 +1,9 @@
 package org.art.web.warrior.compiler.controller;
 
-import org.art.web.warrior.commons.CommonEntity;
+import org.art.web.warrior.commons.compiler.dto.CompServiceResponse;
+import org.art.web.warrior.commons.compiler.dto.CompServiceUnitRequest;
 import org.art.web.warrior.compiler.domain.CompilationResult;
 import org.art.web.warrior.compiler.domain.CompilationUnit;
-import org.art.web.warrior.compiler.dto.ClientRequestData;
-import org.art.web.warrior.compiler.dto.ClientResponseData;
 import org.art.web.warrior.compiler.exception.CompilationServiceException;
 import org.art.web.warrior.compiler.service.api.CompilationService;
 import org.art.web.warrior.compiler.util.ServiceResponseUtils;
@@ -19,8 +18,8 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 import static java.util.stream.Collectors.toList;
+import static org.art.web.warrior.commons.CommonConstants.KRYO_CONTENT_TYPE;
 import static org.art.web.warrior.compiler.ServiceCommonConstants.COMPILER_SERVICE_OK_MESSAGE;
-import static org.art.web.warrior.compiler.ServiceCommonConstants.KRYO_CONTENT_TYPE;
 
 @RestController
 @RequestMapping(value = "/compile", produces = {MediaType.APPLICATION_JSON_UTF8_VALUE, KRYO_CONTENT_TYPE})
@@ -36,9 +35,9 @@ public class CompilerController {
     }
 
     @PostMapping(value = "/src/entity", consumes = MediaType.APPLICATION_JSON_UTF8_VALUE)
-    public ResponseEntity<ClientResponseData> compile(@RequestBody List<ClientRequestData> clientRequestData) {
+    public ResponseEntity<CompServiceResponse> compile(@RequestBody List<CompServiceUnitRequest> clientRequestData) {
         LOG.debug("Compilation request. Client request data: {}", clientRequestData);
-        for (ClientRequestData requestUnit : clientRequestData) {
+        for (CompServiceUnitRequest requestUnit : clientRequestData) {
             if (!requestUnit.isValid()) {
                 return cannotProcessRequestData(requestUnit);
             }
@@ -51,37 +50,35 @@ public class CompilerController {
 
     @GetMapping(value = "/ping")
     public String ping() {
-        CommonEntity commonEntity = new CommonEntity();
-        commonEntity.setMessage("Hello from the Common Entity");
-        return COMPILER_SERVICE_OK_MESSAGE + commonEntity.getMessage();
+        return COMPILER_SERVICE_OK_MESSAGE;
     }
 
-    private ResponseEntity<ClientResponseData> submitCompilationRequest(List<CompilationUnit> units) {
+    private ResponseEntity<CompServiceResponse> submitCompilationRequest(List<CompilationUnit> units) {
         try {
             CompilationResult result = compilationService.compileUnits(units);
             if (result.getCompStatus().getStatusCode() > 0) {
-                ClientResponseData compOkResponse = ServiceResponseUtils.buildClientResponse(result);
+                CompServiceResponse compOkResponse = ServiceResponseUtils.buildClientResponse(result);
                 return ResponseEntity.ok(compOkResponse);
             } else {
-                ClientResponseData compErrorResponse = ServiceResponseUtils.buildClientResponse(result);
+                CompServiceResponse compErrorResponse = ServiceResponseUtils.buildClientResponse(result);
                 return ResponseEntity.ok(compErrorResponse);
             }
         } catch (CompilationServiceException e) {
             LOG.info("Internal service error occurred while compiling units: {}", units, e);
-            ClientResponseData errorResponseDto = ServiceResponseUtils.buildInternalServiceErrorResponse(e, units);
+            CompServiceResponse errorResponseDto = ServiceResponseUtils.buildInternalServiceErrorResponse(e, units);
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(errorResponseDto);
         } catch (Exception e) {
             LOG.info("Unexpected internal service error occurred while compiling units: {}", units, e);
-            ClientResponseData errorResponseDto = ServiceResponseUtils.buildInternalServiceErrorResponse(e, units);
+            CompServiceResponse errorResponseDto = ServiceResponseUtils.buildInternalServiceErrorResponse(e, units);
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(errorResponseDto);
         }
     }
 
-    private ResponseEntity<ClientResponseData> cannotProcessRequestData(ClientRequestData requestData) {
+    private ResponseEntity<CompServiceResponse> cannotProcessRequestData(CompServiceUnitRequest requestData) {
         String className = requestData.getClassName();
         String src = requestData.getSrcCode();
         LOG.info("Cannot process request entity. Request data is not valid. Class name: {}, source code: {}", className, src);
-        ClientResponseData unprocessedEntityResponse = ServiceResponseUtils.buildUnprocessableEntityResponse(className, src);
+        CompServiceResponse unprocessedEntityResponse = ServiceResponseUtils.buildUnprocessableEntityResponse(className, src);
         return ResponseEntity.unprocessableEntity().body(unprocessedEntityResponse);
     }
 }

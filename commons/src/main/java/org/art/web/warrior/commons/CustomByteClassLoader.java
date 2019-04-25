@@ -1,4 +1,4 @@
-package org.art.web.warrior.invoke.service;
+package org.art.web.warrior.commons;
 
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.StringUtils;

@@ -1,7 +1,7 @@
-package org.art.web.warrior.client.dto;
+package org.art.web.warrior.commons.compiler.dto;
 
 import lombok.*;
-import org.art.web.warrior.client.domain.ClientResponseStatus;
+import org.art.web.warrior.commons.compiler.ServiceResponseStatus;
 
 import java.util.Map;
 
@@ -28,13 +28,13 @@ public class CompServiceResponse {
 
     private long errorPosition;
 
-    Map<String, CompUnitResponse> compUnitResults;
+    Map<String, CompServiceUnitResponse> compUnitResults;
 
     public boolean isCompError() {
-        return ClientResponseStatus.COMPILATION_ERROR.getStatusId().equals(compilerStatus);
+        return ServiceResponseStatus.COMPILATION_ERROR.getStatusId().equals(compilerStatus);
     }
 
     public boolean isCompOk() {
-        return ClientResponseStatus.SUCCESS.getStatusId().equals(compilerStatus);
+        return ServiceResponseStatus.SUCCESS.getStatusId().equals(compilerStatus);
     }
 }

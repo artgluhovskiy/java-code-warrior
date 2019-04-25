@@ -1,9 +1,9 @@
 package org.art.web.warrior.compiler.util;
 
-import org.art.web.warrior.compiler.dto.ClientResponseData;
+import org.art.web.warrior.commons.compiler.dto.CompServiceResponse;
+import org.art.web.warrior.commons.compiler.dto.CompServiceUnitResponse;
 import org.art.web.warrior.compiler.domain.CompilationResult;
 import org.art.web.warrior.compiler.domain.CompilationUnit;
-import org.art.web.warrior.compiler.domain.UnitResult;
 
 import java.util.List;
 import java.util.Map;
@@ -18,10 +18,10 @@ public class ServiceResponseUtils {
     private ServiceResponseUtils() {
     }
 
-    public static ClientResponseData buildClientResponse(CompilationResult result) {
-        ClientResponseData.ClientResponseDataBuilder builder = ClientResponseData.builder();
+    public static CompServiceResponse buildClientResponse(CompilationResult result) {
+        CompServiceResponse.CompServiceResponseBuilder builder = CompServiceResponse.builder();
         builder.compilerStatusCode(result.getCompStatus().getStatusCode())
-                .compilerStatus(result.getCompStatus().getStatus())
+                .compilerStatus(result.getCompStatus().getStatusId())
                 .compUnitResults(result.getCompUnitResults());
         if (result.getCompStatus().getStatusCode() > 0) {
             builder.compUnitResults(result.getCompUnitResults());
@@ -35,25 +35,25 @@ public class ServiceResponseUtils {
         return builder.build();
     }
 
-    public static ClientResponseData buildInternalServiceErrorResponse(Throwable cause, List<CompilationUnit> units) {
-        ClientResponseData.ClientResponseDataBuilder builder = ClientResponseData.builder();
+    public static CompServiceResponse buildInternalServiceErrorResponse(Throwable cause, List<CompilationUnit> units) {
+        CompServiceResponse.CompServiceResponseBuilder builder = CompServiceResponse.builder();
         builder.message(cause.getMessage());
         if (units != null) {
-            Map<String, UnitResult> unitResults = units.stream()
+            Map<String, CompServiceUnitResponse> unitResults = units.stream()
                     .map(unit -> {
-                        UnitResult unitResult = new UnitResult();
+                        CompServiceUnitResponse unitResult = new CompServiceUnitResponse();
                         unitResult.setClassName(unit.getClassName());
-                        unitResult.setSrcCode(unit.getSrcCode());
+                        unitResult.setSrcCode(unit.getSrcCode().toString());
                         return unitResult;
-                    }).collect(toMap(UnitResult::getClassName, Function.identity()));
+                    }).collect(toMap(CompServiceUnitResponse::getClassName, Function.identity()));
             builder.compUnitResults(unitResults);
         }
         return builder.build();
     }
 
-    public static ClientResponseData buildUnprocessableEntityResponse(String className, String src) {
-        ClientResponseData.ClientResponseDataBuilder builder = ClientResponseData.builder();
-        UnitResult unitResult = new UnitResult();
+    public static CompServiceResponse buildUnprocessableEntityResponse(String className, String src) {
+        CompServiceResponse.CompServiceResponseBuilder builder = CompServiceResponse.builder();
+        CompServiceUnitResponse unitResult = new CompServiceUnitResponse();
         unitResult.setClassName(className);
         unitResult.setSrcCode(src);
         builder.compUnitResults(singletonMap(className, unitResult))
