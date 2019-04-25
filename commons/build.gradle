@@ -5,28 +5,18 @@ buildscript {
     repositories {
         mavenCentral()
     }
-    dependencies {
-        classpath("org.springframework.boot:spring-boot-gradle-plugin:${springBootVersion}")
-    }
 }
 
 plugins {
     id 'net.saliman.cobertura' version '2.6.0'
 }
 
-ext {
-    springBootVersion = '2.1.2.RELEASE'
-    targetResourceDir = '/docker'
-}
-
 apply plugin: 'java'
-apply plugin: 'org.springframework.boot'
-apply plugin: 'io.spring.dependency-management'
 
 sourceCompatibility = 1.8
 targetCompatibility = 1.8
 
-bootJar {
+jar {
     baseName = 'commons'
 }
 
@@ -49,11 +39,6 @@ test {
 
 dependencies {
 
-    /* *** Spring *** */
-    implementation('org.springframework.boot:spring-boot-starter')
-    implementation('org.springframework.boot:spring-boot-starter-web')
-    testImplementation('org.springframework.boot:spring-boot-starter-test')
-
     implementation('com.esotericsoftware:kryo:4.0.0')
 
     /* *** Common Libs *** */
@@ -72,19 +57,4 @@ dependencies {
 
     testImplementation('org.mockito:mockito-junit-jupiter:2.18.3')
     testImplementation('org.mockito:mockito-core:2.+')
-}
-
-task collectResourcesToDir(type: Copy, dependsOn: build) {
-    println "Copying project resources to the directory '$targetResourceDir'"
-    from "$buildDir/libs", "$projectDir/src/main/resources"
-    include "*.jar", "*.sh"
-    into "$projectDir$targetResourceDir"
-}
-
-task runBuild(dependsOn: collectResourcesToDir) {
-    println 'Running build!'
-}
-
-task cleanProject(type: Delete, dependsOn: clean) {
-    delete "$projectDir$targetResourceDir"
 }
