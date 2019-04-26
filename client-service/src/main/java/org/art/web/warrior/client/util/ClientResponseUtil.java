@@ -11,9 +11,9 @@ import java.util.Map;
 
 import static org.art.web.warrior.client.CommonServiceConstants.*;
 
-public class CompServiceResponseUtil {
+public class ClientResponseUtil {
 
-    private CompServiceResponseUtil() {
+    private ClientResponseUtil() {
     }
 
     public static ClientServiceResponse buildUnprocessableEntityResponse(CompServiceUnitRequest clientReqData) {
