@@ -3,13 +3,14 @@ package org.art.web.warrior.client.controller;
 import lombok.extern.slf4j.Slf4j;
 import org.art.web.warrior.client.dto.AdminTaskCompData;
 import org.art.web.warrior.client.dto.ClientServiceAdminResponse;
-import org.art.web.warrior.commons.tasking.CodingTask;
+import org.art.web.warrior.commons.tasking.dto.TaskServicePubRequest;
 import org.art.web.warrior.client.service.api.CompServiceClient;
 import org.art.web.warrior.client.service.api.TaskServiceClient;
 import org.art.web.warrior.client.util.ClientRequestUtil;
 import org.art.web.warrior.client.util.ClientResponseUtil;
 import org.art.web.warrior.commons.compiler.dto.CompServiceResponse;
 import org.art.web.warrior.commons.compiler.dto.CompServiceUnitRequest;
+import org.art.web.warrior.commons.tasking.dto.TaskServicePubResponse;
 import org.art.web.warrior.commons.util.ParserUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
@@ -55,9 +56,9 @@ public class AdminClientController {
             log.debug("Compilation errors occurred while compiling client source code!");
             return ClientResponseUtil.buildCompErrorAdminTaskResponse(serviceResp, solutionSrcCode, runnerSrcCode);
         }
-        CodingTask codingTask = ClientRequestUtil.buildTaskServiceRequest(clientRequestData, serviceResp);
-        taskServiceClient.publishNewCodingTask(codingTask);
-
+        TaskServicePubRequest taskServicePubRequest = ClientRequestUtil.buildTaskServiceRequest(clientRequestData, serviceResp);
+        //TODO
+        TaskServicePubResponse taskServicePubResponse = taskServiceClient.publishNewCodingTask(taskServicePubRequest);
         return ClientResponseUtil.buildCompOkAdminTaskResponse(solutionSrcCode, runnerSrcCode);
     }
 

@@ -51,9 +51,9 @@ public class ExecServiceClientImpl implements ExecServiceClient {
         if (StringUtils.isNotBlank(activeProfile) && ACTIVE_PROFILE_CONTAINER.equals(activeProfile)) {
             String execHostName = env.getProperty(EXECUTION_SERVICE_HOST_ENV_PROP_NAME);
             String execHostPort = env.getProperty(EXECUTION_SERVICE_PORT_ENV_PROP_NAME);
-            return INVOCATION_SERVICE_ENDPOINT_FORMAT.format(new Object[]{execHostName, execHostPort});
+            return EXECUTION_SERVICE_ENDPOINT_FORMAT.format(new Object[]{execHostName, execHostPort});
         } else {
-            return INVOCATION_SERVICE_ENDPOINT_FORMAT.format(new Object[]{LOCALHOST, EXEC_SERVICE_PORT_NO_PROFILE});
+            return EXECUTION_SERVICE_ENDPOINT_FORMAT.format(new Object[]{LOCALHOST, EXEC_SERVICE_PORT_NO_PROFILE});
         }
     }
 }

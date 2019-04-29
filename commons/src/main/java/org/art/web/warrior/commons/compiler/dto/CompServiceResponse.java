@@ -1,7 +1,7 @@
 package org.art.web.warrior.commons.compiler.dto;
 
 import lombok.*;
-import org.art.web.warrior.commons.compiler.ServiceResponseStatus;
+import org.art.web.warrior.commons.compiler.CompServiceRespStatus;
 
 import java.util.Map;
 
@@ -31,10 +31,10 @@ public class CompServiceResponse {
     Map<String, CompServiceUnitResponse> compUnitResults;
 
     public boolean isCompError() {
-        return ServiceResponseStatus.COMPILATION_ERROR.getStatusId().equals(compilerStatus);
+        return CompServiceRespStatus.COMPILATION_ERROR.getStatusId().equals(compilerStatus);
     }
 
     public boolean isCompOk() {
-        return ServiceResponseStatus.SUCCESS.getStatusId().equals(compilerStatus);
+        return CompServiceRespStatus.SUCCESS.getStatusId().equals(compilerStatus);
     }
 }

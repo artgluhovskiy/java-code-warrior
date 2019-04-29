@@ -1,4 +1,4 @@
-package org.art.web.warrior.commons.tasking;
+package org.art.web.warrior.commons.tasking.dto;
 
 import lombok.*;
 
@@ -7,7 +7,7 @@ import lombok.*;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class CodingTask {
+public class TaskServicePubRequest {
 
     private String nameId;
 

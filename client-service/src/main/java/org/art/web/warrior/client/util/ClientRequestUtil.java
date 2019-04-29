@@ -1,7 +1,7 @@
 package org.art.web.warrior.client.util;
 
 import org.art.web.warrior.client.dto.AdminTaskCompData;
-import org.art.web.warrior.commons.tasking.CodingTask;
+import org.art.web.warrior.commons.tasking.dto.TaskServicePubRequest;
 import org.art.web.warrior.commons.compiler.dto.CompServiceResponse;
 import org.art.web.warrior.commons.compiler.dto.CompServiceUnitResponse;
 
@@ -14,10 +14,10 @@ public class ClientRequestUtil {
     private ClientRequestUtil() {
     }
 
-    public static CodingTask buildTaskServiceRequest(AdminTaskCompData clientRequestData, CompServiceResponse serviceResp) {
+    public static TaskServicePubRequest buildTaskServiceRequest(AdminTaskCompData clientRequestData, CompServiceResponse serviceResp) {
         Map<String, CompServiceUnitResponse> compResults = serviceResp.getCompUnitResults();
         byte[] compiledRunnerClass = compResults.get(RUNNER_CLASS_NAME).getCompiledClassBytes();
-        return CodingTask.builder()
+        return TaskServicePubRequest.builder()
                 .nameId(clientRequestData.getTaskNameId())
                 .name(clientRequestData.getTaskName())
                 .description(clientRequestData.getTaskDescription())

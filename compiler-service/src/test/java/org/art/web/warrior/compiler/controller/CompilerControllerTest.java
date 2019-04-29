@@ -3,7 +3,7 @@ package org.art.web.warrior.compiler.controller;
 import com.esotericsoftware.kryo.Kryo;
 import com.esotericsoftware.kryo.io.Input;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import org.art.web.warrior.commons.compiler.ServiceResponseStatus;
+import org.art.web.warrior.commons.compiler.CompServiceRespStatus;
 import org.art.web.warrior.commons.compiler.dto.CompServiceResponse;
 import org.art.web.warrior.commons.compiler.dto.CompServiceUnitRequest;
 import org.art.web.warrior.commons.compiler.dto.CompServiceUnitResponse;
@@ -81,7 +81,7 @@ class CompilerControllerTest {
         byte[] mockCompiledData = new byte[10];
 
         CompilationUnit unit = new CompilationUnit(className, src);
-        CompilationResult compResult = new CompilationResult(ServiceResponseStatus.SUCCESS);
+        CompilationResult compResult = new CompilationResult(CompServiceRespStatus.SUCCESS);
 
         CompServiceUnitResponse mockUnitResult = new CompServiceUnitResponse(className, src, mockCompiledData);
         compResult.setCompUnitResults(singletonMap(className, mockUnitResult));
@@ -101,7 +101,7 @@ class CompilerControllerTest {
         assertNotNull(binResponseData);
         CompServiceResponse compResponse = (CompServiceResponse) kryo.readClassAndObject(new Input(binResponseData));
         assertNotNull(compResponse);
-        assertEquals(ServiceResponseStatus.SUCCESS.getStatusId(), compResponse.getCompilerStatus());
+        assertEquals(CompServiceRespStatus.SUCCESS.getStatusId(), compResponse.getCompilerStatus());
         CompServiceUnitResponse unitResult = compResponse.getCompUnitResults().get(className);
         assertEquals(className, unitResult.getClassName());
         assertEquals(src, unitResult.getSrcCode());
