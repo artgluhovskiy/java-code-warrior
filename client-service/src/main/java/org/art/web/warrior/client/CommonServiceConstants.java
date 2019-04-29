@@ -23,4 +23,5 @@ public class CommonServiceConstants {
     public static final String INTERNAL_SERVICE_ERROR_MESSAGE = "Internal service error occurred! Compilation service responded with empty body.";
     public static final String COMPILATION_ERROR_MESSAGE = "Compilation errors occurred while compiling client source code!";
     public static final String COMPILATION_OK_MESSAGE = "Client source code was successfully compiled!";
+    public static final String TASK_PUBLISHING_OK_MESSAGE = "New coding task was successfully compiled and published!";
 }

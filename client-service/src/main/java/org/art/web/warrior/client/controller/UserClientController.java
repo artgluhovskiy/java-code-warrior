@@ -1,8 +1,9 @@
 package org.art.web.warrior.client.controller;
 
 import lombok.extern.slf4j.Slf4j;
-import org.art.web.warrior.client.dto.ClientServiceResponse;
-import org.art.web.warrior.client.service.api.CodingTaskService;
+import org.art.web.warrior.client.dto.ClientServiceUserResponse;
+import org.art.web.warrior.client.dto.UserCodeCompData;
+import org.art.web.warrior.client.service.api.TaskServiceClient;
 import org.art.web.warrior.client.service.api.CompServiceClient;
 import org.art.web.warrior.client.service.api.ExecServiceClient;
 import org.art.web.warrior.client.util.ClientResponseUtil;
@@ -22,40 +23,41 @@ import static java.util.Collections.singletonList;
 
 @Slf4j
 @Controller
-@RequestMapping("/submit")
-public class ClientAppController {
+@RequestMapping("/user")
+public class UserClientController {
 
     private final CompServiceClient compServiceClient;
 
     private final ExecServiceClient execServiceClient;
 
-    private final CodingTaskService taskService;
+    private final TaskServiceClient taskService;
 
     @Autowired
-    public ClientAppController(CompServiceClient compServiceClient, ExecServiceClient execServiceClient, CodingTaskService taskService) {
+    public UserClientController(CompServiceClient compServiceClient, ExecServiceClient execServiceClient, TaskServiceClient taskService) {
         this.compServiceClient = compServiceClient;
         this.execServiceClient = execServiceClient;
         this.taskService = taskService;
     }
 
-    @PostMapping(consumes = MediaType.APPLICATION_JSON_UTF8_VALUE, produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
     @ResponseBody
-    public ClientServiceResponse submitClientCode(@RequestBody CompServiceUnitRequest clientRequestData) throws ClassNotFoundException, IllegalAccessException, InstantiationException, NoSuchMethodException, InvocationTargetException {
-        String className = clientRequestData.getClassName();
-        String srcCode = clientRequestData.getSrcCode();
-        if (!clientRequestData.isValid()) {
+    @PostMapping(value = "submit", consumes = MediaType.APPLICATION_JSON_UTF8_VALUE, produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
+    public ClientServiceUserResponse submitClientCode(@RequestBody UserCodeCompData userCompData) throws ClassNotFoundException, IllegalAccessException, InstantiationException, NoSuchMethodException, InvocationTargetException {
+        String className = userCompData.getClassName();
+        String srcCode = userCompData.getSrcCode();
+        if (!userCompData.isValid()) {
             log.debug("Client code cannot be processed: class name {}, source code {}", className, srcCode);
-            return ClientResponseUtil.buildUnprocessableEntityResponse(clientRequestData);
+            return ClientResponseUtil.buildUnprocessableUserEntityResponse(userCompData);
         }
         log.debug("Client code submission request: class name {}, source code {}", className, srcCode);
-        CompServiceResponse serviceResp = compServiceClient.callCompilationService(singletonList(clientRequestData));
+        CompServiceUnitRequest requestCompData = new CompServiceUnitRequest(userCompData.getClassName(), userCompData.getSrcCode());
+        CompServiceResponse serviceResp = compServiceClient.callCompilationService(singletonList(requestCompData));
         if (serviceResp == null) {
             log.debug("Internal service error occurred! Compilation service responded with empty body.");
-            return ClientResponseUtil.buildEmptyBodyResponse(clientRequestData);
+            return ClientResponseUtil.buildEmptyBodyUserResponse(userCompData);
         }
         if (serviceResp.isCompError()) {
             log.debug("Compilation errors occurred while compiling client source code!");
-            return ClientResponseUtil.buildCompErrorResponse(serviceResp, className);
+            return ClientResponseUtil.buildCompErrorUserResponse(serviceResp, className);
         }
         //TODO: Getting the compiled "test-wrapper" for the coding problem (from MySQL). As a stub, use additional
         //request to the compiler service to compile the dummy solution with the test wrapper (maybe already compiled
@@ -85,6 +87,6 @@ public class ClientAppController {
 //
 //        runMethod.invoke(runnerInstance);
 
-        return ClientResponseUtil.buildCompOkResponse(serviceResp, className);
+        return ClientResponseUtil.buildCompOkUserResponse(serviceResp, className);
     }
 }

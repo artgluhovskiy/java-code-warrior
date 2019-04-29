@@ -1,4 +1,4 @@
-package org.art.web.warrior.commons.compiler.dto;
+package org.art.web.warrior.client.dto;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -11,7 +11,7 @@ import org.art.web.warrior.commons.util.ParserUtil;
 @ToString
 @NoArgsConstructor
 @AllArgsConstructor
-public class CompServiceUnitRequest {
+public class UserCodeCompData {
 
     private String className;
 

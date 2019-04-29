@@ -21,4 +21,7 @@ public class CommonConstants {
     public static final Pattern CLASS_NAME_REG_EXP = Pattern.compile("(?<=class[ \\n])(\\w+)");
 
     public static final String KRYO_CONTENT_TYPE = "application/x-kryo";
+
+    public static final String SOLUTION_CLASS_NAME = "Solution";
+    public static final String RUNNER_CLASS_NAME = "Runner";
 }
