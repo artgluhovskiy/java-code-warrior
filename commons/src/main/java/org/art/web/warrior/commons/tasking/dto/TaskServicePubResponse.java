@@ -11,7 +11,9 @@ import lombok.ToString;
 @AllArgsConstructor
 public class TaskServicePubResponse {
 
-
+    private String respStatus;
 
     private String message;
+
+    private Long taskId;
 }

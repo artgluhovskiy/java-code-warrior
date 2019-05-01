@@ -34,15 +34,15 @@ public class CompilerController {
         this.compilationService = compilationService;
     }
 
-    @PostMapping(value = "/src/entity", consumes = MediaType.APPLICATION_JSON_UTF8_VALUE)
-    public ResponseEntity<CompServiceResponse> compile(@RequestBody List<CompServiceUnitRequest> clientRequestData) {
-        LOG.debug("Compilation request. Client request data: {}", clientRequestData);
-        for (CompServiceUnitRequest requestUnit : clientRequestData) {
-            if (!requestUnit.isValid()) {
-                return cannotProcessRequestData(requestUnit);
+    @PostMapping(value = "/src", consumes = MediaType.APPLICATION_JSON_UTF8_VALUE)
+    public ResponseEntity<CompServiceResponse> compile(@RequestBody List<CompServiceUnitRequest> requestData) {
+        LOG.debug("Compilation request. Client request data: {}", requestData);
+        for (CompServiceUnitRequest compUnit : requestData) {
+            if (!compUnit.isValid()) {
+                return cannotProcessRequestData(compUnit);
             }
         }
-        List<CompilationUnit> requestUnits = clientRequestData.stream()
+        List<CompilationUnit> requestUnits = requestData.stream()
                 .map(reqData -> new CompilationUnit(reqData.getClassName(), reqData.getSrcCode()))
                 .collect(toList());
         return submitCompilationRequest(requestUnits);

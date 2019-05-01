@@ -1,6 +1,6 @@
-package org.art.web.warrior.commons.compiler;
+package org.art.web.warrior.commons;
 
-public enum CompServiceRespStatus {
+public enum ServiceResponseStatus {
 
     SUCCESS("success", 1),
     BAD_REQUEST("bad_request", -1),
@@ -10,7 +10,7 @@ public enum CompServiceRespStatus {
     private int statusCode;
     private String statusId;
 
-    CompServiceRespStatus(String statusId, int statusCode) {
+    ServiceResponseStatus(String statusId, int statusCode) {
         this.statusId = statusId;
         this.statusCode = statusCode;
     }

@@ -3,7 +3,7 @@ package org.art.web.warrior.compiler.controller;
 import com.esotericsoftware.kryo.Kryo;
 import com.esotericsoftware.kryo.io.Input;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import org.art.web.warrior.commons.compiler.CompServiceRespStatus;
+import org.art.web.warrior.commons.ServiceResponseStatus;
 import org.art.web.warrior.commons.compiler.dto.CompServiceResponse;
 import org.art.web.warrior.commons.compiler.dto.CompServiceUnitRequest;
 import org.art.web.warrior.commons.compiler.dto.CompServiceUnitResponse;
@@ -65,7 +65,7 @@ class CompilerControllerIntegrationTest {
         assertNotNull(binResponseData);
         CompServiceResponse compResponse = (CompServiceResponse) kryo.readClassAndObject(new Input(binResponseData));
         assertNotNull(compResponse);
-        assertEquals(CompServiceRespStatus.SUCCESS.getStatusId(), compResponse.getCompilerStatus());
+        assertEquals(ServiceResponseStatus.SUCCESS.getStatusId(), compResponse.getCompilerStatus());
         CompServiceUnitResponse unitResult = compResponse.getCompUnitResults().get(className);
         CustomByteClassLoader loader = new CustomByteClassLoader();
         loader.addClassData(className, unitResult.getCompiledClassBytes());
@@ -92,7 +92,7 @@ class CompilerControllerIntegrationTest {
         assertNotNull(binResponseData);
         CompServiceResponse compResponse = (CompServiceResponse) kryo.readClassAndObject(new Input(binResponseData));
         assertNotNull(compResponse);
-        assertEquals(CompServiceRespStatus.SUCCESS.getStatusId(), compResponse.getCompilerStatus());
+        assertEquals(ServiceResponseStatus.SUCCESS.getStatusId(), compResponse.getCompilerStatus());
         CompServiceUnitResponse unitResult = compResponse.getCompUnitResults().get(className);
         CustomByteClassLoader loader = new CustomByteClassLoader();
         loader.addClassData(className, unitResult.getCompiledClassBytes());
@@ -119,7 +119,7 @@ class CompilerControllerIntegrationTest {
         assertNotNull(binResponseData);
         CompServiceResponse compResponse = (CompServiceResponse) kryo.readClassAndObject(new Input(binResponseData));
         assertNotNull(compResponse);
-        assertAll(() -> assertEquals(CompServiceRespStatus.COMPILATION_ERROR.getStatusId(), compResponse.getCompilerStatus()),
+        assertAll(() -> assertEquals(ServiceResponseStatus.COMPILATION_ERROR.getStatusId(), compResponse.getCompilerStatus()),
                 () -> assertEquals(-2, compResponse.getCompilerStatusCode()),
                 () -> assertEquals("modifier private not allowed here", compResponse.getCompilerMessage()),
                 () -> assertEquals("compiler.err.mod.not.allowed.here", compResponse.getCompilerErrorCode()),
@@ -191,7 +191,7 @@ class CompilerControllerIntegrationTest {
         assertNotNull(binResponseData);
         CompServiceResponse compResponse = (CompServiceResponse) kryo.readClassAndObject(new Input(binResponseData));
         assertNotNull(compResponse);
-        assertEquals(CompServiceRespStatus.SUCCESS.getStatusId(), compResponse.getCompilerStatus());
+        assertEquals(ServiceResponseStatus.SUCCESS.getStatusId(), compResponse.getCompilerStatus());
         CustomByteClassLoader loader = new CustomByteClassLoader();
         loader.addClassData(className, compResponse.getCompUnitResults().get(className).getCompiledClassBytes());
         Class<?> clazz = loader.loadClass(className);

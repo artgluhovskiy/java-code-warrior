@@ -1,7 +1,7 @@
 package org.art.web.warrior.compiler.service;
 
 import org.apache.commons.lang3.StringUtils;
-import org.art.web.warrior.commons.compiler.CompServiceRespStatus;
+import org.art.web.warrior.commons.ServiceResponseStatus;
 import org.art.web.warrior.commons.compiler.dto.CompServiceUnitResponse;
 import org.art.web.warrior.compiler.domain.CompilationMessage;
 import org.art.web.warrior.compiler.domain.CompilationResult;
@@ -107,7 +107,7 @@ class InMemoryCompilationServiceTest {
 
         CompilationResult result = assertDoesNotThrow(() -> compiler.compileUnits(singletonList(unit)));
         assertNotNull(result);
-        assertSame(CompServiceRespStatus.SUCCESS, result.getCompStatus());
+        assertSame(ServiceResponseStatus.SUCCESS, result.getCompStatus());
         assertEquals(1, result.getCompUnitResults().size());
         CompServiceUnitResponse unitResult = result.getCompUnitResults().get(className);
         assertNotNull(unitResult);
@@ -215,7 +215,7 @@ class InMemoryCompilationServiceTest {
         CompilationResult result = assertDoesNotThrow(() -> compiler.compileUnits(singletonList(unit)));
         assertNotNull(result);
 
-        assertSame(CompServiceRespStatus.SUCCESS, result.getCompStatus());
+        assertSame(ServiceResponseStatus.SUCCESS, result.getCompStatus());
         assertNull(result.getMessage());
 
         CompServiceUnitResponse unitResult = result.getCompUnitResults().get(unit.getClassName());
@@ -227,7 +227,7 @@ class InMemoryCompilationServiceTest {
         CompilationResult result = assertDoesNotThrow(() -> compiler.compileUnits(singletonList(unit)));
         assertNotNull(result);
 
-        assertSame(CompServiceRespStatus.COMPILATION_ERROR, result.getCompStatus());
+        assertSame(ServiceResponseStatus.COMPILATION_ERROR, result.getCompStatus());
         CompServiceUnitResponse unitResult = result.getCompUnitResults().get(unit.getClassName());
         assertNull(unitResult.getCompiledClassBytes());
 

@@ -4,7 +4,7 @@ import lombok.EqualsAndHashCode;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
-import org.art.web.warrior.commons.compiler.CompServiceRespStatus;
+import org.art.web.warrior.commons.ServiceResponseStatus;
 import org.art.web.warrior.commons.compiler.dto.CompServiceUnitResponse;
 
 import java.util.Map;
@@ -19,13 +19,13 @@ import java.util.Map;
 @RequiredArgsConstructor
 public class CompilationResult {
 
-    private final CompServiceRespStatus status;
+    private final ServiceResponseStatus status;
 
     private CompilationMessage message;
 
     private Map<String, CompServiceUnitResponse> compUnitResults;
 
-    public CompServiceRespStatus getCompStatus() {
+    public ServiceResponseStatus getCompStatus() {
         return status;
     }
 

@@ -1,6 +1,6 @@
 package org.art.web.warrior.compiler.service;
 
-import org.art.web.warrior.commons.compiler.CompServiceRespStatus;
+import org.art.web.warrior.commons.ServiceResponseStatus;
 import org.art.web.warrior.commons.compiler.dto.CompServiceUnitResponse;
 import org.art.web.warrior.compiler.domain.CompilationMessage;
 import org.art.web.warrior.compiler.domain.CompilationResult;
@@ -96,13 +96,13 @@ public class InMemoryCompilationService implements CompilationService {
                                                      Map<String, byte[]> compiledClassData) {
         CompilationResult compilationResult;
         if (result) {
-            compilationResult = new CompilationResult(CompServiceRespStatus.SUCCESS);
+            compilationResult = new CompilationResult(ServiceResponseStatus.SUCCESS);
             Map<String, CompServiceUnitResponse> unitResults = units.stream()
                     .map(unit -> mapToUnitResult(unit, compiledClassData))
                     .collect(toMap(CompServiceUnitResponse::getClassName, Function.identity()));
             compilationResult.setCompUnitResults(unitResults);
         } else {
-            compilationResult = new CompilationResult(CompServiceRespStatus.COMPILATION_ERROR);
+            compilationResult = new CompilationResult(ServiceResponseStatus.COMPILATION_ERROR);
             if (!diagnostics.isEmpty()) {
                 //Reporting the last diagnostic item
                 Diagnostic diagnostic = diagnostics.get(diagnostics.size() - 1);
