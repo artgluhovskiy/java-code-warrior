@@ -2,36 +2,61 @@ version: '3'
 
 services:
 
-  # Client Service
-  client-service:
-    container_name: client-service
-    depends_on:
-      - compiler-service
-    build:
-      context: ./client-service
+#  # Client Service
+#  client-service:
+#    container_name: client-service
+#    depends_on:
+#      - compiler-service
+#    build:
+#      context: ./client-service
+#    environment:
+#      COMPILER_SERVICE_HOST: compiler-service
+#      COMPILER_SERVICE_PORT: 8080
+#
+#      INVOCATION_SERVICE_HOST: invocation-service
+#      INVOCATION_SERVICE_PORT: 8081
+#    ports:
+#      - "8082:8082"
+#
+#  # Compiler Service
+#  compiler-service:
+#    container_name: compiler-service
+#    build:
+#      context: ./compiler-service
+#    ports:
+#      - "8080:8080"
+#    volumes:
+#      - "./logs:/app/logs"
+#
+#  # Invocation Service
+#  execution-service:
+#    container_name: execution-service
+#    build:
+#      context: ./execution-service
+#    ports:
+#      - "8081:8081"
+
+  # MySQL database container
+  mysqldb:
+    image: mysql:5.7
+    container_name: mysqldb
+    ports:
+      - "3306:3306"
     environment:
-      COMPILER_SERVICE_HOST: compiler-service
-      COMPILER_SERVICE_PORT: 8080
+      MYSQL_ROOT_PASSWORD: rootpassword
 
-      INVOCATION_SERVICE_HOST: invocation-service
-      INVOCATION_SERVICE_PORT: 8081
-    ports:
-      - "8082:8082"
-
-  # Compiler Service
-  compiler-service:
-    container_name: compiler-service
+  # Task Service
+  task-service:
+    container_name: task-service
+    depends_on:
+      - mysqldb
+    environment:
+      DATABASE_HOST: mysqldb
+      DATABASE_PORT: 3306
+      DATABASE_USER: root
+      DATABASE_PASSWORD: rootpassword
+      DATABASE_NAME: tasks
     build:
-      context: ./compiler-service
+      context: ./task-service
     ports:
-      - "8080:8080"
-    volumes:
-      - "./logs:/app/logs"
-
-  # Invocation Service
-  invocation-service:
-    container_name: invocation-service
-    build:
-      context: ./method-invocation-service
-    ports:
-      - "8081:8081"
+      - "8083:8083"
