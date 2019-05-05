@@ -17,6 +17,7 @@ import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
+import javax.validation.Valid;
 import java.util.Arrays;
 import java.util.List;
 
@@ -37,14 +38,10 @@ public class AdminClientController {
 
     @ResponseBody
     @PostMapping(value = "submit", consumes = MediaType.APPLICATION_JSON_UTF8_VALUE, produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
-    public ClientServiceAdminResponse publishNewTask(@RequestBody AdminTaskCompData clientRequestData) {
+    public ClientServiceAdminResponse publishNewTask(@Valid @RequestBody AdminTaskCompData clientRequestData) {
         log.info("Publishing New Coding Task: {}", clientRequestData);
         String solutionSrcCode = clientRequestData.getSolutionSrcCode();
         String runnerSrcCode = clientRequestData.getRunnerSrcCode();
-        if (!clientRequestData.isValid()) {
-            log.debug("Admin task code cannot be processed: solution src code: {}, runner src code: {}", solutionSrcCode, runnerSrcCode);
-            return ClientResponseUtil.buildUnprocessableAdminTaskResponse(clientRequestData);
-        }
         log.debug("Compiling class data.");
         List<CompServiceUnitRequest> compServiceReqData = prepareCompServiceRequestData(clientRequestData);
         CompServiceResponse serviceResp = compServiceClient.callCompilationService(compServiceReqData);
@@ -57,9 +54,8 @@ public class AdminClientController {
             return ClientResponseUtil.buildCompErrorAdminTaskResponse(serviceResp, solutionSrcCode, runnerSrcCode);
         }
         TaskServicePubRequest taskServicePubRequest = ClientRequestUtil.buildTaskServiceRequest(clientRequestData, serviceResp);
-        //TODO
         TaskServicePubResponse taskServicePubResponse = taskServiceClient.publishNewCodingTask(taskServicePubRequest);
-        return ClientResponseUtil.buildCompOkAdminTaskResponse(solutionSrcCode, runnerSrcCode);
+        return ClientResponseUtil.buildTaskPubAdminResponse(taskServicePubResponse, clientRequestData);
     }
 
     private List<CompServiceUnitRequest> prepareCompServiceRequestData(AdminTaskCompData requestData) {

@@ -46,10 +46,17 @@ $(function () {
 
     function processErrorResponse(data, targetArea) {
         setError(targetArea);
-        if (data.responseText !== '') {
-            $(targetArea).text(data.responseText);
-        } else {
+        var respStatus = data.status;
+        if (respStatus === 422) {
+            var respObject = JSON.parse(data.responseText);
+            $(targetArea).text('Validation failed!\n');
+            Object.values(respObject).forEach(function (error) {
+                $(targetArea).append('- ' + error + '\n');
+            });
+        } else if (respStatus === 500) {
             $(targetArea).text('Unexpected internal error occurred while processing the submission request!');
+        } else {
+            $(targetArea).text(data.responseText);
         }
     }
 

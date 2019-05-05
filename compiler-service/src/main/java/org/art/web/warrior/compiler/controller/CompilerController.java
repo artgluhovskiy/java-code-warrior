@@ -37,11 +37,6 @@ public class CompilerController {
     @PostMapping(value = "/src", consumes = MediaType.APPLICATION_JSON_UTF8_VALUE)
     public ResponseEntity<CompServiceResponse> compile(@RequestBody List<CompServiceUnitRequest> requestData) {
         LOG.debug("Compilation request. Client request data: {}", requestData);
-        for (CompServiceUnitRequest compUnit : requestData) {
-            if (!compUnit.isValid()) {
-                return cannotProcessRequestData(compUnit);
-            }
-        }
         List<CompilationUnit> requestUnits = requestData.stream()
                 .map(reqData -> new CompilationUnit(reqData.getClassName(), reqData.getSrcCode()))
                 .collect(toList());
@@ -72,13 +67,5 @@ public class CompilerController {
             CompServiceResponse errorResponseDto = ServiceResponseUtils.buildInternalServiceErrorResponse(e, units);
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(errorResponseDto);
         }
-    }
-
-    private ResponseEntity<CompServiceResponse> cannotProcessRequestData(CompServiceUnitRequest requestData) {
-        String className = requestData.getClassName();
-        String src = requestData.getSrcCode();
-        LOG.info("Cannot process request entity. Request data is not valid. Class name: {}, source code: {}", className, src);
-        CompServiceResponse unprocessedEntityResponse = ServiceResponseUtils.buildUnprocessableEntityResponse(className, src);
-        return ResponseEntity.unprocessableEntity().body(unprocessedEntityResponse);
     }
 }

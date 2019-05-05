@@ -3,21 +3,24 @@ package org.art.web.warrior.client.controller;
 import lombok.extern.slf4j.Slf4j;
 import org.art.web.warrior.client.dto.ClientServiceUserResponse;
 import org.art.web.warrior.client.dto.UserCodeCompData;
-import org.art.web.warrior.client.service.api.TaskServiceClient;
 import org.art.web.warrior.client.service.api.CompServiceClient;
 import org.art.web.warrior.client.service.api.ExecServiceClient;
+import org.art.web.warrior.client.service.api.TaskServiceClient;
 import org.art.web.warrior.client.util.ClientResponseUtil;
 import org.art.web.warrior.commons.compiler.dto.CompServiceResponse;
 import org.art.web.warrior.commons.compiler.dto.CompServiceUnitRequest;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.validation.FieldError;
+import org.springframework.web.bind.MethodArgumentNotValidException;
+import org.springframework.web.bind.annotation.*;
 
+import javax.validation.Valid;
 import java.lang.reflect.InvocationTargetException;
+import java.util.HashMap;
+import java.util.Map;
 
 import static java.util.Collections.singletonList;
 
@@ -41,13 +44,9 @@ public class UserClientController {
 
     @ResponseBody
     @PostMapping(value = "submit", consumes = MediaType.APPLICATION_JSON_UTF8_VALUE, produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
-    public ClientServiceUserResponse submitClientCode(@RequestBody UserCodeCompData userCompData) throws ClassNotFoundException, IllegalAccessException, InstantiationException, NoSuchMethodException, InvocationTargetException {
+    public ClientServiceUserResponse submitClientCode(@Valid @RequestBody UserCodeCompData userCompData) throws ClassNotFoundException, IllegalAccessException, InstantiationException, NoSuchMethodException, InvocationTargetException {
         String className = userCompData.getClassName();
         String srcCode = userCompData.getSrcCode();
-        if (!userCompData.isValid()) {
-            log.debug("Client code cannot be processed: class name {}, source code {}", className, srcCode);
-            return ClientResponseUtil.buildUnprocessableUserEntityResponse(userCompData);
-        }
         log.debug("Client code submission request: class name {}, source code {}", className, srcCode);
         CompServiceUnitRequest requestCompData = new CompServiceUnitRequest(userCompData.getClassName(), userCompData.getSrcCode());
         CompServiceResponse serviceResp = compServiceClient.callCompilationService(singletonList(requestCompData));
@@ -62,7 +61,6 @@ public class UserClientController {
         //TODO: Getting the compiled "test-wrapper" for the coding problem (from MySQL). As a stub, use additional
         //request to the compiler service to compile the dummy solution with the test wrapper (maybe already compiled
         //test wrapper should be store in the database, need to check here)
-
 
 
 //        ExecServiceRequest execServiceRequest = new ExecServiceRequest(solutionClassName, solutionClassBytes, runnerClassName, runnerClassBytes);

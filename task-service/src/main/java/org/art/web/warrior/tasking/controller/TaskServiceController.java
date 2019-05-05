@@ -5,6 +5,8 @@ import org.art.web.warrior.commons.tasking.dto.TaskServicePubRequest;
 import org.art.web.warrior.commons.tasking.dto.TaskServicePubResponse;
 import org.art.web.warrior.tasking.model.CodingTask;
 import org.art.web.warrior.tasking.service.api.TaskService;
+import org.art.web.warrior.tasking.util.ServiceRequestUtil;
+import org.art.web.warrior.tasking.util.ServiceResponseUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -28,12 +30,9 @@ public class TaskServiceController {
 
     @PostMapping(value = "/publish", consumes = KRYO_CONTENT_TYPE, produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
     public TaskServicePubResponse publishNewCodingTask(@RequestBody TaskServicePubRequest requestData) {
-        //TODO: Validate request data
-        CodingTask task = new CodingTask(requestData.getNameId(), requestData.getName(), requestData.getDescription(),
-                requestData.getMethodSign(), requestData.getRunnerClassData());
-        CodingTask codingTask = this.taskService.publishTask(task);
-
-        return null;
+        CodingTask codingTask = ServiceRequestUtil.buildCodingTaskFromRequest(requestData);
+        codingTask = this.taskService.publishTask(codingTask);
+        return ServiceResponseUtil.buildTaskPubResponse(codingTask);
     }
 
     @GetMapping("/ping")

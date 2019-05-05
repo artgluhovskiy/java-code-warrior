@@ -36,8 +36,9 @@ public class ExecServiceClientImpl implements ExecServiceClient {
                 .build();
     }
 
+    @Override
     public ExecServiceResponse callExecutorService(ExecServiceRequest execRequestData) {
-        String execServiceEndpoint = getExecServiceEndpoint();
+        String execServiceEndpoint = getServiceEndpoint();
         HttpHeaders headers = new HttpHeaders();
         headers.set(HttpHeaders.CONTENT_TYPE, KRYO_CONTENT_TYPE);
         HttpEntity<ExecServiceRequest> reqEntity = new HttpEntity<>(execRequestData, headers);
@@ -46,7 +47,8 @@ public class ExecServiceClientImpl implements ExecServiceClient {
         return execServiceResponse.getBody();
     }
 
-    private String getExecServiceEndpoint() {
+    @Override
+    public String getServiceEndpoint() {
         String activeProfile = env.getProperty(SPRING_ACTIVE_PROFILE_ENV_PROP_NAME);
         if (StringUtils.isNotBlank(activeProfile) && ACTIVE_PROFILE_CONTAINER.equals(activeProfile)) {
             String execHostName = env.getProperty(EXECUTION_SERVICE_HOST_ENV_PROP_NAME);

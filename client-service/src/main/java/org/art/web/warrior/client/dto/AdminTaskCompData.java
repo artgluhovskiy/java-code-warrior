@@ -31,9 +31,4 @@ public class AdminTaskCompData {
 
     @NotBlank(message = "Runner Code should not be blank!")
     private String runnerSrcCode;
-
-    public boolean isValid() {
-        return StringUtils.isNotBlank(solutionSrcCode)
-                && StringUtils.isNotBlank(runnerSrcCode);
-    }
 }

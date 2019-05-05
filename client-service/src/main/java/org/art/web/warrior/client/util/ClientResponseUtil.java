@@ -4,6 +4,7 @@ import org.art.web.warrior.client.dto.*;
 import org.art.web.warrior.commons.ServiceResponseStatus;
 import org.art.web.warrior.commons.compiler.dto.CompServiceResponse;
 import org.art.web.warrior.commons.compiler.dto.CompServiceUnitResponse;
+import org.art.web.warrior.commons.tasking.dto.TaskServicePubResponse;
 
 import java.util.Map;
 
@@ -12,15 +13,6 @@ import static org.art.web.warrior.client.CommonServiceConstants.*;
 public class ClientResponseUtil {
 
     private ClientResponseUtil() {
-    }
-
-    public static ClientServiceUserResponse buildUnprocessableUserEntityResponse(UserCodeCompData clientReqData) {
-        return ClientServiceUserResponse.builder()
-                .respStatus(ServiceResponseStatus.BAD_REQUEST.getStatusId())
-                .message(UNPROCESSABLE_CLIENT_REQUEST_MESSAGE)
-                .className(clientReqData.getClassName())
-                .srcCode(clientReqData.getSrcCode())
-                .build();
     }
 
     public static ClientServiceAdminResponse buildUnprocessableAdminTaskResponse(AdminTaskCompData clientReqData) {
@@ -91,6 +83,15 @@ public class ClientResponseUtil {
                 .message(TASK_PUBLISHING_OK_MESSAGE)
                 .solutionSrcCode(solutionSrcCode)
                 .runnerSrcCode(runnerSrcCode)
+                .build();
+    }
+
+    public static ClientServiceAdminResponse buildTaskPubAdminResponse(TaskServicePubResponse taskServicePubResponse, AdminTaskCompData clientRequestData) {
+        return ClientServiceAdminResponse.builder()
+                .respStatus(taskServicePubResponse.getRespStatus())
+                .message(taskServicePubResponse.getMessage())
+                .runnerSrcCode(clientRequestData.getRunnerSrcCode())
+                .solutionSrcCode(clientRequestData.getSolutionSrcCode())
                 .build();
     }
 

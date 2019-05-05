@@ -5,7 +5,7 @@ import org.art.web.warrior.commons.compiler.dto.CompServiceUnitRequest;
 
 import java.util.List;
 
-public interface CompServiceClient {
+public interface CompServiceClient extends ServiceClient {
 
     CompServiceResponse callCompilationService(List<CompServiceUnitRequest> compRequestData);
 }

@@ -40,7 +40,7 @@ public class TaskServiceClientImpl implements TaskServiceClient {
 
     @Override
     public TaskServicePubResponse publishNewCodingTask(TaskServicePubRequest taskData) {
-        String taskServiceEndpoint = getExecServiceEndpoint();
+        String taskServiceEndpoint = getServiceEndpoint();
         HttpHeaders headers = new HttpHeaders();
         headers.set(HttpHeaders.CONTENT_TYPE, KRYO_CONTENT_TYPE);
         headers.set(HttpHeaders.ACCEPT, MediaType.APPLICATION_JSON_UTF8_VALUE);
@@ -50,7 +50,8 @@ public class TaskServiceClientImpl implements TaskServiceClient {
         return taskServiceResponse.getBody();
     }
 
-    private String getExecServiceEndpoint() {
+    @Override
+    public String getServiceEndpoint() {
         String activeProfile = env.getProperty(SPRING_ACTIVE_PROFILE_ENV_PROP_NAME);
         if (StringUtils.isNotBlank(activeProfile) && ACTIVE_PROFILE_CONTAINER.equals(activeProfile)) {
             String taskServiceHostName = env.getProperty(TASK_SERVICE_HOST_ENV_PROP_NAME);

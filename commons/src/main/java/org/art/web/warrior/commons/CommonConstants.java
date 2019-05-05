@@ -11,6 +11,9 @@ public class CommonConstants {
     public static final char SLASH_CH = '/';
     public static final char NEW_LINE_CH = '\n';
     public static final char QUOTE_CH = '"';
+    public static final char COLON_CH = ':';
+
+    public static final String NEW_LINE = "\n";
 
     public static final String SPRING_ACTIVE_PROFILE_ENV_PROP_NAME = "spring.profiles.active";
 

@@ -39,8 +39,9 @@ public class CompServiceClientImpl implements CompServiceClient {
                 .build();
     }
 
+    @Override
     public CompServiceResponse callCompilationService(List<CompServiceUnitRequest> compRequestData) {
-        String compServiceEndpoint = getCompServiceEndpoint();
+        String compServiceEndpoint = getServiceEndpoint();
         HttpHeaders headers = new HttpHeaders();
         headers.set(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_UTF8_VALUE);
         headers.set(HttpHeaders.ACCEPT, KRYO_CONTENT_TYPE);
@@ -50,7 +51,8 @@ public class CompServiceClientImpl implements CompServiceClient {
         return compServiceResponse.getBody();
     }
 
-    private String getCompServiceEndpoint() {
+    @Override
+    public String getServiceEndpoint() {
         String activeProfile = env.getProperty(SPRING_ACTIVE_PROFILE_ENV_PROP_NAME);
         if (StringUtils.isNotBlank(activeProfile) && ACTIVE_PROFILE_CONTAINER.equals(activeProfile)) {
             String compHostName = env.getProperty(COMPILER_SERVICE_HOST_ENV_PROP_NAME);
