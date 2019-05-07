@@ -12,6 +12,7 @@ public class CommonConstants {
     public static final char NEW_LINE_CH = '\n';
     public static final char QUOTE_CH = '"';
     public static final char COLON_CH = ':';
+    public static final char SPACE_CH = ' ';
 
     public static final String NEW_LINE = "\n";
 
@@ -27,4 +28,7 @@ public class CommonConstants {
 
     public static final String SOLUTION_CLASS_NAME = "Solution";
     public static final String RUNNER_CLASS_NAME = "Runner";
+
+    public static final String SOLUTION_SETTER_METHOD_NAME = "setSolution";
+    public static final String RUNNER_RUN_METHOD_NAME = "run";
 }

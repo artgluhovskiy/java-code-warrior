@@ -2,13 +2,15 @@ $(function () {
     var form = $('#comp-data');
     var codeArea = $('#code-area');
     var classNameField = $('#class-name');
+    var taskNameIdField = $('#task-name-id');
 
     $(form).submit(function (event) {
         event.preventDefault();
 
         var srcCode = codeArea.val();
         var className = classNameField.val();
-        var formData = JSON.stringify({srcCode: srcCode, className: className});
+        var taskNameId = taskNameIdField.val();
+        var formData = JSON.stringify({srcCode: srcCode, className: className, taskNameId: taskNameId});
 
         var submitResultArea = $('#submit-result');
 
@@ -26,18 +28,23 @@ $(function () {
     });
 
     function processOkResponse(response, targetArea) {
-        if (response.respStatus === 'success') {
+        var respStatus = response.respStatus;
+        if (respStatus === 'success') {
             setSuccess(targetArea);
             $(targetArea).text(response.message);
-        } else if (response.respStatus === 'comp_error') {
+        } else if (respStatus === 'comp_error') {
             setError(targetArea);
             $(targetArea).text(response.message + '\n');
             $(targetArea).append('Compiler message: ' + response.compErrorDetails.compilerMessage + '\n');
             $(targetArea).append('Error code line: ' + response.compErrorDetails.errorColumnNumber + '\n');
             $(targetArea).append('Error position: ' + response.compErrorDetails.errorPosition + '\n');
-        } else if (response.respStatus === 'bad_request') {
+        } else if (respStatus === 'bad_request') {
             setError(targetArea);
             $(targetArea).text('Source code cannot be processed! Please, check the validity of the class names in the input fields!');
+        } else if(respStatus === 'exec_error') {
+            setError(targetArea);
+            $(targetArea).text(response.message + '\n');
+            $(targetArea).append(response.execMessage);
         } else {
             setError(targetArea);
             $(targetArea).text('Unexpected internal error occurred while processing the submission request!');

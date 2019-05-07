@@ -5,8 +5,8 @@ import org.apache.commons.lang3.StringUtils;
 import org.art.web.warrior.client.config.converter.KryoHttpMessageConverter;
 import org.art.web.warrior.client.config.interceptor.RequestProcessingLogger;
 import org.art.web.warrior.client.service.api.CompServiceClient;
-import org.art.web.warrior.commons.compiler.dto.CompServiceResponse;
-import org.art.web.warrior.commons.compiler.dto.CompServiceUnitRequest;
+import org.art.web.warrior.commons.compiler.dto.CompilationResp;
+import org.art.web.warrior.commons.compiler.dto.CompilationUnitReq;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.web.client.RestTemplateBuilder;
 import org.springframework.core.env.Environment;
@@ -30,6 +30,8 @@ public class CompServiceClientImpl implements CompServiceClient {
 
     private RestTemplate restTemplate;
 
+    private String serviceEndpointBase;
+
     @Autowired
     public CompServiceClientImpl(Environment env, RestTemplateBuilder restTemplateBuilder) {
         this.env = env;
@@ -37,22 +39,21 @@ public class CompServiceClientImpl implements CompServiceClient {
                 .additionalInterceptors(new RequestProcessingLogger())
                 .additionalMessageConverters(new KryoHttpMessageConverter())
                 .build();
+        this.serviceEndpointBase = getServiceEndpointBase();
     }
 
     @Override
-    public CompServiceResponse callCompilationService(List<CompServiceUnitRequest> compRequestData) {
-        String compServiceEndpoint = getServiceEndpoint();
+    public CompilationResp compileSrc(List<CompilationUnitReq> compRequestData) {
         HttpHeaders headers = new HttpHeaders();
         headers.set(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_UTF8_VALUE);
         headers.set(HttpHeaders.ACCEPT, KRYO_CONTENT_TYPE);
-        HttpEntity<List<CompServiceUnitRequest>> reqEntity = new HttpEntity<>(compRequestData, headers);
-        log.debug("Making the request to the Compilation service. Endpoint: {}, request data: {}", compServiceEndpoint, compRequestData);
-        ResponseEntity<CompServiceResponse> compServiceResponse = restTemplate.postForEntity(compServiceEndpoint, reqEntity, CompServiceResponse.class);
-        return compServiceResponse.getBody();
+        HttpEntity<List<CompilationUnitReq>> reqEntity = new HttpEntity<>(compRequestData, headers);
+        log.debug("Making the request to the Compilation service. Endpoint: {}, request data: {}", this.serviceEndpointBase, compRequestData);
+        ResponseEntity<CompilationResp> serviceResponse = restTemplate.postForEntity(this.serviceEndpointBase, reqEntity, CompilationResp.class);
+        return serviceResponse.getBody();
     }
 
-    @Override
-    public String getServiceEndpoint() {
+    private String getServiceEndpointBase() {
         String activeProfile = env.getProperty(SPRING_ACTIVE_PROFILE_ENV_PROP_NAME);
         if (StringUtils.isNotBlank(activeProfile) && ACTIVE_PROFILE_CONTAINER.equals(activeProfile)) {
             String compHostName = env.getProperty(COMPILER_SERVICE_HOST_ENV_PROP_NAME);

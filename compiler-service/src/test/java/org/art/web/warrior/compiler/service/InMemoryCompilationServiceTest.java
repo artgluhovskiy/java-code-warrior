@@ -2,7 +2,7 @@ package org.art.web.warrior.compiler.service;
 
 import org.apache.commons.lang3.StringUtils;
 import org.art.web.warrior.commons.ServiceResponseStatus;
-import org.art.web.warrior.commons.compiler.dto.CompServiceUnitResponse;
+import org.art.web.warrior.commons.compiler.dto.CompilationUnitResp;
 import org.art.web.warrior.compiler.domain.CompilationMessage;
 import org.art.web.warrior.compiler.domain.CompilationResult;
 import org.art.web.warrior.compiler.domain.CompilationUnit;
@@ -109,7 +109,7 @@ class InMemoryCompilationServiceTest {
         assertNotNull(result);
         assertSame(ServiceResponseStatus.SUCCESS, result.getCompStatus());
         assertEquals(1, result.getCompUnitResults().size());
-        CompServiceUnitResponse unitResult = result.getCompUnitResults().get(className);
+        CompilationUnitResp unitResult = result.getCompUnitResults().get(className);
         assertNotNull(unitResult);
         assertEquals(className, unitResult.getClassName());
         assertNotNull(unitResult.getCompiledClassBytes());
@@ -218,7 +218,7 @@ class InMemoryCompilationServiceTest {
         assertSame(ServiceResponseStatus.SUCCESS, result.getCompStatus());
         assertNull(result.getMessage());
 
-        CompServiceUnitResponse unitResult = result.getCompUnitResults().get(unit.getClassName());
+        CompilationUnitResp unitResult = result.getCompUnitResults().get(unit.getClassName());
         assertNotNull(unitResult.getCompiledClassBytes());
         assertEquals(unit.getClassName(), unitResult.getClassName());
     }
@@ -228,7 +228,7 @@ class InMemoryCompilationServiceTest {
         assertNotNull(result);
 
         assertSame(ServiceResponseStatus.COMPILATION_ERROR, result.getCompStatus());
-        CompServiceUnitResponse unitResult = result.getCompUnitResults().get(unit.getClassName());
+        CompilationUnitResp unitResult = result.getCompUnitResults().get(unit.getClassName());
         assertNull(unitResult.getCompiledClassBytes());
 
         CompilationMessage message = result.getMessage();

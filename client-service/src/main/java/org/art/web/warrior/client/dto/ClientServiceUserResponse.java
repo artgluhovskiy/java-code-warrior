@@ -15,6 +15,8 @@ public class ClientServiceUserResponse {
 
     private String message;
 
+    private String execMessage;
+
     private String respStatus;
 
     private CompErrorDetails compErrorDetails;

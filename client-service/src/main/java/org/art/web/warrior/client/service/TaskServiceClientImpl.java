@@ -4,17 +4,14 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.art.web.warrior.client.config.converter.KryoHttpMessageConverter;
 import org.art.web.warrior.client.config.interceptor.RequestProcessingLogger;
-import org.art.web.warrior.client.dto.ExecServiceResponse;
 import org.art.web.warrior.client.service.api.TaskServiceClient;
-import org.art.web.warrior.commons.tasking.dto.TaskServicePubRequest;
-import org.art.web.warrior.commons.tasking.dto.TaskServicePubResponse;
+import org.art.web.warrior.commons.tasking.dto.CodingTaskPublicationReq;
+import org.art.web.warrior.commons.tasking.dto.CodingTaskPublicationResp;
+import org.art.web.warrior.commons.tasking.dto.CodingTaskResp;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.web.client.RestTemplateBuilder;
 import org.springframework.core.env.Environment;
-import org.springframework.http.HttpEntity;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.MediaType;
-import org.springframework.http.ResponseEntity;
+import org.springframework.http.*;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
@@ -29,6 +26,8 @@ public class TaskServiceClientImpl implements TaskServiceClient {
 
     private RestTemplate restTemplate;
 
+    private String serviceEndpointBase;
+
     @Autowired
     public TaskServiceClientImpl(Environment env, RestTemplateBuilder restTemplateBuilder) {
         this.env = env;
@@ -36,22 +35,32 @@ public class TaskServiceClientImpl implements TaskServiceClient {
                 .additionalInterceptors(new RequestProcessingLogger())
                 .additionalMessageConverters(new KryoHttpMessageConverter())
                 .build();
+        this.serviceEndpointBase = getServiceEndpointBase();
     }
 
     @Override
-    public TaskServicePubResponse publishNewCodingTask(TaskServicePubRequest taskData) {
-        String taskServiceEndpoint = getServiceEndpoint();
+    public CodingTaskPublicationResp publishCodingTask(CodingTaskPublicationReq taskData) {
         HttpHeaders headers = new HttpHeaders();
         headers.set(HttpHeaders.CONTENT_TYPE, KRYO_CONTENT_TYPE);
         headers.set(HttpHeaders.ACCEPT, MediaType.APPLICATION_JSON_UTF8_VALUE);
-        HttpEntity<TaskServicePubRequest> reqEntity = new HttpEntity<>(taskData, headers);
-        log.debug("Making the request to the Task service. Endpoint: {}, request data: {}", taskServiceEndpoint, taskData);
-        ResponseEntity<TaskServicePubResponse> taskServiceResponse = restTemplate.postForEntity(taskServiceEndpoint, reqEntity, TaskServicePubResponse.class);
-        return taskServiceResponse.getBody();
+        HttpEntity<CodingTaskPublicationReq> reqEntity = new HttpEntity<>(taskData, headers);
+        log.debug("Making task publication request to the Task service. Endpoint: {}, request data: {}", this.serviceEndpointBase, taskData);
+        ResponseEntity<CodingTaskPublicationResp> serviceResponse = restTemplate.postForEntity(this.serviceEndpointBase, reqEntity, CodingTaskPublicationResp.class);
+        return serviceResponse.getBody();
     }
 
     @Override
-    public String getServiceEndpoint() {
+    public CodingTaskResp getCodingTaskByNameId(String nameId) {
+        String serviceEndpoint = this.serviceEndpointBase + SLASH_CH + nameId;
+        HttpHeaders headers = new HttpHeaders();
+        headers.set(HttpHeaders.ACCEPT, KRYO_CONTENT_TYPE);
+        HttpEntity reqEntity = new HttpEntity<>(headers);
+        log.debug("Making the request for the task by name id to the Task service. Endpoint: {}", serviceEndpoint);
+        ResponseEntity<CodingTaskResp> serviceResponse = restTemplate.exchange(serviceEndpoint, HttpMethod.GET, reqEntity, CodingTaskResp.class);
+        return serviceResponse.getBody();
+    }
+
+    private String getServiceEndpointBase() {
         String activeProfile = env.getProperty(SPRING_ACTIVE_PROFILE_ENV_PROP_NAME);
         if (StringUtils.isNotBlank(activeProfile) && ACTIVE_PROFILE_CONTAINER.equals(activeProfile)) {
             String taskServiceHostName = env.getProperty(TASK_SERVICE_HOST_ENV_PROP_NAME);

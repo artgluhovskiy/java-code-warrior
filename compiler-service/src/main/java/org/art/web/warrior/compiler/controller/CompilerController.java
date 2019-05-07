@@ -1,12 +1,12 @@
 package org.art.web.warrior.compiler.controller;
 
-import org.art.web.warrior.commons.compiler.dto.CompServiceResponse;
-import org.art.web.warrior.commons.compiler.dto.CompServiceUnitRequest;
+import org.art.web.warrior.commons.compiler.dto.CompilationResp;
+import org.art.web.warrior.commons.compiler.dto.CompilationUnitReq;
 import org.art.web.warrior.compiler.domain.CompilationResult;
 import org.art.web.warrior.compiler.domain.CompilationUnit;
 import org.art.web.warrior.compiler.exception.CompilationServiceException;
 import org.art.web.warrior.compiler.service.api.CompilationService;
-import org.art.web.warrior.compiler.util.ServiceResponseUtils;
+import org.art.web.warrior.compiler.util.ServiceResponseUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -34,8 +34,8 @@ public class CompilerController {
         this.compilationService = compilationService;
     }
 
-    @PostMapping(value = "/src", consumes = MediaType.APPLICATION_JSON_UTF8_VALUE)
-    public ResponseEntity<CompServiceResponse> compile(@RequestBody List<CompServiceUnitRequest> requestData) {
+    @PostMapping(consumes = MediaType.APPLICATION_JSON_UTF8_VALUE)
+    public ResponseEntity<CompilationResp> compile(@RequestBody List<CompilationUnitReq> requestData) {
         LOG.debug("Compilation request. Client request data: {}", requestData);
         List<CompilationUnit> requestUnits = requestData.stream()
                 .map(reqData -> new CompilationUnit(reqData.getClassName(), reqData.getSrcCode()))
@@ -48,23 +48,18 @@ public class CompilerController {
         return COMPILER_SERVICE_OK_MESSAGE;
     }
 
-    private ResponseEntity<CompServiceResponse> submitCompilationRequest(List<CompilationUnit> units) {
+    private ResponseEntity<CompilationResp> submitCompilationRequest(List<CompilationUnit> units) {
         try {
             CompilationResult result = compilationService.compileUnits(units);
-            if (result.getCompStatus().getStatusCode() > 0) {
-                CompServiceResponse compOkResponse = ServiceResponseUtils.buildClientResponse(result);
-                return ResponseEntity.ok(compOkResponse);
-            } else {
-                CompServiceResponse compErrorResponse = ServiceResponseUtils.buildClientResponse(result);
-                return ResponseEntity.ok(compErrorResponse);
-            }
+            CompilationResp compResponse = ServiceResponseUtil.buildCompilationResponse(result);
+            return ResponseEntity.ok(compResponse);
         } catch (CompilationServiceException e) {
             LOG.info("Internal service error occurred while compiling units: {}", units, e);
-            CompServiceResponse errorResponseDto = ServiceResponseUtils.buildInternalServiceErrorResponse(e, units);
+            CompilationResp errorResponseDto = ServiceResponseUtil.buildInternalServiceErrorResponse(e, units);
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(errorResponseDto);
         } catch (Exception e) {
             LOG.info("Unexpected internal service error occurred while compiling units: {}", units, e);
-            CompServiceResponse errorResponseDto = ServiceResponseUtils.buildInternalServiceErrorResponse(e, units);
+            CompilationResp errorResponseDto = ServiceResponseUtil.buildInternalServiceErrorResponse(e, units);
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(errorResponseDto);
         }
     }

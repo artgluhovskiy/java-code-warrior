@@ -1,9 +1,9 @@
 package org.art.web.warrior.client.service.api;
 
-import org.art.web.warrior.client.dto.ExecServiceRequest;
-import org.art.web.warrior.client.dto.ExecServiceResponse;
+import org.art.web.warrior.commons.execution.dto.ExecutionReq;
+import org.art.web.warrior.commons.execution.dto.ExecutionResp;
 
-public interface ExecServiceClient extends ServiceClient {
+public interface ExecServiceClient {
 
-    ExecServiceResponse callExecutorService(ExecServiceRequest execRequestData);
+    ExecutionResp executeCode(ExecutionReq execRequestData);
 }

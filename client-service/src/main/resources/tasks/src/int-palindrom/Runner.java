@@ -1,3 +1,5 @@
+import org.art.web.warrior.commons.driver.exception.ClientCodeExecutionException;
+
 public class Runner {
 
     private Solution solution;
@@ -9,16 +11,20 @@ public class Runner {
     }
 
     public void test0() {
-        boolean result = solution.isPalindrome(121);
-        if (!result) {
-            throw new RuntimeException();
+        int input = 121;
+        boolean excpected = true;
+        boolean result = solution.isPalindrome(input);
+        if (excpected != result) {
+            throw new ClientCodeExecutionException("test0", excpected, result, input);
         }
     }
 
     public void test1() {
-        boolean result = solution.isPalindrome(-121);
-        if (result) {
-            throw new RuntimeException();
+        int input = -121;
+        boolean expected = false;
+        boolean result = solution.isPalindrome(input);
+        if (expected != result) {
+            throw new ClientCodeExecutionException("test1", expected, result, input);
         }
     }
 

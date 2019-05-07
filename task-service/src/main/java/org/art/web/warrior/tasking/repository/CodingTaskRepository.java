@@ -6,4 +6,6 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface CodingTaskRepository extends JpaRepository<CodingTask, Long> {
+
+    CodingTask getCodingTaskByNameId(String nameId);
 }

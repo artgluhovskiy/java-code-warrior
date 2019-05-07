@@ -15,6 +15,9 @@ import javax.validation.constraints.NotBlank;
 @ClassNameMatchValidation
 public class UserCodeCompData {
 
+    @NotBlank(message = "Task name ID should not be blank!")
+    private String taskNameId;
+
     @NotBlank(message = "Class name should not be blank!")
     private String className;
 

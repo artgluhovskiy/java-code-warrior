@@ -4,8 +4,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.art.web.warrior.client.config.converter.KryoHttpMessageConverter;
 import org.art.web.warrior.client.config.interceptor.RequestProcessingLogger;
-import org.art.web.warrior.client.dto.ExecServiceRequest;
-import org.art.web.warrior.client.dto.ExecServiceResponse;
+import org.art.web.warrior.commons.execution.dto.ExecutionReq;
+import org.art.web.warrior.commons.execution.dto.ExecutionResp;
 import org.art.web.warrior.client.service.api.ExecServiceClient;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.web.client.RestTemplateBuilder;
@@ -27,6 +27,8 @@ public class ExecServiceClientImpl implements ExecServiceClient {
 
     private RestTemplate restTemplate;
 
+    private String serviceEndpointBase;
+
     @Autowired
     public ExecServiceClientImpl(Environment env, RestTemplateBuilder restTemplateBuilder) {
         this.env = env;
@@ -34,21 +36,20 @@ public class ExecServiceClientImpl implements ExecServiceClient {
                 .additionalInterceptors(new RequestProcessingLogger())
                 .additionalMessageConverters(new KryoHttpMessageConverter())
                 .build();
+        this.serviceEndpointBase = getServiceEndpointBase();
     }
 
     @Override
-    public ExecServiceResponse callExecutorService(ExecServiceRequest execRequestData) {
-        String execServiceEndpoint = getServiceEndpoint();
+    public ExecutionResp executeCode(ExecutionReq execRequestData) {
         HttpHeaders headers = new HttpHeaders();
         headers.set(HttpHeaders.CONTENT_TYPE, KRYO_CONTENT_TYPE);
-        HttpEntity<ExecServiceRequest> reqEntity = new HttpEntity<>(execRequestData, headers);
-        log.debug("Making the request to the Executor service. Endpoint: {}, request data: {}", execServiceEndpoint, execRequestData);
-        ResponseEntity<ExecServiceResponse> execServiceResponse = restTemplate.postForEntity(execServiceEndpoint, reqEntity, ExecServiceResponse.class);
-        return execServiceResponse.getBody();
+        HttpEntity<ExecutionReq> reqEntity = new HttpEntity<>(execRequestData, headers);
+        log.debug("Making the request to the Executor service. Endpoint: {}, request data: {}", this.serviceEndpointBase, execRequestData);
+        ResponseEntity<ExecutionResp> serviceResponse = restTemplate.postForEntity(this.serviceEndpointBase, reqEntity, ExecutionResp.class);
+        return serviceResponse.getBody();
     }
 
-    @Override
-    public String getServiceEndpoint() {
+    private String getServiceEndpointBase() {
         String activeProfile = env.getProperty(SPRING_ACTIVE_PROFILE_ENV_PROP_NAME);
         if (StringUtils.isNotBlank(activeProfile) && ACTIVE_PROFILE_CONTAINER.equals(activeProfile)) {
             String execHostName = env.getProperty(EXECUTION_SERVICE_HOST_ENV_PROP_NAME);

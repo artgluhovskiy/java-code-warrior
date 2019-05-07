@@ -1,6 +1,6 @@
 package org.art.web.warrior.compiler.example;
 
-import org.art.web.warrior.commons.compiler.dto.CompServiceUnitResponse;
+import org.art.web.warrior.commons.compiler.dto.CompilationUnitResp;
 import org.art.web.warrior.compiler.domain.CompilationResult;
 import org.art.web.warrior.compiler.domain.CompilationUnit;
 import org.art.web.warrior.compiler.exception.CompilationServiceException;
@@ -75,7 +75,7 @@ public class Test {
 
         CompilationResult compilationResult = compilationService.compileUnits(compilationUnits);
 
-        Map<String, CompServiceUnitResponse> compUnitResults = compilationResult.getCompUnitResults();
+        Map<String, CompilationUnitResp> compUnitResults = compilationResult.getCompUnitResults();
         byte[] solutionClassData = compUnitResults.get(solutionClassName).getCompiledClassBytes();
         byte[] solutionRunnerClassData = compUnitResults.get(runnerClassName).getCompiledClassBytes();
 
