@@ -7,8 +7,8 @@ import org.art.web.warrior.client.service.api.CompServiceClient;
 import org.art.web.warrior.client.service.api.TaskServiceClient;
 import org.art.web.warrior.client.util.ClientRequestUtil;
 import org.art.web.warrior.client.util.ClientResponseUtil;
+import org.art.web.warrior.commons.compiler.dto.CompilationReq;
 import org.art.web.warrior.commons.compiler.dto.CompilationResp;
-import org.art.web.warrior.commons.compiler.dto.CompilationUnitReq;
 import org.art.web.warrior.commons.tasking.dto.CodingTaskPublicationReq;
 import org.art.web.warrior.commons.tasking.dto.CodingTaskPublicationResp;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,7 +17,6 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
-import java.util.List;
 
 @Slf4j
 @Controller
@@ -41,7 +40,7 @@ public class AdminClientController {
         String solutionSrcCode = clientRequestData.getSolutionSrcCode();
         String runnerSrcCode = clientRequestData.getRunnerSrcCode();
         log.debug("Compiling class data.");
-        List<CompilationUnitReq> compServiceReqData = ClientRequestUtil.buildCompilationServiceReq(clientRequestData);
+        CompilationReq compServiceReqData = ClientRequestUtil.buildCompilationServiceReq(clientRequestData);
         CompilationResp serviceResp = compServiceClient.compileSrc(compServiceReqData);
         if (serviceResp == null) {
             log.debug("Internal service error occurred! Compilation service responded with an empty body.");

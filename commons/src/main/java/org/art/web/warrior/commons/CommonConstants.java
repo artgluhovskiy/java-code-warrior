@@ -15,6 +15,7 @@ public class CommonConstants {
     public static final char SPACE_CH = ' ';
 
     public static final String NEW_LINE = "\n";
+    public static final String SPACE = " ";
 
     public static final String SPRING_ACTIVE_PROFILE_ENV_PROP_NAME = "spring.profiles.active";
 

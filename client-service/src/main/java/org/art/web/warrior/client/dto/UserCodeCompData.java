@@ -4,7 +4,7 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
-import org.art.web.warrior.client.config.validator.ClassNameMatchValidation;
+import org.art.web.warrior.commons.compiler.validator.ClassNameMatchValidation;
 
 import javax.validation.constraints.NotBlank;
 

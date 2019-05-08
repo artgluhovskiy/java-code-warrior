@@ -8,6 +8,7 @@ import org.art.web.warrior.client.service.api.ExecServiceClient;
 import org.art.web.warrior.client.service.api.TaskServiceClient;
 import org.art.web.warrior.client.util.ClientRequestUtil;
 import org.art.web.warrior.client.util.ClientResponseUtil;
+import org.art.web.warrior.commons.compiler.dto.CompilationReq;
 import org.art.web.warrior.commons.compiler.dto.CompilationResp;
 import org.art.web.warrior.commons.compiler.dto.CompilationUnitReq;
 import org.art.web.warrior.commons.execution.dto.ExecutionReq;
@@ -51,7 +52,8 @@ public class UserClientController {
         String taskNameId = userCompData.getTaskNameId();
         log.debug("Client code submission request: class name {}, source code {}, task name id {}", className, srcCode, taskNameId);
         CompilationUnitReq requestCompData = new CompilationUnitReq(className, srcCode);
-        CompilationResp compServiceResp = compServiceClient.compileSrc(singletonList(requestCompData));
+        CompilationReq compRequest = new CompilationReq(singletonList(requestCompData));
+        CompilationResp compServiceResp = compServiceClient.compileSrc(compRequest);
         if (compServiceResp == null) {
             log.debug("Internal service error occurred! Compilation service responded with empty body.");
             return ClientResponseUtil.buildUserTaskEmptyBodyResp(userCompData);

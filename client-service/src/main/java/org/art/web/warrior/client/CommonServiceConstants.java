@@ -24,7 +24,6 @@ public class CommonServiceConstants {
     public static final MessageFormat EXECUTION_SERVICE_ENDPOINT_FORMAT = new MessageFormat("http://{0}:{1}/executor/execute");
     public static final MessageFormat TASK_SERVICE_ENDPOINT_FORMAT = new MessageFormat("http://{0}:{1}/tasking/task");
 
-    public static final String UNPROCESSABLE_CLIENT_REQUEST_MESSAGE = "Client request cannot be processed. Client source data is invalid!";
     public static final String INTERNAL_SERVICE_ERROR_MESSAGE = "Internal service error occurred! Compilation service responded with empty body.";
     public static final String COMPILATION_ERROR_MESSAGE = "Compilation errors occurred while compiling client source code!";
     public static final String COMPILATION_OK_MESSAGE = "Client source code was successfully compiled!";

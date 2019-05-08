@@ -7,13 +7,16 @@ import java.util.regex.Matcher;
 
 public class ParserUtil {
 
-    private ParserUtil() {}
+    private ParserUtil() {
+    }
 
     public static String parseClassNameFromSrcString(String srcCode) {
         String parsedClassName = StringUtils.EMPTY;
-        Matcher matcher = CommonConstants.CLASS_NAME_REG_EXP.matcher(srcCode);
-        if (matcher.find()) {
-            parsedClassName = matcher.group(0);
+        if (StringUtils.isNotBlank(srcCode)) {
+            Matcher matcher = CommonConstants.CLASS_NAME_REG_EXP.matcher(srcCode);
+            if (matcher.find()) {
+                parsedClassName = matcher.group(0);
+            }
         }
         return parsedClassName;
     }

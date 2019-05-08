@@ -1,4 +1,4 @@
-package org.art.web.warrior.client.config.validator;
+package org.art.web.warrior.commons.compiler.validator;
 
 import javax.validation.Constraint;
 import javax.validation.Payload;

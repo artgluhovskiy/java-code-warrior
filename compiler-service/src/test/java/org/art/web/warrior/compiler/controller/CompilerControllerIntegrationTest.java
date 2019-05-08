@@ -4,9 +4,12 @@ import com.esotericsoftware.kryo.Kryo;
 import com.esotericsoftware.kryo.io.Input;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.art.web.warrior.commons.ServiceResponseStatus;
+import org.art.web.warrior.commons.compiler.dto.CompilationReq;
 import org.art.web.warrior.commons.compiler.dto.CompilationResp;
 import org.art.web.warrior.commons.compiler.dto.CompilationUnitReq;
 import org.art.web.warrior.commons.compiler.dto.CompilationUnitResp;
+import org.art.web.warrior.commons.execution.dto.ExecutionReq;
+import org.art.web.warrior.commons.tasking.dto.CodingTaskResp;
 import org.art.web.warrior.compiler.service.CustomByteClassLoader;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.DisplayName;
@@ -19,6 +22,8 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
+
+import java.util.List;
 
 import static java.util.Collections.singletonList;
 import static org.art.web.warrior.commons.CommonConstants.KRYO_CONTENT_TYPE;
@@ -44,6 +49,7 @@ class CompilerControllerIntegrationTest {
     static void initAll() {
         kryo = new Kryo();
         kryo.register(CompilationResp.class, 10);
+        kryo.register(CompilationUnitResp.class, 11);
         mapper = new ObjectMapper();
     }
 
@@ -52,9 +58,11 @@ class CompilerControllerIntegrationTest {
     void test0() throws Exception {
         String className = "TestClass1";
         String src = "class TestClass1{}";
+        List<CompilationUnitReq> compUnit = singletonList(new CompilationUnitReq(className, src));
+        CompilationReq compReq = new CompilationReq(compUnit);
         MvcResult result = mockMvc.perform(
                 post(COMP_ENTITY_ENDPOINT)
-                        .content(mapper.writeValueAsString(singletonList(new CompilationUnitReq(className, src))))
+                        .content(mapper.writeValueAsString(compReq))
                         .contentType(MediaType.APPLICATION_JSON_UTF8)
                         .accept(KRYO_CONTENT_TYPE))
                 .andExpect(status().isOk())
@@ -79,9 +87,11 @@ class CompilerControllerIntegrationTest {
     void test1() throws Exception {
         String className = "TestClass2";
         String src = "class TestClass2{}";
+        List<CompilationUnitReq> compUnit = singletonList(new CompilationUnitReq(className, src));
+        CompilationReq compReq = new CompilationReq(compUnit);
         MvcResult result = mockMvc.perform(
                 post(COMP_ENTITY_ENDPOINT)
-                        .content(mapper.writeValueAsString(singletonList(new CompilationUnitReq(className, src))))
+                        .content(mapper.writeValueAsString(compReq))
                         .contentType(MediaType.APPLICATION_JSON_UTF8)
                         .accept(KRYO_CONTENT_TYPE))
                 .andExpect(status().isOk())
@@ -106,9 +116,11 @@ class CompilerControllerIntegrationTest {
     void test2() throws Exception {
         String className = "TestClass3";
         String src = "private class TestClass3{}";
+        List<CompilationUnitReq> compUnit = singletonList(new CompilationUnitReq(className, src));
+        CompilationReq compReq = new CompilationReq(compUnit);
         MvcResult result = mockMvc.perform(
                 post(COMP_ENTITY_ENDPOINT)
-                        .content(mapper.writeValueAsString(singletonList(new CompilationUnitReq(className, src))))
+                        .content(mapper.writeValueAsString(compReq))
                         .contentType(MediaType.APPLICATION_JSON_UTF8)
                         .accept(KRYO_CONTENT_TYPE))
                 .andExpect(status().isOk())
@@ -132,9 +144,11 @@ class CompilerControllerIntegrationTest {
     @DisplayName("POST request. Expects - application/x-kryo. Empty 'src'")
     void test3() throws Exception {
         String className = "TestClass4";
+        List<CompilationUnitReq> compUnit = singletonList(new CompilationUnitReq(className, null));
+        CompilationReq compReq = new CompilationReq(compUnit);
         MvcResult result = mockMvc.perform(
                 post(COMP_ENTITY_ENDPOINT)
-                        .content(mapper.writeValueAsString(singletonList(new CompilationUnitReq(className, null))))
+                        .content(mapper.writeValueAsString(compReq))
                         .contentType(MediaType.APPLICATION_JSON_UTF8)
                         .accept(KRYO_CONTENT_TYPE))
                 .andExpect(status().isUnprocessableEntity())
@@ -145,8 +159,9 @@ class CompilerControllerIntegrationTest {
         assertNotNull(binResponseData);
         CompilationResp compilationResp = (CompilationResp) kryo.readClassAndObject(new Input(binResponseData));
         assertNotNull(compilationResp);
-        assertEquals(className, compilationResp.getCompUnitResults().get(className).getClassName());
-        assertEquals(REQUEST_DATA_CANNOT_BE_PROCESSED_MESSAGE, compilationResp.getMessage());
+        assertEquals(ServiceResponseStatus.BAD_REQUEST.getStatusId(), compilationResp.getCompilerStatus());
+        assertEquals(ServiceResponseStatus.BAD_REQUEST.getStatusCode(), compilationResp.getCompilerStatusCode());
+        assertNotNull(compilationResp.getMessage());
     }
 
     @Test
@@ -154,9 +169,11 @@ class CompilerControllerIntegrationTest {
     void test4() throws Exception {
         String className = "TestClass5";
         String src = "class TestClass6{}";
+        List<CompilationUnitReq> compUnit = singletonList(new CompilationUnitReq(className, src));
+        CompilationReq compReq = new CompilationReq(compUnit);
         MvcResult result = mockMvc.perform(
                 post(COMP_ENTITY_ENDPOINT)
-                        .content(mapper.writeValueAsString(singletonList(new CompilationUnitReq(className, src))))
+                        .content(mapper.writeValueAsString(compReq))
                         .contentType(MediaType.APPLICATION_JSON_UTF8)
                         .accept(KRYO_CONTENT_TYPE))
                 .andExpect(status().isUnprocessableEntity())
@@ -166,11 +183,9 @@ class CompilerControllerIntegrationTest {
         byte[] binResponseData = result.getResponse().getContentAsByteArray();
         assertNotNull(binResponseData);
         CompilationResp compilationResp = (CompilationResp) kryo.readClassAndObject(new Input(binResponseData));
-        assertNotNull(compilationResp);
-        CompilationUnitResp unitResult = compilationResp.getCompUnitResults().get(className);
-        assertNotNull(unitResult);
-        assertEquals(className, unitResult.getClassName());
-        assertEquals(src, unitResult.getSrcCode());
+        assertEquals(ServiceResponseStatus.BAD_REQUEST.getStatusId(), compilationResp.getCompilerStatus());
+        assertEquals(ServiceResponseStatus.BAD_REQUEST.getStatusCode(), compilationResp.getCompilerStatusCode());
+        assertNotNull(compilationResp.getMessage());
     }
 
     @Test
@@ -178,10 +193,12 @@ class CompilerControllerIntegrationTest {
     void test5() throws Exception {
         String className = "TestClass7";
         String src = "class TestClass7{}";
+        List<CompilationUnitReq> compUnit = singletonList(new CompilationUnitReq(className, src));
+        CompilationReq compReq = new CompilationReq(compUnit);
         MvcResult result = mockMvc.perform(
                 post(COMP_ENTITY_ENDPOINT)
                         .contentType(MediaType.APPLICATION_JSON_UTF8)
-                        .content(mapper.writeValueAsString(singletonList(new CompilationUnitReq(className, src))))
+                        .content(mapper.writeValueAsString(compReq))
                         .accept(KRYO_CONTENT_TYPE))
                 .andExpect(status().isOk())
                 .andExpect(header().string(HttpHeaders.CONTENT_TYPE, KRYO_CONTENT_TYPE))

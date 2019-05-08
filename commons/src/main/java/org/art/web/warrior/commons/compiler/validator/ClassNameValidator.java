@@ -1,4 +1,4 @@
-package org.art.web.warrior.client.config.validator;
+package org.art.web.warrior.commons.compiler.validator;
 
 import org.art.web.warrior.commons.util.ParserUtil;
 import org.springframework.beans.BeanWrapperImpl;

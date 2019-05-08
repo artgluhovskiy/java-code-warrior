@@ -4,6 +4,7 @@ import com.esotericsoftware.kryo.Kryo;
 import com.esotericsoftware.kryo.io.Input;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.art.web.warrior.commons.ServiceResponseStatus;
+import org.art.web.warrior.commons.compiler.dto.CompilationReq;
 import org.art.web.warrior.commons.compiler.dto.CompilationResp;
 import org.art.web.warrior.commons.compiler.dto.CompilationUnitReq;
 import org.art.web.warrior.commons.compiler.dto.CompilationUnitResp;
@@ -54,6 +55,7 @@ class CompilerControllerTest {
     static void initAll() {
         kryo = new Kryo();
         kryo.register(CompilationResp.class, 10);
+        kryo.register(CompilationUnitResp.class, 11);
         mapper = new ObjectMapper();
     }
 
@@ -88,9 +90,10 @@ class CompilerControllerTest {
 
         when(compilationService.compileUnits(singletonList(unit))).thenReturn(compResult);
 
+        CompilationReq compReq = new CompilationReq(singletonList(new CompilationUnitReq(className, src)));
         MvcResult result = mockMvc.perform(
                 post(COMP_ENTITY_ENDPOINT)
-                        .content(mapper.writeValueAsString(singletonList(new CompilationUnitReq(className, src))))
+                        .content(mapper.writeValueAsString(compReq))
                         .contentType(MediaType.APPLICATION_JSON_UTF8)
                         .accept(KRYO_CONTENT_TYPE))
                 .andExpect(status().isOk())
@@ -115,9 +118,10 @@ class CompilerControllerTest {
     void test2() throws Exception {
         String className = "TestClass4";
 
+        CompilationReq compReq = new CompilationReq(singletonList(new CompilationUnitReq(className, null)));
         MvcResult result = mockMvc.perform(
                 post(COMP_ENTITY_ENDPOINT)
-                        .content(mapper.writeValueAsString(singletonList(new CompilationUnitReq(className, null))))
+                        .content(mapper.writeValueAsString(compReq))
                         .contentType(MediaType.APPLICATION_JSON_UTF8)
                         .accept(KRYO_CONTENT_TYPE))
                 .andExpect(status().isUnprocessableEntity())
@@ -128,9 +132,9 @@ class CompilerControllerTest {
         assertNotNull(binResponseData);
         CompilationResp compilationResp = (CompilationResp) kryo.readClassAndObject(new Input(binResponseData));
         assertNotNull(compilationResp);
-        CompilationUnitResp unitResult = compilationResp.getCompUnitResults().get(className);
-        assertEquals(className, unitResult.getClassName());
-        assertEquals(REQUEST_DATA_CANNOT_BE_PROCESSED_MESSAGE, compilationResp.getMessage());
+        assertEquals(ServiceResponseStatus.BAD_REQUEST.getStatusId(), compilationResp.getCompilerStatus());
+        assertEquals(ServiceResponseStatus.BAD_REQUEST.getStatusCode(), compilationResp.getCompilerStatusCode());
+        assertNotNull(compilationResp.getMessage());
 
         verify(compilationService, never()).compileUnits(anyList());
     }

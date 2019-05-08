@@ -5,8 +5,8 @@ import org.apache.commons.lang3.StringUtils;
 import org.art.web.warrior.client.config.converter.KryoHttpMessageConverter;
 import org.art.web.warrior.client.config.interceptor.RequestProcessingLogger;
 import org.art.web.warrior.client.service.api.CompServiceClient;
+import org.art.web.warrior.commons.compiler.dto.CompilationReq;
 import org.art.web.warrior.commons.compiler.dto.CompilationResp;
-import org.art.web.warrior.commons.compiler.dto.CompilationUnitReq;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.web.client.RestTemplateBuilder;
 import org.springframework.core.env.Environment;
@@ -16,8 +16,6 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
-
-import java.util.List;
 
 import static org.art.web.warrior.client.CommonServiceConstants.*;
 import static org.art.web.warrior.commons.CommonConstants.*;
@@ -43,11 +41,11 @@ public class CompServiceClientImpl implements CompServiceClient {
     }
 
     @Override
-    public CompilationResp compileSrc(List<CompilationUnitReq> compRequestData) {
+    public CompilationResp compileSrc(CompilationReq compRequestData) {
         HttpHeaders headers = new HttpHeaders();
         headers.set(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_UTF8_VALUE);
         headers.set(HttpHeaders.ACCEPT, KRYO_CONTENT_TYPE);
-        HttpEntity<List<CompilationUnitReq>> reqEntity = new HttpEntity<>(compRequestData, headers);
+        HttpEntity<CompilationReq> reqEntity = new HttpEntity<>(compRequestData, headers);
         log.debug("Making the request to the Compilation service. Endpoint: {}, request data: {}", this.serviceEndpointBase, compRequestData);
         ResponseEntity<CompilationResp> serviceResponse = restTemplate.postForEntity(this.serviceEndpointBase, reqEntity, CompilationResp.class);
         return serviceResponse.getBody();

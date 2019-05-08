@@ -1,12 +1,13 @@
 package org.art.web.warrior.client.util;
 
 import org.art.web.warrior.client.dto.AdminTaskCompData;
-import org.art.web.warrior.commons.execution.dto.ExecutionReq;
 import org.art.web.warrior.commons.CommonConstants;
+import org.art.web.warrior.commons.compiler.dto.CompilationReq;
+import org.art.web.warrior.commons.compiler.dto.CompilationResp;
 import org.art.web.warrior.commons.compiler.dto.CompilationUnitReq;
 import org.art.web.warrior.commons.compiler.dto.CompilationUnitResp;
+import org.art.web.warrior.commons.execution.dto.ExecutionReq;
 import org.art.web.warrior.commons.tasking.dto.CodingTaskPublicationReq;
-import org.art.web.warrior.commons.compiler.dto.CompilationResp;
 import org.art.web.warrior.commons.tasking.dto.CodingTaskResp;
 import org.art.web.warrior.commons.util.ParserUtil;
 
@@ -33,14 +34,15 @@ public class ClientRequestUtil {
                 .build();
     }
 
-    public static List<CompilationUnitReq> buildCompilationServiceReq(AdminTaskCompData requestData) {
+    public static CompilationReq buildCompilationServiceReq(AdminTaskCompData requestData) {
         String solutionSrcCode = requestData.getSolutionSrcCode();
         String solutionClassName = ParserUtil.parseClassNameFromSrcString(solutionSrcCode);
         CompilationUnitReq solutionCompUnit = new CompilationUnitReq(solutionClassName, solutionSrcCode);
         String runnerSrcCode = requestData.getRunnerSrcCode();
         String runnerClassName = ParserUtil.parseClassNameFromSrcString(runnerSrcCode);
         CompilationUnitReq runnerCompUnit = new CompilationUnitReq(runnerClassName, runnerSrcCode);
-        return Arrays.asList(solutionCompUnit, runnerCompUnit);
+        List<CompilationUnitReq> compUnits = Arrays.asList(solutionCompUnit, runnerCompUnit);
+        return new CompilationReq(compUnits);
     }
 
     public static ExecutionReq buildExecutionServiceRequest(CompilationResp compServiceResp, CodingTaskResp taskServiceResp) {

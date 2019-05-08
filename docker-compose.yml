@@ -2,48 +2,45 @@ version: '3'
 
 services:
 
-#  # Client Service
-#  client-service:
-#    container_name: client-service
-#    depends_on:
-#      - compiler-service
-#    build:
-#      context: ./client-service
-#    environment:
-#      COMPILER_SERVICE_HOST: compiler-service
-#      COMPILER_SERVICE_PORT: 8080
-#
-#      INVOCATION_SERVICE_HOST: invocation-service
-#      INVOCATION_SERVICE_PORT: 8081
-#    ports:
-#      - "8082:8082"
-#
-#  # Compiler Service
-#  compiler-service:
-#    container_name: compiler-service
-#    build:
-#      context: ./compiler-service
-#    ports:
-#      - "8080:8080"
-#    volumes:
-#      - "./logs:/app/logs"
-#
-#  # Invocation Service
-#  execution-service:
-#    container_name: execution-service
-#    build:
-#      context: ./execution-service
-#    ports:
-#      - "8081:8081"
-
-  # MySQL database container
-  mysqldb:
-    image: mysql:5.7
-    container_name: mysqldb
-    ports:
-      - "3306:3306"
+  # Client Service
+  client-service:
+    container_name: client-service
+    depends_on:
+      - compiler-service
+    build:
+      context: ./client-service
     environment:
-      MYSQL_ROOT_PASSWORD: rootpassword
+      COMPILER_SERVICE_HOST: compiler-service
+      COMPILER_SERVICE_PORT: 8080
+
+      EXECUTION_SERVICE_HOST: execution-service
+      EXECUTION_SERVICE_PORT: 8081
+
+      TASK_SERVICE_HOST: task-service
+      TASK_SERVICE_PORT: 8083
+    ports:
+      - "8082:8082"
+      - "8092:8092"
+
+  # Compiler Service
+  compiler-service:
+    container_name: compiler-service
+    build:
+      context: ./compiler-service
+    ports:
+      - "8080:8080"
+      - "8090:8090"
+    volumes:
+      - "./app/logs:/app/logs"
+
+  # Execution Service
+  execution-service:
+    container_name: execution-service
+    build:
+      context: ./execution-service
+    ports:
+      - "8081:8081"
+      - "8091:8091"
 
   # Task Service
   task-service:
@@ -60,3 +57,13 @@ services:
       context: ./task-service
     ports:
       - "8083:8083"
+      - "8093:8093"
+
+  # MySQL Coding Task Container
+  mysqldb:
+    image: mysql:5.7
+    container_name: mysqldb
+    ports:
+      - "3306:3306"
+    environment:
+      MYSQL_ROOT_PASSWORD: rootpassword
