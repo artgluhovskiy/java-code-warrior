@@ -28,6 +28,12 @@ targetCompatibility = 1.8
 
 bootJar {
     baseName = 'compiler-service-boot'
+    
+    //Hack to load the class (which should be seen by the System Compiler) via system class loader rather than Spring Boot classloader by copying class file to the root of boot jar
+    with copySpec {
+        from "$projectDir/../commons/build/classes/java/main/org/art/web/warrior/commons/driver/exception"
+        into 'org/art/web/warrior/commons/driver/exception'
+    }
 }
 
 repositories {

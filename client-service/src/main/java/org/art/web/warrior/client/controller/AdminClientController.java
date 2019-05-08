@@ -36,7 +36,7 @@ public class AdminClientController {
     @ResponseBody
     @PostMapping(value = "submit", consumes = MediaType.APPLICATION_JSON_UTF8_VALUE, produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
     public ClientServiceAdminResponse publishNewTask(@Valid @RequestBody AdminTaskCompData clientRequestData) {
-        log.info("Publishing new Coding Task: {}", clientRequestData);
+        log.info("Publishing new Coding Task. Task name ID: {}", clientRequestData.getTaskNameId());
         String solutionSrcCode = clientRequestData.getSolutionSrcCode();
         String runnerSrcCode = clientRequestData.getRunnerSrcCode();
         log.debug("Compiling class data.");
