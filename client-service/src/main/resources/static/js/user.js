@@ -41,7 +41,7 @@ $(function () {
         } else if (respStatus === 'bad_request') {
             setError(targetArea);
             $(targetArea).text('Source code cannot be processed! Please, check the validity of the class names in the input fields!');
-        } else if(respStatus === 'exec_error') {
+        } else if(respStatus === 'exec_error' || respStatus === 'not_found') {
             setError(targetArea);
             $(targetArea).text(response.message + '\n');
             $(targetArea).append(response.execMessage);

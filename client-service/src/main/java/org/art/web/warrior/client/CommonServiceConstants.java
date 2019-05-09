@@ -28,4 +28,6 @@ public class CommonServiceConstants {
     public static final String COMPILATION_ERROR_MESSAGE = "Compilation errors occurred while compiling client source code!";
     public static final String COMPILATION_OK_MESSAGE = "Client source code was successfully compiled!";
     public static final String TASK_PUBLISHING_OK_MESSAGE = "New coding task was successfully compiled and published!";
+    public static final String TASK_EXECUTION_ERROR_MESSAGE = "Some problems occurred while task execution.";
+    public static final String TASK_NOT_FOUND_ERROR_MESSAGE = "Coding task with such name wasn't found.";
 }

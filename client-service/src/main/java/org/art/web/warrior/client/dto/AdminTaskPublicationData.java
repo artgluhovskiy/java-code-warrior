@@ -12,7 +12,7 @@ import javax.validation.constraints.NotBlank;
 @ToString
 @AllArgsConstructor
 @NoArgsConstructor
-public class AdminTaskCompData {
+public class AdminTaskPublicationData {
 
     @NotBlank(message = "Task Name ID should not be blank!")
     private String taskNameId;

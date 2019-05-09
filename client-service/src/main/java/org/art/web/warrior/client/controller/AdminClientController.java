@@ -1,8 +1,8 @@
 package org.art.web.warrior.client.controller;
 
 import lombok.extern.slf4j.Slf4j;
-import org.art.web.warrior.client.dto.AdminTaskCompData;
-import org.art.web.warrior.client.dto.ClientServiceAdminResponse;
+import org.art.web.warrior.client.dto.AdminTaskPublicationData;
+import org.art.web.warrior.client.dto.ClientServiceAdminResp;
 import org.art.web.warrior.client.service.api.CompServiceClient;
 import org.art.web.warrior.client.service.api.TaskServiceClient;
 import org.art.web.warrior.client.util.ClientRequestUtil;
@@ -35,7 +35,7 @@ public class AdminClientController {
 
     @ResponseBody
     @PostMapping(value = "submit", consumes = MediaType.APPLICATION_JSON_UTF8_VALUE, produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
-    public ClientServiceAdminResponse publishNewTask(@Valid @RequestBody AdminTaskCompData clientRequestData) {
+    public ClientServiceAdminResp publishNewTask(@Valid @RequestBody AdminTaskPublicationData clientRequestData) {
         log.info("Publishing new Coding Task. Task name ID: {}", clientRequestData.getTaskNameId());
         String solutionSrcCode = clientRequestData.getSolutionSrcCode();
         String runnerSrcCode = clientRequestData.getRunnerSrcCode();

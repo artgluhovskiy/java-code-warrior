@@ -6,6 +6,7 @@ import org.art.web.warrior.commons.compiler.dto.CompilationResp;
 import org.art.web.warrior.commons.compiler.dto.CompilationUnitResp;
 import org.art.web.warrior.commons.execution.dto.ExecutionResp;
 import org.art.web.warrior.commons.tasking.dto.CodingTaskPublicationResp;
+import org.art.web.warrior.commons.tasking.dto.CodingTaskResp;
 
 import java.util.Map;
 
@@ -16,8 +17,8 @@ public class ClientResponseUtil {
     private ClientResponseUtil() {
     }
 
-    public static ClientServiceUserResponse buildUserTaskEmptyBodyResp(UserCodeCompData clientReqData) {
-        return ClientServiceUserResponse.builder()
+    public static ClientServiceUserResp buildUserTaskEmptyBodyResp(UserTaskCodeData clientReqData) {
+        return ClientServiceUserResp.builder()
                 .respStatus(ServiceResponseStatus.INTERNAL_SERVICE_ERROR.getStatusId())
                 .message(INTERNAL_SERVICE_ERROR_MESSAGE)
                 .className(clientReqData.getClassName())
@@ -25,8 +26,8 @@ public class ClientResponseUtil {
                 .build();
     }
 
-    public static ClientServiceAdminResponse buildAdminTaskEmptyBodyResp(AdminTaskCompData clientReqData) {
-        return ClientServiceAdminResponse.builder()
+    public static ClientServiceAdminResp buildAdminTaskEmptyBodyResp(AdminTaskPublicationData clientReqData) {
+        return ClientServiceAdminResp.builder()
                 .respStatus(ServiceResponseStatus.INTERNAL_SERVICE_ERROR.getStatusId())
                 .message(INTERNAL_SERVICE_ERROR_MESSAGE)
                 .solutionSrcCode(clientReqData.getSolutionSrcCode())
@@ -34,11 +35,11 @@ public class ClientResponseUtil {
                 .build();
     }
 
-    public static ClientServiceUserResponse buildUserTaskCompilationErrorResp(CompilationResp serviceResp, String className) {
+    public static ClientServiceUserResp buildUserTaskCompilationErrorResp(UserTaskCodeData userCodeData, CompilationResp serviceResp) {
         CompErrorDetails errorDetails = buildCompilationErrorDetails(serviceResp);
         Map<String, CompilationUnitResp> compUnits = serviceResp.getCompUnitResults();
-        CompilationUnitResp unitResult = compUnits.get(className);
-        return ClientServiceUserResponse.builder()
+        CompilationUnitResp unitResult = compUnits.get(userCodeData.getClassName());
+        return ClientServiceUserResp.builder()
                 .respStatus(ServiceResponseStatus.COMPILATION_ERROR.getStatusId())
                 .message(COMPILATION_ERROR_MESSAGE)
                 .className(unitResult.getClassName())
@@ -47,9 +48,9 @@ public class ClientResponseUtil {
                 .build();
     }
 
-    public static ClientServiceAdminResponse buildAdminTaskCompilationErrorResp(CompilationResp serviceResp, String solutionSrcCode, String runnerSrcCode) {
+    public static ClientServiceAdminResp buildAdminTaskCompilationErrorResp(CompilationResp serviceResp, String solutionSrcCode, String runnerSrcCode) {
         CompErrorDetails errorDetails = buildCompilationErrorDetails(serviceResp);
-        return ClientServiceAdminResponse.builder()
+        return ClientServiceAdminResp.builder()
                 .respStatus(ServiceResponseStatus.COMPILATION_ERROR.getStatusId())
                 .message(COMPILATION_ERROR_MESSAGE)
                 .solutionSrcCode(solutionSrcCode)
@@ -58,10 +59,10 @@ public class ClientResponseUtil {
                 .build();
     }
 
-    public static ClientServiceUserResponse buildUserTaskCompilationOkResp(CompilationResp serviceResp, String className) {
+    public static ClientServiceUserResp buildUserTaskCompilationOkResp(CompilationResp serviceResp, String className) {
         Map<String, CompilationUnitResp> compUnits = serviceResp.getCompUnitResults();
         CompilationUnitResp unitResult = compUnits.get(className);
-        return ClientServiceUserResponse.builder()
+        return ClientServiceUserResp.builder()
                 .respStatus(ServiceResponseStatus.SUCCESS.getStatusId())
                 .message(COMPILATION_OK_MESSAGE)
                 .className(unitResult.getClassName())
@@ -69,8 +70,8 @@ public class ClientResponseUtil {
                 .build();
     }
 
-    public static ClientServiceAdminResponse buildAdminTaskCompilationOkResp(String solutionSrcCode, String runnerSrcCode) {
-        return ClientServiceAdminResponse.builder()
+    public static ClientServiceAdminResp buildAdminTaskCompilationOkResp(String solutionSrcCode, String runnerSrcCode) {
+        return ClientServiceAdminResp.builder()
                 .respStatus(ServiceResponseStatus.SUCCESS.getStatusId())
                 .message(TASK_PUBLISHING_OK_MESSAGE)
                 .solutionSrcCode(solutionSrcCode)
@@ -78,8 +79,8 @@ public class ClientResponseUtil {
                 .build();
     }
 
-    public static ClientServiceAdminResponse buildTaskServicePublicationResp(CodingTaskPublicationResp codingTaskPublicationResp, AdminTaskCompData clientRequestData) {
-        return ClientServiceAdminResponse.builder()
+    public static ClientServiceAdminResp buildTaskServicePublicationResp(CodingTaskPublicationResp codingTaskPublicationResp, AdminTaskPublicationData clientRequestData) {
+        return ClientServiceAdminResp.builder()
                 .respStatus(codingTaskPublicationResp.getRespStatus())
                 .message(codingTaskPublicationResp.getMessage())
                 .runnerSrcCode(clientRequestData.getRunnerSrcCode())
@@ -96,13 +97,25 @@ public class ClientResponseUtil {
                 .build();
     }
 
-    public static ClientServiceUserResponse buildUserTaskExecutionResp(ExecutionResp execServiceResp, String className, String srcCode) {
-        return ClientServiceUserResponse.builder()
+    public static ClientServiceUserResp buildUserTaskExecutionResp(UserTaskCodeData userTaskCodeData, ExecutionResp execServiceResp) {
+        return ClientServiceUserResp.builder()
                 .respStatus(execServiceResp.getRespStatus())
                 .message(execServiceResp.getMessage())
                 .execMessage(execServiceResp.getFailedTestMessage())
-                .className(className)
-                .srcCode(srcCode)
+                .className(userTaskCodeData.getClassName())
+                .srcCode(userTaskCodeData.getSrcCode())
                 .build();
+    }
+
+    public static ClientServiceUserResp buildUserTaskServiceErrorResp(UserTaskCodeData userTaskData, CodingTaskResp taskServiceResp) {
+        ClientServiceUserResp.ClientServiceUserRespBuilder builder = ClientServiceUserResp.builder();
+        builder.className(userTaskData.getClassName())
+                .srcCode(userTaskData.getSrcCode())
+                .message(TASK_EXECUTION_ERROR_MESSAGE);
+        if (ServiceResponseStatus.NOT_FOUND.getStatusId().equals(taskServiceResp.getRespStatus())) {
+            builder.respStatus(taskServiceResp.getRespStatus())
+                    .execMessage(TASK_NOT_FOUND_ERROR_MESSAGE);
+        }
+        return builder.build();
     }
 }

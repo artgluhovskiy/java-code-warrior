@@ -2,13 +2,10 @@ package org.art.web.warrior.client.service;
 
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
-import org.art.web.warrior.client.config.converter.KryoHttpMessageConverter;
-import org.art.web.warrior.client.config.interceptor.RequestProcessingLogger;
+import org.art.web.warrior.client.service.api.ExecServiceClient;
 import org.art.web.warrior.commons.execution.dto.ExecutionReq;
 import org.art.web.warrior.commons.execution.dto.ExecutionResp;
-import org.art.web.warrior.client.service.api.ExecServiceClient;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.web.client.RestTemplateBuilder;
 import org.springframework.core.env.Environment;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
@@ -30,12 +27,9 @@ public class ExecServiceClientImpl implements ExecServiceClient {
     private String serviceEndpointBase;
 
     @Autowired
-    public ExecServiceClientImpl(Environment env, RestTemplateBuilder restTemplateBuilder) {
+    public ExecServiceClientImpl(Environment env, RestTemplate restTemplate) {
         this.env = env;
-        this.restTemplate = restTemplateBuilder
-                .additionalInterceptors(new RequestProcessingLogger())
-                .additionalMessageConverters(new KryoHttpMessageConverter())
-                .build();
+        this.restTemplate = restTemplate;
         this.serviceEndpointBase = getServiceEndpointBase();
     }
 

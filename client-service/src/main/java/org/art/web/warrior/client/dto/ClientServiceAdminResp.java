@@ -7,15 +7,13 @@ import lombok.*;
 @ToString
 @NoArgsConstructor
 @AllArgsConstructor
-public class ClientServiceUserResponse {
+public class ClientServiceAdminResp {
 
-    private String className;
+    private String solutionSrcCode;
 
-    private String srcCode;
+    private String runnerSrcCode;
 
     private String message;
-
-    private String execMessage;
 
     private String respStatus;
 

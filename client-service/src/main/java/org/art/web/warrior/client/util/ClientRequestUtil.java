@@ -1,6 +1,6 @@
 package org.art.web.warrior.client.util;
 
-import org.art.web.warrior.client.dto.AdminTaskCompData;
+import org.art.web.warrior.client.dto.AdminTaskPublicationData;
 import org.art.web.warrior.commons.CommonConstants;
 import org.art.web.warrior.commons.compiler.dto.CompilationReq;
 import org.art.web.warrior.commons.compiler.dto.CompilationResp;
@@ -22,7 +22,7 @@ public class ClientRequestUtil {
     private ClientRequestUtil() {
     }
 
-    public static CodingTaskPublicationReq buildTaskServicePublicationReq(AdminTaskCompData clientRequestData, CompilationResp serviceResp) {
+    public static CodingTaskPublicationReq buildTaskServicePublicationReq(AdminTaskPublicationData clientRequestData, CompilationResp serviceResp) {
         Map<String, CompilationUnitResp> compResults = serviceResp.getCompUnitResults();
         byte[] compiledRunnerClass = compResults.get(RUNNER_CLASS_NAME).getCompiledClassBytes();
         return CodingTaskPublicationReq.builder()
@@ -34,7 +34,7 @@ public class ClientRequestUtil {
                 .build();
     }
 
-    public static CompilationReq buildCompilationServiceReq(AdminTaskCompData requestData) {
+    public static CompilationReq buildCompilationServiceReq(AdminTaskPublicationData requestData) {
         String solutionSrcCode = requestData.getSolutionSrcCode();
         String solutionClassName = ParserUtil.parseClassNameFromSrcString(solutionSrcCode);
         CompilationUnitReq solutionCompUnit = new CompilationUnitReq(solutionClassName, solutionSrcCode);
