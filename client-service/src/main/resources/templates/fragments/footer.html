@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+    <head>
+        <title>Footer Fragment</title>
+        <meta charset="utf-8">
+
+        <link rel="stylesheet" th:href="@{/css/app.css}">
+        <link rel="stylesheet" th:href="@{/css/bootstrap.min.css}">
+    </head>
+    <body>
+        <div class="container-fluid" th:fragment="footer">
+            <footer>
+                <div class="container">
+                    <hr>
+                    <p class="pull-right">&#169;Design by Art Glugovskiy, <span th:text="${#temporals.format(#temporals.createNow(), 'yyyy')}">2019</span></p>
+                </div>
+            </footer>
+        </div>
+    </body>
+</html>
