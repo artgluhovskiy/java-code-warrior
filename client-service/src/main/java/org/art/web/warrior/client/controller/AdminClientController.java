@@ -54,9 +54,4 @@ public class AdminClientController {
         CodingTaskPublicationResp taskPublicationResp = taskServiceClient.publishCodingTask(taskPublicationReq);
         return ClientResponseUtil.buildTaskServicePublicationResp(taskPublicationResp, clientRequestData);
     }
-
-    @GetMapping
-    public String admin() {
-        return "admin/admin";
-    }
 }
