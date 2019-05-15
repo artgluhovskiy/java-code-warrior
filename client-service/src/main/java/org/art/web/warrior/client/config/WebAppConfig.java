@@ -10,6 +10,9 @@ public class WebAppConfig implements WebMvcConfigurer {
     @Override
     public void addViewControllers(ViewControllerRegistry registry) {
         registry.addViewController("/").setViewName("index");
+        registry.addViewController("/user/login").setViewName("login/login");
+        registry.addViewController("/user/signin").setViewName("tasks/tasks");
+
         registry.addViewController("/admin").setViewName("admin/admin");
     }
 }

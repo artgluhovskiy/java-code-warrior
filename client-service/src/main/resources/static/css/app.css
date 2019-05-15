@@ -13,3 +13,8 @@
 .submit-result .error {
     color: red;
 }
+
+.main-app {
+    margin: 30px;
+    text-align: center;
+}
