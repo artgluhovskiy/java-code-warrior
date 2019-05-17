@@ -18,3 +18,8 @@
     margin: 30px;
     text-align: center;
 }
+
+.container .user-login {
+    width: 400px;
+    text-align: center;
+}

@@ -68,4 +68,11 @@ public class UserClientController {
         ExecutionResp execServiceResp = this.execServiceClient.executeCode(executionReq);
         return ClientResponseUtil.buildUserTaskExecutionResp(userTaskData, execServiceResp);
     }
+
+    @PostMapping("login")
+    public String login(@RequestParam("login") String login, @RequestParam("password") String password) {
+        System.out.println(login);
+        System.out.println(password);
+        return "tasks/tasks";
+    }
 }
