@@ -20,15 +20,15 @@ import javax.validation.Valid;
 
 @Slf4j
 @Controller
-@RequestMapping("/admin")
-public class AdminClientController {
+@RequestMapping("admin")
+public class AdminController {
 
     private final CompServiceClient compServiceClient;
 
     private final TaskServiceClient taskServiceClient;
 
     @Autowired
-    public AdminClientController(CompServiceClient compServiceClient, TaskServiceClient taskServiceClient) {
+    public AdminController(CompServiceClient compServiceClient, TaskServiceClient taskServiceClient) {
         this.compServiceClient = compServiceClient;
         this.taskServiceClient = taskServiceClient;
     }

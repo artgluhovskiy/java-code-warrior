@@ -7,6 +7,8 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.context.request.WebRequest;
 
+import static org.art.web.warrior.client.CommonServiceConstants.REGISTRATION_VIEW_NAME;
+
 @Controller
 @RequestMapping("user")
 public class UserRegistrationController {
@@ -15,6 +17,6 @@ public class UserRegistrationController {
     public String showRegistrationForm(WebRequest request, Model model) {
         UserDto userDto = new UserDto();
         model.addAttribute("user", userDto);
-        return "registration/registration";
+        return REGISTRATION_VIEW_NAME;
     }
 }

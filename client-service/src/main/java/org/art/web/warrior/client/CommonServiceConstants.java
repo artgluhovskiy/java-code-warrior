@@ -7,6 +7,13 @@ public class CommonServiceConstants {
     private CommonServiceConstants() {
     }
 
+    //View names
+    public static final String HOME_VIEW_NAME = "home";
+    public static final String LOGIN_VIEW_NAME = "login/login";
+    public static final String REGISTRATION_VIEW_NAME = "registration/registration";
+    public static final String TASKS_VIEW_NAME = "tasks/tasks";
+    public static final String ADMIN_VIEW_NAME = "admin/admin";
+
     public static final String COMPILER_SERVICE_HOST_ENV_PROP_NAME = "COMPILER_SERVICE_HOST";
     public static final String COMPILER_SERVICE_PORT_ENV_PROP_NAME = "COMPILER_SERVICE_PORT";
 

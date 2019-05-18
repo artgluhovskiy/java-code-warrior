@@ -4,16 +4,15 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.web.servlet.config.annotation.ViewControllerRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
+import static org.art.web.warrior.client.CommonServiceConstants.*;
+
 @Configuration
 public class WebAppConfig implements WebMvcConfigurer {
 
     @Override
     public void addViewControllers(ViewControllerRegistry registry) {
-        registry.addViewController("/").setViewName("index");
-        registry.addViewController("/user/login").setViewName("login/login");
-        registry.addViewController("/user/signin").setViewName("signin/signin");
-        registry.addViewController("user/registration").setViewName("registration/registration");
-
-        registry.addViewController("/admin").setViewName("admin/admin");
+        registry.addViewController("/").setViewName(HOME_VIEW_NAME);
+        registry.addViewController("/home").setViewName(HOME_VIEW_NAME);
+        registry.addViewController("/admin").setViewName(ADMIN_VIEW_NAME);
     }
 }

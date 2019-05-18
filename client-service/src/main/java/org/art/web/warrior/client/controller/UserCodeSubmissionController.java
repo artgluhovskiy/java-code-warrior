@@ -17,17 +17,23 @@ import org.art.web.warrior.commons.execution.dto.ExecutionResp;
 import org.art.web.warrior.commons.tasking.dto.CodingTaskResp;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
-import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
 import javax.validation.Valid;
 
 import static java.util.Collections.singletonList;
 
 @Slf4j
-@Controller
-@RequestMapping("/user")
-public class UserClientController {
+@RestController
+@RequestMapping(
+        value = "user",
+        consumes = MediaType.APPLICATION_JSON_UTF8_VALUE,
+        produces = MediaType.APPLICATION_JSON_UTF8_VALUE
+)
+public class UserCodeSubmissionController {
 
     private final CompServiceClient compServiceClient;
 
@@ -36,14 +42,13 @@ public class UserClientController {
     private final TaskServiceClient taskServiceClient;
 
     @Autowired
-    public UserClientController(CompServiceClient compServiceClient, ExecServiceClient execServiceClient, TaskServiceClient taskServiceClient) {
+    public UserCodeSubmissionController(CompServiceClient compServiceClient, ExecServiceClient execServiceClient, TaskServiceClient taskServiceClient) {
         this.compServiceClient = compServiceClient;
         this.execServiceClient = execServiceClient;
         this.taskServiceClient = taskServiceClient;
     }
 
-    @ResponseBody
-    @PostMapping(value = "submit", consumes = MediaType.APPLICATION_JSON_UTF8_VALUE, produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
+    @PostMapping(value = "submit")
     public ClientServiceUserResp submitClientCode(@Valid @RequestBody UserTaskCodeData userTaskData) {
         String className = userTaskData.getClassName();
         String srcCode = userTaskData.getSrcCode();
@@ -67,12 +72,5 @@ public class UserClientController {
         ExecutionReq executionReq = ClientRequestUtil.buildExecutionServiceRequest(compServiceResp, taskServiceResp);
         ExecutionResp execServiceResp = this.execServiceClient.executeCode(executionReq);
         return ClientResponseUtil.buildUserTaskExecutionResp(userTaskData, execServiceResp);
-    }
-
-    @PostMapping("login")
-    public String login(@RequestParam("login") String login, @RequestParam("password") String password) {
-        System.out.println(login);
-        System.out.println(password);
-        return "tasks/tasks";
     }
 }
