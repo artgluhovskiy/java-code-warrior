@@ -13,6 +13,21 @@ public class CommonServiceConstants {
     public static final String REGISTRATION_VIEW_NAME = "registration/registration";
     public static final String TASKS_VIEW_NAME = "tasks/tasks";
     public static final String ADMIN_VIEW_NAME = "admin/admin";
+    public static final String LAYOUT_VIEW_NAME = "layout/layout";
+
+    public static final String FRAGMENT = "fragment";
+    public static final String LOGIN_FRAGMENT = "login";
+    public static final String REGISTRATION_FRAGMENT = "registration";
+    public static final String SUBMISSION_FRAGMENT = "submission";
+
+    public static final String USER_ATTR_NAME = "user";
+
+    //Request URL Parts
+    public static final String USER = "user";
+    public static final String ADMIN = "admin";
+    public static final String LOGIN = "login";
+    public static final String SUBMIT = "submit";
+    public static final String REGISTRATION = "registration";
 
     public static final String COMPILER_SERVICE_HOST_ENV_PROP_NAME = "COMPILER_SERVICE_HOST";
     public static final String COMPILER_SERVICE_PORT_ENV_PROP_NAME = "COMPILER_SERVICE_PORT";

@@ -2,21 +2,22 @@ package org.art.web.warrior.client.controller;
 
 import org.art.web.warrior.client.dto.UserDto;
 import org.springframework.stereotype.Controller;
-import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.context.request.WebRequest;
+import org.springframework.web.servlet.ModelAndView;
 
-import static org.art.web.warrior.client.CommonServiceConstants.REGISTRATION_VIEW_NAME;
+import static org.art.web.warrior.client.CommonServiceConstants.*;
 
 @Controller
-@RequestMapping("user")
+@RequestMapping(USER)
 public class UserRegistrationController {
 
-    @GetMapping(value = "registration")
-    public String showRegistrationForm(WebRequest request, Model model) {
+    @GetMapping(REGISTRATION)
+    public ModelAndView showRegistrationForm() {
+        ModelAndView modelAndView = new ModelAndView(LAYOUT_VIEW_NAME);
         UserDto userDto = new UserDto();
-        model.addAttribute("user", userDto);
-        return REGISTRATION_VIEW_NAME;
+        modelAndView.addObject(USER_ATTR_NAME, userDto);
+        modelAndView.addObject(FRAGMENT, REGISTRATION_FRAGMENT);
+        return modelAndView;
     }
 }

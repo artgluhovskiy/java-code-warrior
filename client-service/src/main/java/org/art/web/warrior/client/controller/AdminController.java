@@ -18,9 +18,12 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 
+import static org.art.web.warrior.client.CommonServiceConstants.ADMIN;
+import static org.art.web.warrior.client.CommonServiceConstants.SUBMIT;
+
 @Slf4j
 @Controller
-@RequestMapping("admin")
+@RequestMapping(ADMIN)
 public class AdminController {
 
     private final CompServiceClient compServiceClient;
@@ -34,7 +37,7 @@ public class AdminController {
     }
 
     @ResponseBody
-    @PostMapping(value = "submit", consumes = MediaType.APPLICATION_JSON_UTF8_VALUE, produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
+    @PostMapping(value = SUBMIT, consumes = MediaType.APPLICATION_JSON_UTF8_VALUE, produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
     public ClientServiceAdminResp publishNewTask(@Valid @RequestBody AdminTaskPublicationData clientRequestData) {
         log.info("Publishing new Coding Task. Task name ID: {}", clientRequestData.getTaskNameId());
         String solutionSrcCode = clientRequestData.getSolutionSrcCode();

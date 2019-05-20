@@ -1,26 +1,26 @@
 <!DOCTYPE html>
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
-<head>
-    <title>Welcome!</title>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <head>
+        <title>Welcome!</title>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
 
-    <link rel="stylesheet" th:href="@{/css/app.css}">
-    <link rel="stylesheet" th:href="@{/css/bootstrap.min.css}">
-</head>
-<body>
+        <link rel="stylesheet" th:href="@{/css/app.css}">
+        <link rel="stylesheet" th:href="@{/css/bootstrap.min.css}">
+    </head>
+    <body>
 
-<!--Navigation-->
-<header th:replace="fragments/header :: header"></header>
+        <!--Navigation-->
+        <header th:replace="fragments/fragments :: header"></header>
 
-<!-- Body -->
-<div th:replace="${#strings.isEmpty(content) ? 'fragments/main :: main' : ''}"></div>
+        <!-- Body -->
+        <div th:replace="fragments/fragments :: (${#strings.isEmpty(fragment)}? 'main' : ${fragment})"></div>
 
-<!--Footer-->
-<footer th:replace="fragments/footer :: footer"></footer>
+        <!--Footer-->
+        <footer th:replace="fragments/fragments :: footer"></footer>
 
-<script type="text/javascript" th:src="@{/js/jquery-3.3.1.min.js}"></script>
-<script type="text/javascript" th:src="@{/js/bootstrap.min.js}"></script>
-<script type="text/javascript" th:src="@{/js/app.js}"></script>
-</body>
+        <script type="text/javascript" th:src="@{/js/jquery-3.3.1.min.js}"></script>
+        <script type="text/javascript" th:src="@{/js/bootstrap.min.js}"></script>
+        <script type="text/javascript" th:src="@{/js/app.js}"></script>
+    </body>
 </html>

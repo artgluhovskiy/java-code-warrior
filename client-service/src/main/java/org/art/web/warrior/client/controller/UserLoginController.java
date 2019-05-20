@@ -5,24 +5,24 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.servlet.ModelAndView;
 
-import static org.art.web.warrior.client.CommonServiceConstants.LOGIN_VIEW_NAME;
-import static org.art.web.warrior.client.CommonServiceConstants.TASKS_VIEW_NAME;
+import static org.art.web.warrior.client.CommonServiceConstants.*;
 
 @Controller
-@RequestMapping("user")
+@RequestMapping(USER)
 public class UserLoginController {
 
-    @GetMapping("login")
-    public String login() {
-        return LOGIN_VIEW_NAME;
+    @GetMapping(LOGIN)
+    public ModelAndView login() {
+        ModelAndView modelAndView = new ModelAndView(LAYOUT_VIEW_NAME);
+        modelAndView.addObject(FRAGMENT, LOGIN_FRAGMENT);
+        return modelAndView;
     }
 
-    @PostMapping("login")
+    @PostMapping(LOGIN)
     public String login(@RequestParam("login") String login, @RequestParam("password") String password) {
-        System.out.println(login);
-        System.out.println(password);
-        return TASKS_VIEW_NAME;
-//        return TASKS_VIEW_NAME;
+        //TODO: Implement login logic
+        return LAYOUT_VIEW_NAME;
     }
 }

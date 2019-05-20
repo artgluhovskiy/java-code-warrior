@@ -11,13 +11,13 @@
     <body>
 
         <!--Navigation-->
-        <header th:replace="fragments/header :: header"></header>
+        <header th:replace="fragments/fragments :: header"></header>
 
         <!-- Body -->
-        <div th:replace="fragments/main :: main"></div>
+        <div th:replace="fragments/fragments :: main"></div>
 
         <!--Footer-->
-        <footer th:replace="fragments/footer :: footer"></footer>
+        <footer th:replace="fragments/fragments :: footer"></footer>
 
         <script type="text/javascript" th:src="@{/js/jquery-3.3.1.min.js}"></script>
         <script type="text/javascript" th:src="@{/js/bootstrap.min.js}"></script>

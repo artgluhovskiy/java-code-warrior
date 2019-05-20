@@ -25,11 +25,13 @@ import org.springframework.web.bind.annotation.RestController;
 import javax.validation.Valid;
 
 import static java.util.Collections.singletonList;
+import static org.art.web.warrior.client.CommonServiceConstants.SUBMIT;
+import static org.art.web.warrior.client.CommonServiceConstants.USER;
 
 @Slf4j
 @RestController
 @RequestMapping(
-        value = "user",
+        value = USER,
         consumes = MediaType.APPLICATION_JSON_UTF8_VALUE,
         produces = MediaType.APPLICATION_JSON_UTF8_VALUE
 )
@@ -48,7 +50,7 @@ public class UserCodeSubmissionController {
         this.taskServiceClient = taskServiceClient;
     }
 
-    @PostMapping(value = "submit")
+    @PostMapping(SUBMIT)
     public ClientServiceUserResp submitClientCode(@Valid @RequestBody UserTaskCodeData userTaskData) {
         String className = userTaskData.getClassName();
         String srcCode = userTaskData.getSrcCode();
