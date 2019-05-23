@@ -4,19 +4,29 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import javax.validation.constraints.Email;
+import javax.validation.constraints.NotBlank;
+
+import static org.art.web.warrior.client.CommonServiceConstants.EMAIL_REGEXP;
+
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
 public class UserDto {
 
+    @NotBlank(message = "First name should not be blank!")
     private String firstName;
 
+    @NotBlank(message = "Last name should not be blank!")
     private String lastName;
 
+    @NotBlank(message = "Password should not be blank!")
     private String password;
 
+    @NotBlank(message = "Matching password should not be blank!")
     private String matchingPassword;
 
+    @Email(regexp = EMAIL_REGEXP, message = "Invalid email address!")
     private String email;
 
 }

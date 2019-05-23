@@ -15,19 +15,22 @@ public class CommonServiceConstants {
     public static final String ADMIN_VIEW_NAME = "admin/admin";
     public static final String LAYOUT_VIEW_NAME = "layout/layout";
 
-    public static final String FRAGMENT = "fragment";
+    public static final String VIEW_FRAGMENT = "fragment";
     public static final String LOGIN_FRAGMENT = "login";
     public static final String REGISTRATION_FRAGMENT = "registration";
     public static final String SUBMISSION_FRAGMENT = "submission";
+    public static final String TASKS_FRAGMENT = "tasks";
 
     public static final String USER_ATTR_NAME = "user";
 
-    //Request URL Parts
+    //Request URL Mapping
     public static final String USER = "user";
+    public static final String TASKS = "tasks";
     public static final String ADMIN = "admin";
     public static final String LOGIN = "login";
     public static final String SUBMIT = "submit";
     public static final String REGISTRATION = "registration";
+    public static final String REDIRECT = "redirect:";
 
     public static final String COMPILER_SERVICE_HOST_ENV_PROP_NAME = "COMPILER_SERVICE_HOST";
     public static final String COMPILER_SERVICE_PORT_ENV_PROP_NAME = "COMPILER_SERVICE_PORT";
@@ -52,4 +55,6 @@ public class CommonServiceConstants {
     public static final String TASK_PUBLISHING_OK_MESSAGE = "New coding task was successfully compiled and published!";
     public static final String TASK_EXECUTION_ERROR_MESSAGE = "Some problems occurred while task execution.";
     public static final String TASK_NOT_FOUND_ERROR_MESSAGE = "Coding task with such name wasn't found.";
+
+    public static final String EMAIL_REGEXP = "^[a-z0-9._%+-]+@[a-z0-9.-]+\\.[a-z]{2,6}$";
 }

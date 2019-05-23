@@ -16,7 +16,7 @@ public class UserLoginController {
     @GetMapping(LOGIN)
     public ModelAndView login() {
         ModelAndView modelAndView = new ModelAndView(LAYOUT_VIEW_NAME);
-        modelAndView.addObject(FRAGMENT, LOGIN_FRAGMENT);
+        modelAndView.addObject(VIEW_FRAGMENT, LOGIN_FRAGMENT);
         return modelAndView;
     }
 
