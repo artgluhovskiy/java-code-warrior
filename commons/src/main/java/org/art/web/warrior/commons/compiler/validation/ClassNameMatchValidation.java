@@ -1,4 +1,4 @@
-package org.art.web.warrior.commons.compiler.validator;
+package org.art.web.warrior.commons.compiler.validation;
 
 import javax.validation.Constraint;
 import javax.validation.Payload;
@@ -14,11 +14,11 @@ public @interface ClassNameMatchValidation {
 
     String message() default "Class name in the source code doesn't equal to the class name in the field!";
 
-    Class<?>[] groups() default {};
-
-    Class<? extends Payload>[] payload() default {};
-
     String classNameField() default "className";
 
     String srcCodeField() default "srcCode";
+
+    Class<?>[] groups() default {};
+
+    Class<? extends Payload>[] payload() default {};
 }

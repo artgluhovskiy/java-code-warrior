@@ -1,4 +1,4 @@
-package org.art.web.warrior.client.config.validation;
+package org.art.web.warrior.commons.compiler.validation;
 
 import javax.validation.Constraint;
 import javax.validation.Payload;
@@ -13,6 +13,10 @@ import java.lang.annotation.Target;
 public @interface PasswordMatches {
 
     String message() default "Passwords don't match!";
+
+    String passwordField() default "password";
+
+    String matchingPasswordField() default "matchingPassword";
 
     Class<?>[] groups() default {};
 

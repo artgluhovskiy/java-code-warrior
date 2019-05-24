@@ -9,10 +9,11 @@ package org.art.web.warrior.client.config.security;
 //import org.springframework.security.core.userdetails.UserDetailsService;
 //import org.springframework.security.provisioning.InMemoryUserDetailsManager;
 
+import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
+
 //@Configuration
 //@EnableWebSecurity
-public class WebSecurityConfig
-//        extends WebSecurityConfigurerAdapter
+public class WebSecurityConfig extends WebSecurityConfigurerAdapter
 {
 
 }

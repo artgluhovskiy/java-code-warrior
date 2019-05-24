@@ -1,0 +1,17 @@
+spring:
+  application:
+    name: task-service
+  datasource:
+    url: jdbc:mysql://${DATABASE_HOST}:${DATABASE_PORT}/${DATABASE_NAME}?createDatabaseIfNotExist=true
+    password: ${DATABASE_PASSWORD}
+    username: ${DATABASE_USER}
+  jpa:
+    hibernate:
+      ddl-auto: update
+server:
+  port: 8082
+  servlet:
+    context-path: /client
+client:
+  request:
+    logging: false

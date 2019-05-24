@@ -57,4 +57,7 @@ public class CommonServiceConstants {
     public static final String TASK_NOT_FOUND_ERROR_MESSAGE = "Coding task with such name wasn't found.";
 
     public static final String EMAIL_REGEXP = "^[a-z0-9._%+-]+@[a-z0-9.-]+\\.[a-z]{2,6}$";
+
+    //Roles
+    public static final String ROLE_USER = "ROLE_USER";
 }
