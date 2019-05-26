@@ -1,11 +1,11 @@
 package org.art.web.warrior.client.repository;
 
-import org.art.web.warrior.client.model.User;
+import org.art.web.warrior.client.model.Role;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
 @Repository
-public interface UserRepository extends JpaRepository<User, Long> {
+public interface RoleRepository extends JpaRepository<Role, Long> {
 
-    User findUserByEmail(String email);
+    Role findByName(String name);
 }

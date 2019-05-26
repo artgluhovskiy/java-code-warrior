@@ -32,6 +32,10 @@ public class CommonServiceConstants {
     public static final String REGISTRATION = "registration";
     public static final String REDIRECT = "redirect:";
 
+    //Roles
+    public static final String ROLE_ADMIN = "ROLE_ADMIN";
+    public static final String ROLE_USER = "ROLE_USER";
+
     public static final String COMPILER_SERVICE_HOST_ENV_PROP_NAME = "COMPILER_SERVICE_HOST";
     public static final String COMPILER_SERVICE_PORT_ENV_PROP_NAME = "COMPILER_SERVICE_PORT";
 
@@ -57,7 +61,4 @@ public class CommonServiceConstants {
     public static final String TASK_NOT_FOUND_ERROR_MESSAGE = "Coding task with such name wasn't found.";
 
     public static final String EMAIL_REGEXP = "^[a-z0-9._%+-]+@[a-z0-9.-]+\\.[a-z]{2,6}$";
-
-    //Roles
-    public static final String ROLE_USER = "ROLE_USER";
 }

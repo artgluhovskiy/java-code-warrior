@@ -35,10 +35,10 @@
         <!-- Login Fragment -->
         <div class="container" th:fragment="login">
             <div class="row">
-                <form class="user-login" action="#" th:action="@{/user/login}" method="post">
+                <form class="user-login" th:action="@{/login}" method="post">
                     <div class="form-group">
-                        <label for="login">Login:</label>
-                        <input type="text" class="form-control" name="login" id="login">
+                        <label for="username">Email:</label>
+                        <input type="text" class="form-control" name="username" id="username">
                     </div>
                     <div class="form-group">
                         <label for="pwd">Password:</label>

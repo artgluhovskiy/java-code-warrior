@@ -63,6 +63,12 @@ public class UserRegistrationController {
         }
     }
 
+    @GetMapping(LOGIN)
+    public ModelAndView userLogin(ModelMap model) {
+        model.addAttribute(VIEW_FRAGMENT, LOGIN_FRAGMENT);
+        return new ModelAndView(LAYOUT_VIEW_NAME, model);
+    }
+
     private User createUserAccount(UserDto userDto) {
         User registered;
         try {
