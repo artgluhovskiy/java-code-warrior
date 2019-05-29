@@ -47,7 +47,11 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 .loginPage("/user/login")
                 .loginProcessingUrl("/login")
                 .defaultSuccessUrl("/user/tasks")
-                .permitAll();
+                .permitAll()
+                .and()
+            .logout()
+                .logoutSuccessUrl("/home")
+                .logoutUrl("/user/logout");
         // @formatter:on
     }
 
