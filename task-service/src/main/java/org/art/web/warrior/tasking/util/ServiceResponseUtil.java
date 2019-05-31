@@ -1,12 +1,14 @@
 package org.art.web.warrior.tasking.util;
 
+import org.apache.commons.collections4.CollectionUtils;
 import org.art.web.warrior.commons.ServiceResponseStatus;
+import org.art.web.warrior.commons.tasking.dto.CodingTaskDescriptor;
+import org.art.web.warrior.commons.tasking.dto.CodingTaskDescriptorsResp;
 import org.art.web.warrior.commons.tasking.dto.CodingTaskPublicationResp;
 import org.art.web.warrior.commons.tasking.dto.CodingTaskResp;
 import org.art.web.warrior.tasking.model.CodingTask;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
 import static org.art.web.warrior.tasking.ServiceCommonConstants.TASK_PUBLICATION_ERROR_RESPONSE;
 import static org.art.web.warrior.tasking.ServiceCommonConstants.TASK_PUBLICATION_OK_RESPONSE;
@@ -45,14 +47,14 @@ public class ServiceResponseUtil {
         return builder.build();
     }
 
-    public static List<CodingTaskResp> buildAllCodingTasksResp(List<CodingTask> codingTasks) {
-        return codingTasks.stream()
-                .map(task -> CodingTaskResp.builder()
-                        .nameId(task.getNameId())
-                        .name(task.getName())
-                        .description(task.getDescription())
-                        .methodSign(task.getMethodSign())
-                        .build())
-                .collect(Collectors.toList());
+    public static CodingTaskDescriptorsResp buildCodingTaskDescriptorsResp(List<CodingTaskDescriptor> taskDescriptors) {
+        CodingTaskDescriptorsResp taskListResp = new CodingTaskDescriptorsResp();
+        if (CollectionUtils.isNotEmpty(taskDescriptors)) {
+            taskListResp.setCodingTasks(taskDescriptors);
+            taskListResp.setRespStatus(ServiceResponseStatus.SUCCESS.getStatusId());
+        } else {
+            taskListResp.setRespStatus(ServiceResponseStatus.NOT_FOUND.getStatusId());
+        }
+        return taskListResp;
     }
 }

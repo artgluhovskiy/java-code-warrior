@@ -51,7 +51,7 @@ public class CommonServiceConstants {
 
     public static final MessageFormat COMPILATION_SERVICE_ENDPOINT_FORMAT = new MessageFormat("http://{0}:{1}/compiler/compile");
     public static final MessageFormat EXECUTION_SERVICE_ENDPOINT_FORMAT = new MessageFormat("http://{0}:{1}/executor/execute");
-    public static final MessageFormat TASK_SERVICE_ENDPOINT_FORMAT = new MessageFormat("http://{0}:{1}/tasking/task");
+    public static final MessageFormat TASK_SERVICE_ENDPOINT_FORMAT = new MessageFormat("http://{0}:{1}/tasking/");
 
     public static final String INTERNAL_SERVICE_ERROR_MESSAGE = "Internal service error occurred! Compilation service responded with empty body.";
     public static final String COMPILATION_ERROR_MESSAGE = "Compilation errors occurred while compiling client source code!";

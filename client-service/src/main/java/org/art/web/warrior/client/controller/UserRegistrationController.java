@@ -45,11 +45,11 @@ public class UserRegistrationController {
     @PostMapping(REGISTRATION)
     public ModelAndView registerUserAccount(@ModelAttribute(USER_ATTR_NAME) @Valid UserDto userDto,
                                             BindingResult result, RedirectAttributes redirectAttrs) {
-        User registered = new User();
+        User user = new User();
         if (!result.hasErrors()) {
-            registered = createUserAccount(userDto);
+            user = createUserAccount(userDto);
         }
-        if (registered == null) {
+        if (user == null) {
             result.rejectValue("email", "message.regError");
         }
         if (result.hasErrors()) {

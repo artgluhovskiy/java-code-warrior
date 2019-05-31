@@ -1,9 +1,7 @@
 package org.art.web.warrior.tasking.controller;
 
 import lombok.extern.slf4j.Slf4j;
-import org.art.web.warrior.commons.tasking.dto.CodingTaskResp;
-import org.art.web.warrior.commons.tasking.dto.CodingTaskPublicationReq;
-import org.art.web.warrior.commons.tasking.dto.CodingTaskPublicationResp;
+import org.art.web.warrior.commons.tasking.dto.*;
 import org.art.web.warrior.tasking.model.CodingTask;
 import org.art.web.warrior.tasking.service.api.TaskService;
 import org.art.web.warrior.tasking.util.ServiceRequestUtil;
@@ -13,7 +11,6 @@ import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
-
 import java.util.List;
 
 import static org.art.web.warrior.commons.CommonConstants.KRYO_CONTENT_TYPE;
@@ -31,7 +28,7 @@ public class TaskServiceController {
     }
 
     @GetMapping(value = "/task/{nameId}", produces = KRYO_CONTENT_TYPE)
-    public CodingTaskResp getTaskByTaskNameId(@PathVariable("nameId") String nameId) {
+    public CodingTaskResp getCodingTaskByTaskNameId(@PathVariable("nameId") String nameId) {
         CodingTask codingTask = this.taskService.getTaskByNameId(nameId);
         return ServiceResponseUtil.buildCodingTaskResp(codingTask);
     }
@@ -43,10 +40,10 @@ public class TaskServiceController {
         return ServiceResponseUtil.buildCodingTaskPublicationResp(codingTask);
     }
 
-    @GetMapping(value = "/tasks", produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
-    public List<CodingTaskResp> getAllTasks() {
-        List<CodingTask> codingTasks = this.taskService.getAllTasks();
-        return ServiceResponseUtil.buildAllCodingTasksResp(codingTasks);
+    @GetMapping(value = "/task/descriptors", produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
+    public CodingTaskDescriptorsResp getCodingTaskDescriptors() {
+        List<CodingTaskDescriptor> taskDescriptors = this.taskService.getCodingTaskDescriptors();
+        return ServiceResponseUtil.buildCodingTaskDescriptorsResp(taskDescriptors);
     }
 
     @GetMapping("/ping")

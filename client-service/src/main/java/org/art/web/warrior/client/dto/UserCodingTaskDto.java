@@ -1,13 +1,15 @@
-package org.art.web.warrior.commons.tasking.dto;
+package org.art.web.warrior.client.dto;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
 @Data
-@NoArgsConstructor
 @AllArgsConstructor
-public class CodingTaskDescriptor {
+@NoArgsConstructor
+public class UserCodingTaskDto {
+
+    private boolean solved = false;
 
     private String nameId;
 

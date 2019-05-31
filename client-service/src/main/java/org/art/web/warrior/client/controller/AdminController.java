@@ -54,7 +54,7 @@ public class AdminController {
             return ClientResponseUtil.buildAdminTaskCompilationErrorResp(serviceResp, solutionSrcCode, runnerSrcCode);
         }
         CodingTaskPublicationReq taskPublicationReq = ClientRequestUtil.buildTaskServicePublicationReq(clientRequestData, serviceResp);
-        CodingTaskPublicationResp taskPublicationResp = taskServiceClient.publishCodingTask(taskPublicationReq);
+        CodingTaskPublicationResp taskPublicationResp = taskServiceClient.publishNewCodingTask(taskPublicationReq);
         return ClientResponseUtil.buildTaskServicePublicationResp(taskPublicationResp, clientRequestData);
     }
 }
