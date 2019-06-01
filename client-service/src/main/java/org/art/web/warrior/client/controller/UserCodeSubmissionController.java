@@ -2,10 +2,13 @@ package org.art.web.warrior.client.controller;
 
 import lombok.extern.slf4j.Slf4j;
 import org.art.web.warrior.client.dto.ClientServiceUserResp;
+import org.art.web.warrior.client.dto.UserDto;
 import org.art.web.warrior.client.dto.UserTaskCodeData;
+import org.art.web.warrior.client.model.User;
 import org.art.web.warrior.client.service.api.CompServiceClient;
 import org.art.web.warrior.client.service.api.ExecServiceClient;
 import org.art.web.warrior.client.service.api.TaskServiceClient;
+import org.art.web.warrior.client.service.api.UserService;
 import org.art.web.warrior.client.util.ClientRequestUtil;
 import org.art.web.warrior.client.util.ClientResponseUtil;
 import org.art.web.warrior.commons.ServiceResponseStatus;
@@ -17,23 +20,21 @@ import org.art.web.warrior.commons.execution.dto.ExecutionResp;
 import org.art.web.warrior.commons.tasking.dto.CodingTaskResp;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
+import javax.servlet.http.HttpSession;
 import javax.validation.Valid;
 
 import static java.util.Collections.singletonList;
-import static org.art.web.warrior.client.CommonServiceConstants.SUBMIT;
-import static org.art.web.warrior.client.CommonServiceConstants.USER;
+import static org.art.web.warrior.client.CommonServiceConstants.USER_ATTR_NAME;
 
 @Slf4j
 @RestController
+@SessionAttributes(USER_ATTR_NAME)
 @RequestMapping(
-        value = USER,
-        consumes = MediaType.APPLICATION_JSON_UTF8_VALUE,
-        produces = MediaType.APPLICATION_JSON_UTF8_VALUE
+    value = "user",
+    consumes = MediaType.APPLICATION_JSON_UTF8_VALUE,
+    produces = MediaType.APPLICATION_JSON_UTF8_VALUE
 )
 public class UserCodeSubmissionController {
 
@@ -43,15 +44,20 @@ public class UserCodeSubmissionController {
 
     private final TaskServiceClient taskServiceClient;
 
+    private final UserService userService;
+
     @Autowired
-    public UserCodeSubmissionController(CompServiceClient compServiceClient, ExecServiceClient execServiceClient, TaskServiceClient taskServiceClient) {
+    public UserCodeSubmissionController(CompServiceClient compServiceClient, ExecServiceClient execServiceClient,
+                                        TaskServiceClient taskServiceClient, UserService userService) {
         this.compServiceClient = compServiceClient;
         this.execServiceClient = execServiceClient;
         this.taskServiceClient = taskServiceClient;
+        this.userService = userService;
     }
 
-    @PostMapping(SUBMIT)
-    public ClientServiceUserResp submitClientCode(@Valid @RequestBody UserTaskCodeData userTaskData) {
+    @PostMapping("submit")
+    public ClientServiceUserResp submitClientCode(@Valid @RequestBody UserTaskCodeData userTaskData,
+                                                  @ModelAttribute(USER_ATTR_NAME) UserDto user, HttpSession session) {
         String className = userTaskData.getClassName();
         String srcCode = userTaskData.getSrcCode();
         String taskNameId = userTaskData.getTaskNameId();
@@ -73,6 +79,16 @@ public class UserCodeSubmissionController {
         }
         ExecutionReq executionReq = ClientRequestUtil.buildExecutionServiceRequest(compServiceResp, taskServiceResp);
         ExecutionResp execServiceResp = this.execServiceClient.executeCode(executionReq);
+        if (ServiceResponseStatus.SUCCESS.getStatusId().equals(execServiceResp.getRespStatus())) {
+            updateUserTaskList(user, userTaskData.getTaskNameId());
+        }
         return ClientResponseUtil.buildUserTaskExecutionResp(userTaskData, execServiceResp);
+    }
+
+    private void updateUserTaskList(UserDto userDto, String taskNameId) {
+        User user = userService.findUserByEmail(userDto.getEmail());
+        user.getSolvedTaskNameIds().add(taskNameId);
+        userService.updateUser(user);
+        userDto.getSolvedTaskNameIds().add(taskNameId);
     }
 }

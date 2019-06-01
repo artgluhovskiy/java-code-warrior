@@ -42,8 +42,8 @@ public class TaskServiceController {
 
     @GetMapping(value = "/task/descriptors", produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
     public CodingTaskDescriptorsResp getCodingTaskDescriptors() {
-        List<CodingTaskDescriptor> taskDescriptors = this.taskService.getCodingTaskDescriptors();
-        return ServiceResponseUtil.buildCodingTaskDescriptorsResp(taskDescriptors);
+        List<CodingTask> codingTasks = this.taskService.getCodingTasks();
+        return ServiceResponseUtil.buildCodingTaskDescriptorsResp(codingTasks);
     }
 
     @GetMapping("/ping")

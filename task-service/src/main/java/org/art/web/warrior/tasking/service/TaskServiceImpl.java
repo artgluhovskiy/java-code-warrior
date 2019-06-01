@@ -1,6 +1,5 @@
 package org.art.web.warrior.tasking.service;
 
-import org.art.web.warrior.commons.tasking.dto.CodingTaskDescriptor;
 import org.art.web.warrior.tasking.model.CodingTask;
 import org.art.web.warrior.tasking.repository.CodingTaskRepository;
 import org.art.web.warrior.tasking.service.api.TaskService;
@@ -32,10 +31,5 @@ public class TaskServiceImpl implements TaskService {
     @Override
     public List<CodingTask> getCodingTasks() {
         return this.taskRepository.findAll();
-    }
-
-    @Override
-    public List<CodingTaskDescriptor> getCodingTaskDescriptors() {
-        return this.taskRepository.getCodingTasks(CodingTaskDescriptor.class);
     }
 }

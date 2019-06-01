@@ -38,12 +38,13 @@ public class TaskServiceClientImpl implements TaskServiceClient {
 
     @Override
     public CodingTaskPublicationResp publishNewCodingTask(CodingTaskPublicationReq taskData) {
+        String serviceEndpoint = this.serviceEndpointBase + TASK;
         HttpHeaders headers = new HttpHeaders();
         headers.set(HttpHeaders.CONTENT_TYPE, KRYO_CONTENT_TYPE);
         headers.set(HttpHeaders.ACCEPT, MediaType.APPLICATION_JSON_UTF8_VALUE);
         HttpEntity<CodingTaskPublicationReq> reqEntity = new HttpEntity<>(taskData, headers);
-        log.debug("Making task publication request to the Task Service. Endpoint: {}, request data: {}", this.serviceEndpointBase + TASK, taskData);
-        ResponseEntity<CodingTaskPublicationResp> serviceResponse = restTemplate.postForEntity(this.serviceEndpointBase, reqEntity, CodingTaskPublicationResp.class);
+        log.debug("Making task publication request to the Task Service. Endpoint: {}, request data: {}", serviceEndpoint, taskData);
+        ResponseEntity<CodingTaskPublicationResp> serviceResponse = restTemplate.postForEntity(serviceEndpoint, reqEntity, CodingTaskPublicationResp.class);
         return serviceResponse.getBody();
     }
 

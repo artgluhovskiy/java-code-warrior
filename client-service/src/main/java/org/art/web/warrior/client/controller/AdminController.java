@@ -14,16 +14,16 @@ import org.art.web.warrior.commons.tasking.dto.CodingTaskPublicationResp;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.ResponseBody;
 
 import javax.validation.Valid;
 
-import static org.art.web.warrior.client.CommonServiceConstants.ADMIN;
-import static org.art.web.warrior.client.CommonServiceConstants.SUBMIT;
-
 @Slf4j
 @Controller
-@RequestMapping(ADMIN)
+@RequestMapping("admin")
 public class AdminController {
 
     private final CompServiceClient compServiceClient;
@@ -37,9 +37,9 @@ public class AdminController {
     }
 
     @ResponseBody
-    @PostMapping(value = SUBMIT, consumes = MediaType.APPLICATION_JSON_UTF8_VALUE, produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
+    @PostMapping(value = "submit", consumes = MediaType.APPLICATION_JSON_UTF8_VALUE, produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
     public ClientServiceAdminResp publishNewTask(@Valid @RequestBody AdminTaskPublicationData clientRequestData) {
-        log.info("Publishing new Coding Task. Task name ID: {}", clientRequestData.getTaskNameId());
+        log.info("Publishing a new Coding Task. Task name ID: {}", clientRequestData.getTaskNameId());
         String solutionSrcCode = clientRequestData.getSolutionSrcCode();
         String runnerSrcCode = clientRequestData.getRunnerSrcCode();
         log.debug("Compiling class data.");

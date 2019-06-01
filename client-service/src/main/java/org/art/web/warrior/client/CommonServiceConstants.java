@@ -20,8 +20,11 @@ public class CommonServiceConstants {
     public static final String REGISTRATION_FRAGMENT = "registration";
     public static final String SUBMISSION_FRAGMENT = "submission";
     public static final String TASKS_FRAGMENT = "tasks";
+    public static final String TASK_FRAGMENT = "task";
 
     public static final String USER_ATTR_NAME = "user";
+    public static final String USER_TASK_LIST_ATTR_NAME = "userTaskList";
+    public static final String TASK_ATTR_NAME = "task";
 
     //Request URL Mapping
     public static final String USER = "user";

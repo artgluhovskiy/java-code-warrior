@@ -21,10 +21,10 @@
                     <li class="nav-item active">
                         <a class="nav-link" th:href="@{/user/tasks}">Coding Problems</a>
                     </li>
-                    <li class="nav-item active">
+                    <li class="nav-item active" sec:authorize="!isAuthenticated()">
                         <a class="nav-link" th:href="@{/user/login}">Login</a>
                     </li>
-                    <li class="nav-item active">
+                    <li class="nav-item active" sec:authorize="isAuthenticated()">
                         <a class="nav-link" th:href="@{/user/logout}">Logout</a>
                     </li>
                 </ul>
@@ -97,7 +97,29 @@
         </div>
 
         <!-- Task List Fragment -->
-        <div th:fragment="tasks">Tasks!</div>
+        <div th:fragment="tasks">
+            <div class="container">
+                <h2>Coding Task List</h2>
+                <table class="table table-bordered">
+                    <thead>
+                        <tr>
+                            <th>Task Name</th>
+                            <th>Task Description</th>
+                            <th>Status</th>
+                            <th>Task Link</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr th:each="taskInfo : ${userTaskList}">
+                            <td><span th:text="${taskInfo.name}">Task Name</span></td>
+                            <td><span th:text="${taskInfo.description}">Task Description</span></td>
+                            <td><span th:text="${taskInfo.solved}">Status</span></td>
+                            <td><a th:href="@{/user/task/{taskNameId}(taskNameId=${taskInfo.nameId})}">Task Link</a></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
 
         <!-- Submission Fragment -->
         <div class="container" th:fragment="submission">
@@ -106,9 +128,17 @@
                     <form id="comp-data" action="#" th:action="@{/user/submit}" method="post">
                         <div class="md-form">
                             <label for="code-area">Write your code here:</label>
-                            <textarea id="code-area" class="md-textarea form-control" rows="12"></textarea>
-                            <input id="class-name" class="form-control" type="text" placeholder="Class Name">
-                            <input id="task-name-id" class="form-control" type="text" placeholder="Task Name ID">
+                            <textarea id="code-area" class="md-textarea form-control" rows="12">
+public class Solution {
+    [[${task.methodSign}]]
+
+        //Write your code here
+
+    }
+}
+                            </textarea>
+                            <input type="hidden" id="class-name" class="form-control" value="Solution">
+                            <input type="hidden" id="task-name-id" class="form-control" th:value="${task.nameId}">
                         </div>
                         <button type="submit" class="btn btn-default submit-code">Submit Code</button>
                     </form>

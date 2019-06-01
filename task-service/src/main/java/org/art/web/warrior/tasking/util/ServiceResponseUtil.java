@@ -9,6 +9,7 @@ import org.art.web.warrior.commons.tasking.dto.CodingTaskResp;
 import org.art.web.warrior.tasking.model.CodingTask;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 import static org.art.web.warrior.tasking.ServiceCommonConstants.TASK_PUBLICATION_ERROR_RESPONSE;
 import static org.art.web.warrior.tasking.ServiceCommonConstants.TASK_PUBLICATION_OK_RESPONSE;
@@ -47,9 +48,12 @@ public class ServiceResponseUtil {
         return builder.build();
     }
 
-    public static CodingTaskDescriptorsResp buildCodingTaskDescriptorsResp(List<CodingTaskDescriptor> taskDescriptors) {
+    public static CodingTaskDescriptorsResp buildCodingTaskDescriptorsResp(List<CodingTask> codingTasks) {
         CodingTaskDescriptorsResp taskListResp = new CodingTaskDescriptorsResp();
-        if (CollectionUtils.isNotEmpty(taskDescriptors)) {
+        if (CollectionUtils.isNotEmpty(codingTasks)) {
+            List<CodingTaskDescriptor> taskDescriptors = codingTasks.stream()
+                .map(task -> new CodingTaskDescriptor(task.getNameId(), task.getName(), task.getDescription()))
+                .collect(Collectors.toList());
             taskListResp.setCodingTasks(taskDescriptors);
             taskListResp.setRespStatus(ServiceResponseStatus.SUCCESS.getStatusId());
         } else {

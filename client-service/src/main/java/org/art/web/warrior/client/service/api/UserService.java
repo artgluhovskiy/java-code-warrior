@@ -7,4 +7,8 @@ import org.art.web.warrior.client.model.User;
 public interface UserService {
 
     User registerNewUserAccount(UserDto userDto) throws EmailExistsException;
+
+    User findUserByEmail(String email);
+
+    User updateUser(User user);
 }

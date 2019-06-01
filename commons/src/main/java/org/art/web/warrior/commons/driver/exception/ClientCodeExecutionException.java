@@ -4,13 +4,13 @@ public class ClientCodeExecutionException extends RuntimeException {
 
     private String testName;
 
-    private Object expected;
+    private String expected;
 
-    private Object result;
+    private String result;
 
-    private Object input;
+    private String input;
 
-    public ClientCodeExecutionException(String testName, Object expected, Object result, Object input) {
+    public ClientCodeExecutionException(String testName, String expected, String result, String input) {
         super();
         this.testName = testName;
         this.expected = expected;

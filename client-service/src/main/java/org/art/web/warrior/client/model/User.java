@@ -6,7 +6,9 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
+import java.util.Collections;
 import java.util.List;
+import java.util.Set;
 
 @Data
 @Entity
@@ -38,4 +40,7 @@ public class User {
         inverseJoinColumns = @JoinColumn(
             name = "role_id", referencedColumnName = "id"))
     private List<Role> roles;
+
+    @ElementCollection(fetch = FetchType.EAGER)
+    private Set<String> solvedTaskNameIds = Collections.emptySet();
 }

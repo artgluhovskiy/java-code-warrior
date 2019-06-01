@@ -1,19 +1,17 @@
 package org.art.web.warrior.client.dto;
 
-import lombok.AllArgsConstructor;
 import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.RequiredArgsConstructor;
 
 @Data
-@AllArgsConstructor
-@NoArgsConstructor
+@RequiredArgsConstructor
 public class UserCodingTaskDto {
 
     private boolean solved = false;
 
-    private String nameId;
+    private final String nameId;
 
-    private String name;
+    private final String name;
 
-    private String description;
+    private final String description;
 }

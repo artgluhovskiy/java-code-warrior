@@ -5,17 +5,17 @@ public class Runner {
     private Solution solution;
 
     public void run() {
-        System.out.println("Runner is running!");
+        System.out.println("Running the 'Int Palindrome' coding problem solution!");
         test0();
         test1();
     }
 
     public void test0() {
         int input = 121;
-        boolean excpected = true;
+        boolean expected = true;
         boolean result = solution.isPalindrome(input);
-        if (excpected != result) {
-            throw new ClientCodeExecutionException("test0", excpected, result, input);
+        if (expected != result) {
+            throw new ClientCodeExecutionException("test0", String.valueOf(expected), String.valueOf(result), String.valueOf(input));
         }
     }
 
@@ -24,7 +24,7 @@ public class Runner {
         boolean expected = false;
         boolean result = solution.isPalindrome(input);
         if (expected != result) {
-            throw new ClientCodeExecutionException("test1", expected, result, input);
+            throw new ClientCodeExecutionException("test1", String.valueOf(expected), String.valueOf(result), String.valueOf(input));
         }
     }
 
