@@ -28,13 +28,13 @@ public class TaskServiceController {
     }
 
     @GetMapping(value = "/task/{nameId}", produces = KRYO_CONTENT_TYPE)
-    public CodingTaskResp getCodingTaskByTaskNameId(@PathVariable("nameId") String nameId) {
+    public TaskServiceResp getCodingTaskByTaskNameId(@PathVariable("nameId") String nameId) {
         CodingTask codingTask = this.taskService.getTaskByNameId(nameId);
         return ServiceResponseUtil.buildCodingTaskResp(codingTask);
     }
 
     @PostMapping(value = "/task", consumes = KRYO_CONTENT_TYPE, produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
-    public CodingTaskPublicationResp publishNewCodingTask(@Valid @RequestBody CodingTaskPublicationReq requestData) {
+    public CodingTaskPublicationResp publishNewCodingTask(@Valid @RequestBody CodingTaskDto requestData) {
         CodingTask codingTask = ServiceRequestUtil.buildCodingTaskFromReqData(requestData);
         codingTask = this.taskService.publishTask(codingTask);
         return ServiceResponseUtil.buildCodingTaskPublicationResp(codingTask);

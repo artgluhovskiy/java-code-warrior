@@ -2,11 +2,11 @@ package org.art.web.warrior.client.util;
 
 import org.art.web.warrior.client.dto.*;
 import org.art.web.warrior.commons.ServiceResponseStatus;
-import org.art.web.warrior.commons.compiler.dto.CompilationResp;
+import org.art.web.warrior.commons.compiler.dto.CompServiceResp;
 import org.art.web.warrior.commons.compiler.dto.CompilationUnitResp;
 import org.art.web.warrior.commons.execution.dto.ExecutionResp;
 import org.art.web.warrior.commons.tasking.dto.CodingTaskPublicationResp;
-import org.art.web.warrior.commons.tasking.dto.CodingTaskResp;
+import org.art.web.warrior.commons.tasking.dto.TaskServiceResp;
 
 import java.util.Map;
 
@@ -26,16 +26,8 @@ public class ClientResponseUtil {
                 .build();
     }
 
-    public static ClientServiceAdminResp buildAdminTaskEmptyBodyResp(AdminTaskPublicationData clientReqData) {
-        return ClientServiceAdminResp.builder()
-                .respStatus(ServiceResponseStatus.INTERNAL_SERVICE_ERROR.getStatusId())
-                .message(INTERNAL_SERVICE_ERROR_MESSAGE)
-                .solutionSrcCode(clientReqData.getSolutionSrcCode())
-                .runnerSrcCode(clientReqData.getRunnerSrcCode())
-                .build();
-    }
 
-    public static ClientServiceUserResp buildUserTaskCompilationErrorResp(UserTaskCodeData userCodeData, CompilationResp serviceResp) {
+    public static ClientServiceUserResp buildUserTaskCompilationErrorResp(UserTaskCodeData userCodeData, CompServiceResp serviceResp) {
         CompErrorDetails errorDetails = buildCompilationErrorDetails(serviceResp);
         Map<String, CompilationUnitResp> compUnits = serviceResp.getCompUnitResults();
         CompilationUnitResp unitResult = compUnits.get(userCodeData.getClassName());
@@ -48,18 +40,7 @@ public class ClientResponseUtil {
                 .build();
     }
 
-    public static ClientServiceAdminResp buildAdminTaskCompilationErrorResp(CompilationResp serviceResp, String solutionSrcCode, String runnerSrcCode) {
-        CompErrorDetails errorDetails = buildCompilationErrorDetails(serviceResp);
-        return ClientServiceAdminResp.builder()
-                .respStatus(ServiceResponseStatus.COMPILATION_ERROR.getStatusId())
-                .message(COMPILATION_ERROR_MESSAGE)
-                .solutionSrcCode(solutionSrcCode)
-                .runnerSrcCode(runnerSrcCode)
-                .compErrorDetails(errorDetails)
-                .build();
-    }
-
-    public static ClientServiceUserResp buildUserTaskCompilationOkResp(CompilationResp serviceResp, String className) {
+    public static ClientServiceUserResp buildUserTaskCompilationOkResp(CompServiceResp serviceResp, String className) {
         Map<String, CompilationUnitResp> compUnits = serviceResp.getCompUnitResults();
         CompilationUnitResp unitResult = compUnits.get(className);
         return ClientServiceUserResp.builder()
@@ -79,21 +60,19 @@ public class ClientResponseUtil {
                 .build();
     }
 
-    public static ClientServiceAdminResp buildTaskServicePublicationResp(CodingTaskPublicationResp codingTaskPublicationResp, AdminTaskPublicationData clientRequestData) {
+    public static ClientServiceAdminResp buildClientServiceOkResp(TaskServiceResp taskServiceResp, AdminTaskPublicationData requestData) {
         return ClientServiceAdminResp.builder()
-                .respStatus(codingTaskPublicationResp.getRespStatus())
-                .message(codingTaskPublicationResp.getMessage())
-                .runnerSrcCode(clientRequestData.getRunnerSrcCode())
-                .solutionSrcCode(clientRequestData.getSolutionSrcCode())
+                .respStatus(taskServiceResp.getRespStatus())
+                .message(taskServiceResp.getMessage())
+                .runnerSrcCode(requestData.getRunnerSrcCode())
+                .solutionSrcCode(requestData.getSolutionSrcCode())
                 .build();
     }
 
-    private static CompErrorDetails buildCompilationErrorDetails(CompilationResp serviceResp) {
-        return CompErrorDetails.builder()
-                .compilerErrorCode(serviceResp.getCompilerErrorCode())
-                .compilerMessage(serviceResp.getCompilerMessage())
-                .errorCodeLine(serviceResp.getErrorCodeLine())
-                .errorPosition(serviceResp.getErrorPosition())
+    public static ClientServiceAdminResp buildTaskForUpdateNotExistResp(String taskNameId) {
+        return ClientServiceAdminResp.builder()
+                .respStatus(ServiceResponseStatus.NOT_FOUND.getStatusId())
+                .message("Coding task with such name ID doesn't exist: " + taskNameId + ". Please, publish it firstly!")
                 .build();
     }
 
@@ -107,7 +86,7 @@ public class ClientResponseUtil {
                 .build();
     }
 
-    public static ClientServiceUserResp buildUserTaskServiceErrorResp(UserTaskCodeData userTaskData, CodingTaskResp taskServiceResp) {
+    public static ClientServiceUserResp buildUserTaskServiceErrorResp(UserTaskCodeData userTaskData, TaskServiceResp taskServiceResp) {
         ClientServiceUserResp.ClientServiceUserRespBuilder builder = ClientServiceUserResp.builder();
         builder.className(userTaskData.getClassName())
                 .srcCode(userTaskData.getSrcCode())
@@ -117,5 +96,42 @@ public class ClientResponseUtil {
                     .execMessage(TASK_NOT_FOUND_ERROR_MESSAGE);
         }
         return builder.build();
+    }
+
+    public static ClientServiceAdminResp buildCompilationErrorResp(CompServiceResp serviceResp, AdminTaskPublicationData requestData) {
+        if (serviceResp == null) {
+            return buildTaskServiceErrorResp(requestData);
+        } else {
+            return buildTaskCompilationErrorResp(serviceResp, requestData);
+        }
+    }
+
+    private static ClientServiceAdminResp buildTaskServiceErrorResp(AdminTaskPublicationData requestData) {
+        return ClientServiceAdminResp.builder()
+                .respStatus(ServiceResponseStatus.INTERNAL_SERVICE_ERROR.getStatusId())
+                .message(INTERNAL_SERVICE_ERROR_MESSAGE)
+                .solutionSrcCode(requestData.getSolutionSrcCode())
+                .runnerSrcCode(requestData.getRunnerSrcCode())
+                .build();
+    }
+
+    private static ClientServiceAdminResp buildTaskCompilationErrorResp(CompServiceResp serviceResp, AdminTaskPublicationData requestData) {
+        CompErrorDetails errorDetails = buildCompilationErrorDetails(serviceResp);
+        return ClientServiceAdminResp.builder()
+                .respStatus(ServiceResponseStatus.COMPILATION_ERROR.getStatusId())
+                .message(COMPILATION_ERROR_MESSAGE)
+                .solutionSrcCode(requestData.getSolutionSrcCode())
+                .runnerSrcCode(requestData.getRunnerSrcCode())
+                .compErrorDetails(errorDetails)
+                .build();
+    }
+
+    private static CompErrorDetails buildCompilationErrorDetails(CompServiceResp serviceResp) {
+        return CompErrorDetails.builder()
+                .compilerErrorCode(serviceResp.getCompilerErrorCode())
+                .compilerMessage(serviceResp.getCompilerMessage())
+                .errorCodeLine(serviceResp.getErrorCodeLine())
+                .errorPosition(serviceResp.getErrorPosition())
+                .build();
     }
 }

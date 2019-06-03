@@ -37,22 +37,11 @@ public class InitialDataLoader implements ApplicationListener<ContextRefreshedEv
     @Override
     @Transactional
     public void onApplicationEvent(ContextRefreshedEvent event) {
-
         if (alreadySetup) return;
-
         createRoleIfNotFound(ROLE_ADMIN);
         createRoleIfNotFound(ROLE_USER);
-
-        Role adminRole = roleRepository.findByName(ROLE_USER);
-        User user = new User();
-        user.setEnabled(true);
-        user.setFirstName("User");
-        user.setLastName("User");
-        user.setPassword(passwordEncoder.encode("user"));
-        user.setEmail("user@user.com");
-        user.setRoles(Collections.singletonList(adminRole));
-        userRepository.save(user);
-
+        createAdminIfNotFound();
+        createUserIfNotFound();
         alreadySetup = true;
     }
 
@@ -65,5 +54,41 @@ public class InitialDataLoader implements ApplicationListener<ContextRefreshedEv
             role = this.roleRepository.save(role);
         }
         return role;
+    }
+
+    @Transactional
+    protected User createAdminIfNotFound() {
+        String email = "admin@gmail.com";
+        User admin = userRepository.findUserByEmail(email);
+        if (admin == null) {
+            admin = new User();
+            admin.setEnabled(true);
+            admin.setFirstName("Admin");
+            admin.setLastName("Admin");
+            admin.setPassword(passwordEncoder.encode("admin"));
+            admin.setEmail(email);
+            Role adminRole = roleRepository.findByName(ROLE_ADMIN);
+            admin.setRoles(Collections.singletonList(adminRole));
+            userRepository.save(admin);
+        }
+        return admin;
+    }
+
+    @Transactional
+    protected User createUserIfNotFound() {
+        String email = "user@gmail.com";
+        User user = userRepository.findUserByEmail(email);
+        if (user == null) {
+            user = new User();
+            user.setEnabled(true);
+            user.setFirstName("User");
+            user.setLastName("User");
+            user.setPassword(passwordEncoder.encode("user"));
+            user.setEmail(email);
+            Role adminRole = roleRepository.findByName(ROLE_USER);
+            user.setRoles(Collections.singletonList(adminRole));
+            userRepository.save(user);
+        }
+        return user;
     }
 }

@@ -1,9 +1,9 @@
 package org.art.web.warrior.client.service.api;
 
-import org.art.web.warrior.commons.compiler.dto.CompilationReq;
-import org.art.web.warrior.commons.compiler.dto.CompilationResp;
+import org.art.web.warrior.commons.compiler.dto.CompServiceReq;
+import org.art.web.warrior.commons.compiler.dto.CompServiceResp;
 
 public interface CompServiceClient {
 
-    CompilationResp compileSrc(CompilationReq compRequestData);
+    CompServiceResp compileSrc(CompServiceReq compRequestData);
 }

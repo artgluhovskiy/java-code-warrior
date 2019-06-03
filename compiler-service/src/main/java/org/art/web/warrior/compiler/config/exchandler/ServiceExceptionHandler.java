@@ -1,7 +1,7 @@
 package org.art.web.warrior.compiler.config.exchandler;
 
 import org.art.web.warrior.commons.ServiceResponseStatus;
-import org.art.web.warrior.commons.compiler.dto.CompilationResp;
+import org.art.web.warrior.commons.compiler.dto.CompServiceResp;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
@@ -21,14 +21,14 @@ public class ServiceExceptionHandler {
     @ResponseBody
     @ResponseStatus(HttpStatus.UNPROCESSABLE_ENTITY)
     @ExceptionHandler(MethodArgumentNotValidException.class)
-    public CompilationResp handleMethodArgumentNotValidException(MethodArgumentNotValidException e) {
+    public CompServiceResp handleMethodArgumentNotValidException(MethodArgumentNotValidException e) {
         String validationErrors = e.getBindingResult().getAllErrors().stream()
                 .map(er -> {
                     String fieldName = er.getObjectName();
                     String errorMessage = er.getDefaultMessage();
                     return VALIDATION_ERROR_PREF + fieldName + QUOTE_CH + DOT_CH + SPACE_CH + errorMessage;
                 }).collect(Collectors.joining(NEW_LINE));
-        return CompilationResp.builder()
+        return CompServiceResp.builder()
                 .compilerStatus(ServiceResponseStatus.BAD_REQUEST.getStatusId())
                 .compilerStatusCode(ServiceResponseStatus.BAD_REQUEST.getStatusCode())
                 .message(validationErrors)

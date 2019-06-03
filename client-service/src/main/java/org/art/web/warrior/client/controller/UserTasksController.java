@@ -8,7 +8,7 @@ import org.art.web.warrior.client.service.api.TaskServiceClient;
 import org.art.web.warrior.client.service.api.UserService;
 import org.art.web.warrior.commons.tasking.dto.CodingTaskDescriptor;
 import org.art.web.warrior.commons.tasking.dto.CodingTaskDescriptorsResp;
-import org.art.web.warrior.commons.tasking.dto.CodingTaskResp;
+import org.art.web.warrior.commons.tasking.dto.TaskServiceResp;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
@@ -53,7 +53,7 @@ public class UserTasksController {
     @GetMapping("task/{taskNameId}")
     public ModelAndView taskPage(@PathVariable("taskNameId") String taskNameId, ModelMap model) {
         log.debug("Task page request for the task with ID: {}", taskNameId);
-        CodingTaskResp taskServiceResp = taskServiceClient.getCodingTaskByNameId(taskNameId);
+        TaskServiceResp taskServiceResp = taskServiceClient.getCodingTaskByNameId(taskNameId);
         model.addAttribute(TASK_ATTR_NAME, taskServiceResp);
         model.addAttribute(VIEW_FRAGMENT, SUBMISSION_FRAGMENT);
         return new ModelAndView(LAYOUT_VIEW_NAME, model);

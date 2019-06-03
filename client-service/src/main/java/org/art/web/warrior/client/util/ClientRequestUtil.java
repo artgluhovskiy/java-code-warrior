@@ -2,13 +2,13 @@ package org.art.web.warrior.client.util;
 
 import org.art.web.warrior.client.dto.AdminTaskPublicationData;
 import org.art.web.warrior.commons.CommonConstants;
-import org.art.web.warrior.commons.compiler.dto.CompilationReq;
-import org.art.web.warrior.commons.compiler.dto.CompilationResp;
-import org.art.web.warrior.commons.compiler.dto.CompilationUnitReq;
+import org.art.web.warrior.commons.compiler.dto.CompServiceReq;
+import org.art.web.warrior.commons.compiler.dto.CompServiceResp;
+import org.art.web.warrior.commons.compiler.dto.CompilationUnit;
 import org.art.web.warrior.commons.compiler.dto.CompilationUnitResp;
 import org.art.web.warrior.commons.execution.dto.ExecutionReq;
-import org.art.web.warrior.commons.tasking.dto.CodingTaskPublicationReq;
-import org.art.web.warrior.commons.tasking.dto.CodingTaskResp;
+import org.art.web.warrior.commons.tasking.dto.CodingTaskDto;
+import org.art.web.warrior.commons.tasking.dto.TaskServiceResp;
 import org.art.web.warrior.commons.util.ParserUtil;
 
 import java.util.Arrays;
@@ -22,30 +22,30 @@ public class ClientRequestUtil {
     private ClientRequestUtil() {
     }
 
-    public static CodingTaskPublicationReq buildTaskServicePublicationReq(AdminTaskPublicationData clientRequestData, CompilationResp serviceResp) {
+    public static CodingTaskDto buildTaskServiceReq(AdminTaskPublicationData requestData, CompServiceResp serviceResp) {
         Map<String, CompilationUnitResp> compResults = serviceResp.getCompUnitResults();
         byte[] compiledRunnerClass = compResults.get(RUNNER_CLASS_NAME).getCompiledClassBytes();
-        return CodingTaskPublicationReq.builder()
-                .nameId(clientRequestData.getTaskNameId())
-                .name(clientRequestData.getTaskName())
-                .description(clientRequestData.getTaskDescription())
-                .methodSign(clientRequestData.getTaskMethodSign())
+        return CodingTaskDto.builder()
+                .nameId(requestData.getTaskNameId())
+                .name(requestData.getTaskName())
+                .description(requestData.getTaskDescription())
+                .methodSign(requestData.getTaskMethodSign())
                 .runnerClassData(compiledRunnerClass)
                 .build();
     }
 
-    public static CompilationReq buildCompilationServiceReq(AdminTaskPublicationData requestData) {
+    public static CompServiceReq buildCompilationServiceReq(AdminTaskPublicationData requestData) {
         String solutionSrcCode = requestData.getSolutionSrcCode();
         String solutionClassName = ParserUtil.parseClassNameFromSrcString(solutionSrcCode);
-        CompilationUnitReq solutionCompUnit = new CompilationUnitReq(solutionClassName, solutionSrcCode);
+        CompilationUnit solutionCompUnit = new CompilationUnit(solutionClassName, solutionSrcCode);
         String runnerSrcCode = requestData.getRunnerSrcCode();
         String runnerClassName = ParserUtil.parseClassNameFromSrcString(runnerSrcCode);
-        CompilationUnitReq runnerCompUnit = new CompilationUnitReq(runnerClassName, runnerSrcCode);
-        List<CompilationUnitReq> compUnits = Arrays.asList(solutionCompUnit, runnerCompUnit);
-        return new CompilationReq(compUnits);
+        CompilationUnit runnerCompUnit = new CompilationUnit(runnerClassName, runnerSrcCode);
+        List<CompilationUnit> compUnits = Arrays.asList(solutionCompUnit, runnerCompUnit);
+        return new CompServiceReq(compUnits);
     }
 
-    public static ExecutionReq buildExecutionServiceRequest(CompilationResp compServiceResp, CodingTaskResp taskServiceResp) {
+    public static ExecutionReq buildExecutionServiceRequest(CompServiceResp compServiceResp, TaskServiceResp taskServiceResp) {
         CompilationUnitResp solutionClassData = compServiceResp.getCompUnitResults().get(CommonConstants.SOLUTION_CLASS_NAME);
         return ExecutionReq.builder()
                 .solutionClassName(solutionClassData.getClassName())

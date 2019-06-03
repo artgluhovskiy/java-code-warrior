@@ -10,7 +10,7 @@ import javax.validation.constraints.NotEmpty;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class CodingTaskPublicationReq {
+public class CodingTaskDto {
 
     @NotBlank(message = "Task Name ID should not be blank!")
     private String nameId;

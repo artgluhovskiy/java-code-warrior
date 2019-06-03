@@ -5,7 +5,7 @@ import org.art.web.warrior.commons.ServiceResponseStatus;
 import org.art.web.warrior.commons.tasking.dto.CodingTaskDescriptor;
 import org.art.web.warrior.commons.tasking.dto.CodingTaskDescriptorsResp;
 import org.art.web.warrior.commons.tasking.dto.CodingTaskPublicationResp;
-import org.art.web.warrior.commons.tasking.dto.CodingTaskResp;
+import org.art.web.warrior.commons.tasking.dto.TaskServiceResp;
 import org.art.web.warrior.tasking.model.CodingTask;
 
 import java.util.List;
@@ -32,8 +32,8 @@ public class ServiceResponseUtil {
         return pubResponse;
     }
 
-    public static CodingTaskResp buildCodingTaskResp(CodingTask task) {
-        CodingTaskResp.CodingTaskRespBuilder builder = CodingTaskResp.builder();
+    public static TaskServiceResp buildCodingTaskResp(CodingTask task) {
+        TaskServiceResp.CodingTaskRespBuilder builder = TaskServiceResp.builder();
         if (task != null) {
             builder.respStatus(ServiceResponseStatus.SUCCESS.getStatusId())
                     .nameId(task.getNameId())

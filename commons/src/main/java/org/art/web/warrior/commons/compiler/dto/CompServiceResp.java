@@ -10,7 +10,7 @@ import java.util.Map;
 @ToString
 @NoArgsConstructor
 @AllArgsConstructor
-public class CompilationResp {
+public class CompServiceResp {
 
     private int compilerStatusCode;
 
@@ -36,5 +36,9 @@ public class CompilationResp {
 
     public boolean isCompOk() {
         return ServiceResponseStatus.SUCCESS.getStatusId().equals(compilerStatus);
+    }
+
+    public boolean hasErrors() {
+        return !isCompOk();
     }
 }

@@ -12,12 +12,12 @@ import org.art.web.warrior.client.service.api.UserService;
 import org.art.web.warrior.client.util.ClientRequestUtil;
 import org.art.web.warrior.client.util.ClientResponseUtil;
 import org.art.web.warrior.commons.ServiceResponseStatus;
-import org.art.web.warrior.commons.compiler.dto.CompilationReq;
-import org.art.web.warrior.commons.compiler.dto.CompilationResp;
-import org.art.web.warrior.commons.compiler.dto.CompilationUnitReq;
+import org.art.web.warrior.commons.compiler.dto.CompServiceReq;
+import org.art.web.warrior.commons.compiler.dto.CompServiceResp;
+import org.art.web.warrior.commons.compiler.dto.CompilationUnit;
 import org.art.web.warrior.commons.execution.dto.ExecutionReq;
 import org.art.web.warrior.commons.execution.dto.ExecutionResp;
-import org.art.web.warrior.commons.tasking.dto.CodingTaskResp;
+import org.art.web.warrior.commons.tasking.dto.TaskServiceResp;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
@@ -62,9 +62,9 @@ public class UserCodeSubmissionController {
         String srcCode = userTaskData.getSrcCode();
         String taskNameId = userTaskData.getTaskNameId();
         log.debug("Client code submission request: class name {}, source code {}, task name id {}", className, srcCode, taskNameId);
-        CompilationUnitReq requestCompData = new CompilationUnitReq(className, srcCode);
-        CompilationReq compRequest = new CompilationReq(singletonList(requestCompData));
-        CompilationResp compServiceResp = compServiceClient.compileSrc(compRequest);
+        CompilationUnit requestCompData = new CompilationUnit(className, srcCode);
+        CompServiceReq compRequest = new CompServiceReq(singletonList(requestCompData));
+        CompServiceResp compServiceResp = compServiceClient.compileSrc(compRequest);
         if (compServiceResp == null) {
             log.debug("Internal service error occurred! Compilation service responded with empty body.");
             return ClientResponseUtil.buildUserTaskEmptyBodyResp(userTaskData);
@@ -73,7 +73,7 @@ public class UserCodeSubmissionController {
             log.debug("Compilation errors occurred while compiling client source code!");
             return ClientResponseUtil.buildUserTaskCompilationErrorResp(userTaskData, compServiceResp);
         }
-        CodingTaskResp taskServiceResp = this.taskServiceClient.getCodingTaskByNameId(taskNameId);
+        TaskServiceResp taskServiceResp = this.taskServiceClient.getCodingTaskByNameId(taskNameId);
         if (!ServiceResponseStatus.SUCCESS.getStatusId().equals(taskServiceResp.getRespStatus())) {
             return ClientResponseUtil.buildUserTaskServiceErrorResp(userTaskData, taskServiceResp);
         }

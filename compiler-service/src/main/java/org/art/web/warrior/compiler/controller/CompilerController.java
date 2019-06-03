@@ -1,7 +1,7 @@
 package org.art.web.warrior.compiler.controller;
 
-import org.art.web.warrior.commons.compiler.dto.CompilationReq;
-import org.art.web.warrior.commons.compiler.dto.CompilationResp;
+import org.art.web.warrior.commons.compiler.dto.CompServiceReq;
+import org.art.web.warrior.commons.compiler.dto.CompServiceResp;
 import org.art.web.warrior.compiler.domain.CompilationResult;
 import org.art.web.warrior.compiler.domain.CompilationUnit;
 import org.art.web.warrior.compiler.exception.CompilationServiceException;
@@ -34,7 +34,7 @@ public class CompilerController {
     }
 
     @PostMapping(consumes = MediaType.APPLICATION_JSON_UTF8_VALUE)
-    public CompilationResp compile(@Valid @RequestBody CompilationReq requestData) {
+    public CompServiceResp compile(@Valid @RequestBody CompServiceReq requestData) {
         LOG.debug("Compilation request. Client request data: {}", requestData);
         List<CompilationUnit> requestUnits = requestData.getCompUnits().stream()
                 .map(reqData -> new CompilationUnit(reqData.getClassName(), reqData.getSrcCode()))
@@ -47,7 +47,7 @@ public class CompilerController {
         return COMPILER_SERVICE_OK_MESSAGE;
     }
 
-    private CompilationResp submitCompilationRequest(List<CompilationUnit> units) {
+    private CompServiceResp submitCompilationRequest(List<CompilationUnit> units) {
         try {
             CompilationResult result = compilationService.compileUnits(units);
             return ServiceResponseUtil.buildCompilationResponse(result);

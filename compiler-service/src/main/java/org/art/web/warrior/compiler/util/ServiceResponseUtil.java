@@ -1,6 +1,6 @@
 package org.art.web.warrior.compiler.util;
 
-import org.art.web.warrior.commons.compiler.dto.CompilationResp;
+import org.art.web.warrior.commons.compiler.dto.CompServiceResp;
 import org.art.web.warrior.commons.compiler.dto.CompilationUnitResp;
 import org.art.web.warrior.compiler.domain.CompilationResult;
 import org.art.web.warrior.compiler.domain.CompilationUnit;
@@ -9,17 +9,15 @@ import java.util.List;
 import java.util.Map;
 import java.util.function.Function;
 
-import static java.util.Collections.singletonMap;
 import static java.util.stream.Collectors.toMap;
-import static org.art.web.warrior.compiler.ServiceCommonConstants.REQUEST_DATA_CANNOT_BE_PROCESSED_MESSAGE;
 
 public class ServiceResponseUtil {
 
     private ServiceResponseUtil() {
     }
 
-    public static CompilationResp buildCompilationResponse(CompilationResult result) {
-        CompilationResp.CompilationRespBuilder builder = CompilationResp.builder();
+    public static CompServiceResp buildCompilationResponse(CompilationResult result) {
+        CompServiceResp.CompilationRespBuilder builder = CompServiceResp.builder();
         builder.compilerStatusCode(result.getCompStatus().getStatusCode())
                 .compilerStatus(result.getCompStatus().getStatusId())
                 .compUnitResults(result.getCompUnitResults());
@@ -35,8 +33,8 @@ public class ServiceResponseUtil {
         return builder.build();
     }
 
-    public static CompilationResp buildInternalServiceErrorResponse(Throwable cause, List<CompilationUnit> units) {
-        CompilationResp.CompilationRespBuilder builder = CompilationResp.builder();
+    public static CompServiceResp buildInternalServiceErrorResponse(Throwable cause, List<CompilationUnit> units) {
+        CompServiceResp.CompilationRespBuilder builder = CompServiceResp.builder();
         builder.message(cause.getMessage());
         if (units != null) {
             Map<String, CompilationUnitResp> unitResults = units.stream()

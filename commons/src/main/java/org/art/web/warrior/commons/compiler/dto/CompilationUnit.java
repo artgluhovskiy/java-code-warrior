@@ -13,7 +13,7 @@ import javax.validation.constraints.NotBlank;
 @NoArgsConstructor
 @AllArgsConstructor
 @ClassNameMatchValidation
-public class CompilationUnitReq {
+public class CompilationUnit {
 
     @NotBlank(message = "Target class name should not be blank!")
     private String className;

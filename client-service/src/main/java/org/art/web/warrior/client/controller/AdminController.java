@@ -1,28 +1,30 @@
 package org.art.web.warrior.client.controller;
 
 import lombok.extern.slf4j.Slf4j;
+import org.art.web.warrior.client.config.validation.groups.OnPublishing;
+import org.art.web.warrior.client.config.validation.groups.OnUpdate;
 import org.art.web.warrior.client.dto.AdminTaskPublicationData;
 import org.art.web.warrior.client.dto.ClientServiceAdminResp;
 import org.art.web.warrior.client.service.api.CompServiceClient;
 import org.art.web.warrior.client.service.api.TaskServiceClient;
 import org.art.web.warrior.client.util.ClientRequestUtil;
 import org.art.web.warrior.client.util.ClientResponseUtil;
-import org.art.web.warrior.commons.compiler.dto.CompilationReq;
-import org.art.web.warrior.commons.compiler.dto.CompilationResp;
-import org.art.web.warrior.commons.tasking.dto.CodingTaskPublicationReq;
-import org.art.web.warrior.commons.tasking.dto.CodingTaskPublicationResp;
+import org.art.web.warrior.commons.compiler.dto.CompServiceReq;
+import org.art.web.warrior.commons.compiler.dto.CompServiceResp;
+import org.art.web.warrior.commons.tasking.dto.CodingTaskDto;
+import org.art.web.warrior.commons.tasking.dto.TaskServiceResp;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
-import org.springframework.stereotype.Controller;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.RestController;
 
 import javax.validation.Valid;
 
 @Slf4j
-@Controller
+@RestController
 @RequestMapping("admin")
 public class AdminController {
 
@@ -36,25 +38,43 @@ public class AdminController {
         this.taskServiceClient = taskServiceClient;
     }
 
-    @ResponseBody
+    @Validated(OnPublishing.class)
     @PostMapping(value = "submit", consumes = MediaType.APPLICATION_JSON_UTF8_VALUE, produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
-    public ClientServiceAdminResp publishNewTask(@Valid @RequestBody AdminTaskPublicationData clientRequestData) {
-        log.info("Publishing a new Coding Task. Task name ID: {}", clientRequestData.getTaskNameId());
-        String solutionSrcCode = clientRequestData.getSolutionSrcCode();
-        String runnerSrcCode = clientRequestData.getRunnerSrcCode();
-        log.debug("Compiling class data.");
-        CompilationReq compServiceReqData = ClientRequestUtil.buildCompilationServiceReq(clientRequestData);
-        CompilationResp serviceResp = compServiceClient.compileSrc(compServiceReqData);
-        if (serviceResp == null) {
-            log.debug("Internal service error occurred! Compilation service responded with an empty body.");
-            return ClientResponseUtil.buildAdminTaskEmptyBodyResp(clientRequestData);
+    public ClientServiceAdminResp publishNewCodingTask(@Valid AdminTaskPublicationData requestData) {
+        log.info("Publishing a new Coding Task. Task name ID: {}", requestData.getTaskNameId());
+        CompServiceResp compServiceResp = callCompilerService(requestData);
+        if (compServiceResp == null || compServiceResp.hasErrors()) {
+            log.debug("Some errors occurred while task src compilation! Request data: {}", requestData);
+            return ClientResponseUtil.buildCompilationErrorResp(compServiceResp, requestData);
         }
-        if (serviceResp.isCompError()) {
-            log.debug("Compilation errors occurred while compiling client source code!");
-            return ClientResponseUtil.buildAdminTaskCompilationErrorResp(serviceResp, solutionSrcCode, runnerSrcCode);
+        CodingTaskDto taskDto = ClientRequestUtil.buildTaskServiceReq(requestData, compServiceResp);
+        TaskServiceResp taskServiceResp = taskServiceClient.publishNewCodingTask(taskDto);
+        return ClientResponseUtil.buildClientServiceOkResp(taskServiceResp, requestData);
+    }
+
+    @Validated(OnUpdate.class)
+    @PutMapping(value = "submit", consumes = MediaType.APPLICATION_JSON_UTF8_VALUE, produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
+    public ClientServiceAdminResp updateCodingTask(@Valid AdminTaskPublicationData requestData) {
+        String taskNameId = requestData.getTaskNameId();
+        log.info("Updating the Coding Task. Task name ID: {}", taskNameId);
+        TaskServiceResp taskServiceResp = taskServiceClient.getCodingTaskByNameId(taskNameId);
+        if (taskServiceResp == null || taskServiceResp.getTask() == null) {
+            return ClientResponseUtil.buildTaskForUpdateNotExistResp(taskNameId);
         }
-        CodingTaskPublicationReq taskPublicationReq = ClientRequestUtil.buildTaskServicePublicationReq(clientRequestData, serviceResp);
-        CodingTaskPublicationResp taskPublicationResp = taskServiceClient.publishNewCodingTask(taskPublicationReq);
-        return ClientResponseUtil.buildTaskServicePublicationResp(taskPublicationResp, clientRequestData);
+        CompServiceResp compServiceResp = callCompilerService(requestData);
+        if (compServiceResp == null || compServiceResp.hasErrors()) {
+            log.debug("Some errors occurred while task src compilation! Request data: {}", requestData);
+            return ClientResponseUtil.buildCompilationErrorResp(compServiceResp, requestData);
+        }
+        CodingTaskDto taskDto = ClientRequestUtil.buildTaskServiceReq(requestData, compServiceResp);
+        TaskServiceResp taskServiceResp = taskServiceClient.updateCodingTask(taskDto);
+        return ClientResponseUtil.buildClientServiceOkResp(taskServiceResp, requestData);
+
+    }
+
+    private CompServiceResp callCompilerService(AdminTaskPublicationData requestData) {
+        log.debug("Compiling coding task source data.");
+        CompServiceReq compServiceReqData = ClientRequestUtil.buildCompilationServiceReq(requestData);
+        return compServiceClient.compileSrc(compServiceReqData);
     }
 }
