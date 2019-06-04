@@ -67,7 +67,7 @@ public class AdminController {
             return ClientResponseUtil.buildCompilationErrorResp(compServiceResp, requestData);
         }
         CodingTaskDto taskDto = ClientRequestUtil.buildTaskServiceReq(requestData, compServiceResp);
-        TaskServiceResp taskServiceResp = taskServiceClient.updateCodingTask(taskDto);
+        taskServiceResp = taskServiceClient.updateCodingTask(taskDto);
         return ClientResponseUtil.buildClientServiceOkResp(taskServiceResp, requestData);
 
     }

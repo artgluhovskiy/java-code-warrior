@@ -37,7 +37,7 @@ public class TaskServiceClientImpl implements TaskServiceClient {
     }
 
     @Override
-    public CodingTaskPublicationResp publishNewCodingTask(CodingTaskDto taskData) {
+    public TaskServiceResp publishNewCodingTask(CodingTaskDto taskData) {
         String serviceEndpoint = this.serviceEndpointBase + TASK;
         HttpHeaders headers = new HttpHeaders();
         headers.set(HttpHeaders.CONTENT_TYPE, KRYO_CONTENT_TYPE);
