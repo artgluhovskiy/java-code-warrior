@@ -29,7 +29,12 @@ public class TaskServiceImpl implements TaskService {
     }
 
     @Override
-    public List<CodingTask> getCodingTasks() {
+    public List<CodingTask> getAllTasks() {
         return this.taskRepository.findAll();
+    }
+
+    @Override
+    public void deleteTaskByNameId(String nameId) {
+        taskRepository.deleteByNameId(nameId);
     }
 }

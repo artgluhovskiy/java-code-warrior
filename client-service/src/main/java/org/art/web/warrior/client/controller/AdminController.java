@@ -11,8 +11,7 @@ import org.art.web.warrior.client.util.ClientRequestUtil;
 import org.art.web.warrior.client.util.ClientResponseUtil;
 import org.art.web.warrior.commons.compiler.dto.CompServiceReq;
 import org.art.web.warrior.commons.compiler.dto.CompServiceResp;
-import org.art.web.warrior.commons.tasking.dto.CodingTaskDto;
-import org.art.web.warrior.commons.tasking.dto.TaskServiceResp;
+import org.art.web.warrior.commons.tasking.dto.TaskDto;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.validation.annotation.Validated;
@@ -47,7 +46,7 @@ public class AdminController {
             log.debug("Some errors occurred while task src compilation! Request data: {}", requestData);
             return ClientResponseUtil.buildCompilationErrorResp(compServiceResp, requestData);
         }
-        CodingTaskDto taskDto = ClientRequestUtil.buildTaskServiceReq(requestData, compServiceResp);
+        TaskDto taskDto = ClientRequestUtil.buildTaskServiceReq(requestData, compServiceResp);
         TaskServiceResp taskServiceResp = taskServiceClient.publishNewCodingTask(taskDto);
         return ClientResponseUtil.buildClientServiceOkResp(taskServiceResp, requestData);
     }
@@ -66,8 +65,8 @@ public class AdminController {
             log.debug("Some errors occurred while task src compilation! Request data: {}", requestData);
             return ClientResponseUtil.buildCompilationErrorResp(compServiceResp, requestData);
         }
-        CodingTaskDto taskDto = ClientRequestUtil.buildTaskServiceReq(requestData, compServiceResp);
-        TaskServiceResp taskServiceResp = taskServiceClient.updateCodingTask(taskDto);
+        TaskDto taskDto = ClientRequestUtil.buildTaskServiceReq(requestData, compServiceResp);
+        taskServiceResp = taskServiceClient.updateCodingTask(taskDto);
         return ClientResponseUtil.buildClientServiceOkResp(taskServiceResp, requestData);
 
     }

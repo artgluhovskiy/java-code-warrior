@@ -2,10 +2,7 @@ package org.art.web.warrior.tasking.util;
 
 import org.apache.commons.collections4.CollectionUtils;
 import org.art.web.warrior.commons.ServiceResponseStatus;
-import org.art.web.warrior.commons.tasking.dto.CodingTaskDescriptor;
-import org.art.web.warrior.commons.tasking.dto.CodingTaskDescriptorsResp;
-import org.art.web.warrior.commons.tasking.dto.CodingTaskPublicationResp;
-import org.art.web.warrior.commons.tasking.dto.TaskServiceResp;
+import org.art.web.warrior.commons.tasking.dto.TaskDescriptorDto;
 import org.art.web.warrior.tasking.model.CodingTask;
 
 import java.util.List;
@@ -51,8 +48,8 @@ public class ServiceResponseUtil {
     public static CodingTaskDescriptorsResp buildCodingTaskDescriptorsResp(List<CodingTask> codingTasks) {
         CodingTaskDescriptorsResp taskListResp = new CodingTaskDescriptorsResp();
         if (CollectionUtils.isNotEmpty(codingTasks)) {
-            List<CodingTaskDescriptor> taskDescriptors = codingTasks.stream()
-                .map(task -> new CodingTaskDescriptor(task.getNameId(), task.getName(), task.getDescription()))
+            List<TaskDescriptorDto> taskDescriptors = codingTasks.stream()
+                .map(task -> new TaskDescriptorDto(task.getNameId(), task.getName(), task.getDescription()))
                 .collect(Collectors.toList());
             taskListResp.setCodingTasks(taskDescriptors);
             taskListResp.setRespStatus(ServiceResponseStatus.SUCCESS.getStatusId());

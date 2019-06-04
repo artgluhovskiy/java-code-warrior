@@ -10,5 +10,7 @@ public interface TaskService {
 
     CodingTask getTaskByNameId(String nameId);
 
-    List<CodingTask> getCodingTasks();
+    List<CodingTask> getAllTasks();
+
+    void deleteTaskByNameId(String nameId);
 }

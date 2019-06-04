@@ -8,4 +8,6 @@ import org.springframework.stereotype.Repository;
 public interface CodingTaskRepository extends JpaRepository<CodingTask, Long> {
 
     CodingTask getCodingTaskByNameId(String nameId);
+
+    void deleteByNameId(String nameId);
 }

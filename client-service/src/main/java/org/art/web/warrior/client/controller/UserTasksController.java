@@ -6,9 +6,7 @@ import org.art.web.warrior.client.dto.UserDto;
 import org.art.web.warrior.client.model.User;
 import org.art.web.warrior.client.service.api.TaskServiceClient;
 import org.art.web.warrior.client.service.api.UserService;
-import org.art.web.warrior.commons.tasking.dto.CodingTaskDescriptor;
-import org.art.web.warrior.commons.tasking.dto.CodingTaskDescriptorsResp;
-import org.art.web.warrior.commons.tasking.dto.TaskServiceResp;
+import org.art.web.warrior.commons.tasking.dto.TaskDescriptorDto;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
@@ -43,7 +41,7 @@ public class UserTasksController {
         UserDto user = (UserDto) model.get(USER_ATTR_NAME);
         log.debug("Task list page request. User: {}", user.getEmail());
         CodingTaskDescriptorsResp taskServiceResponse = taskServiceClient.getCodingTaskDescriptors();
-        List<CodingTaskDescriptor> taskDescriptors = taskServiceResponse.getCodingTasks();
+        List<TaskDescriptorDto> taskDescriptors = taskServiceResponse.getCodingTasks();
         List<UserCodingTaskDto> userCodingTaskList = mapToUserCodingTaskDto(user.getSolvedTaskNameIds(), taskDescriptors);
         model.addAttribute(USER_TASK_LIST_ATTR_NAME, userCodingTaskList);
         model.addAttribute(VIEW_FRAGMENT, TASKS_FRAGMENT);
@@ -79,7 +77,7 @@ public class UserTasksController {
             .build();
     }
 
-    private List<UserCodingTaskDto> mapToUserCodingTaskDto(Set<String> solvedUserTasks, List<CodingTaskDescriptor> taskDescriptors) {
+    private List<UserCodingTaskDto> mapToUserCodingTaskDto(Set<String> solvedUserTasks, List<TaskDescriptorDto> taskDescriptors) {
         return taskDescriptors.stream()
             .map(desc -> {
                 UserCodingTaskDto codingTaskDto = new UserCodingTaskDto(desc.getNameId(), desc.getName(), desc.getDescription());

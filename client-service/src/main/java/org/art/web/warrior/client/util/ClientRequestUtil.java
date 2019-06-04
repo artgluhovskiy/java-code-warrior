@@ -7,8 +7,7 @@ import org.art.web.warrior.commons.compiler.dto.CompServiceResp;
 import org.art.web.warrior.commons.compiler.dto.CompilationUnit;
 import org.art.web.warrior.commons.compiler.dto.CompilationUnitResp;
 import org.art.web.warrior.commons.execution.dto.ExecutionReq;
-import org.art.web.warrior.commons.tasking.dto.CodingTaskDto;
-import org.art.web.warrior.commons.tasking.dto.TaskServiceResp;
+import org.art.web.warrior.commons.tasking.dto.TaskDto;
 import org.art.web.warrior.commons.util.ParserUtil;
 
 import java.util.Arrays;
@@ -22,10 +21,10 @@ public class ClientRequestUtil {
     private ClientRequestUtil() {
     }
 
-    public static CodingTaskDto buildTaskServiceReq(AdminTaskPublicationData requestData, CompServiceResp serviceResp) {
+    public static TaskDto buildTaskServiceReq(AdminTaskPublicationData requestData, CompServiceResp serviceResp) {
         Map<String, CompilationUnitResp> compResults = serviceResp.getCompUnitResults();
         byte[] compiledRunnerClass = compResults.get(RUNNER_CLASS_NAME).getCompiledClassBytes();
-        return CodingTaskDto.builder()
+        return TaskDto.builder()
                 .nameId(requestData.getTaskNameId())
                 .name(requestData.getTaskName())
                 .description(requestData.getTaskDescription())

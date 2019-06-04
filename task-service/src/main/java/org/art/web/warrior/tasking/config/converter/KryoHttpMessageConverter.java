@@ -5,7 +5,8 @@ import com.esotericsoftware.kryo.io.Input;
 import com.esotericsoftware.kryo.io.Output;
 import org.art.web.warrior.commons.compiler.dto.CompServiceResp;
 import org.art.web.warrior.commons.compiler.dto.CompilationUnitResp;
-import org.art.web.warrior.commons.tasking.dto.TaskServiceResp;
+import org.art.web.warrior.commons.tasking.dto.TaskDescriptorDto;
+import org.art.web.warrior.commons.tasking.dto.TaskDto;
 import org.springframework.http.HttpInputMessage;
 import org.springframework.http.HttpOutputMessage;
 import org.springframework.http.MediaType;
@@ -22,6 +23,8 @@ public class KryoHttpMessageConverter extends AbstractHttpMessageConverter<Objec
         kryo.register(CompServiceResp.class, 10);
         kryo.register(CompilationUnitResp.class, 11);
         kryo.register(TaskServiceResp.class, 12);
+        kryo.register(TaskDto.class, 14);
+        kryo.register(TaskDescriptorDto.class, 15);
         return kryo;
     });
 

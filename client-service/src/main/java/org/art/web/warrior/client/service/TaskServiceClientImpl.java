@@ -3,10 +3,7 @@ package org.art.web.warrior.client.service;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.art.web.warrior.client.service.api.TaskServiceClient;
-import org.art.web.warrior.commons.tasking.dto.CodingTaskDescriptorsResp;
-import org.art.web.warrior.commons.tasking.dto.CodingTaskDto;
-import org.art.web.warrior.commons.tasking.dto.CodingTaskPublicationResp;
-import org.art.web.warrior.commons.tasking.dto.TaskServiceResp;
+import org.art.web.warrior.commons.tasking.dto.TaskDto;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.env.Environment;
 import org.springframework.http.*;
@@ -37,12 +34,12 @@ public class TaskServiceClientImpl implements TaskServiceClient {
     }
 
     @Override
-    public CodingTaskPublicationResp publishNewCodingTask(CodingTaskDto taskData) {
+    public TaskServiceResp publishNewCodingTask(TaskDto taskData) {
         String serviceEndpoint = this.serviceEndpointBase + TASK;
         HttpHeaders headers = new HttpHeaders();
         headers.set(HttpHeaders.CONTENT_TYPE, KRYO_CONTENT_TYPE);
         headers.set(HttpHeaders.ACCEPT, MediaType.APPLICATION_JSON_UTF8_VALUE);
-        HttpEntity<CodingTaskDto> reqEntity = new HttpEntity<>(taskData, headers);
+        HttpEntity<TaskDto> reqEntity = new HttpEntity<>(taskData, headers);
         log.debug("Making task publication request to the Task Service. Endpoint: {}, request data: {}", serviceEndpoint, taskData);
         ResponseEntity<CodingTaskPublicationResp> serviceResponse = restTemplate.postForEntity(serviceEndpoint, reqEntity, CodingTaskPublicationResp.class);
         return serviceResponse.getBody();
@@ -60,7 +57,7 @@ public class TaskServiceClientImpl implements TaskServiceClient {
     }
 
     @Override
-    public TaskServiceResp updateCodingTask(CodingTaskDto task) {
+    public TaskServiceResp updateCodingTask(TaskDto task) {
         String nameId = task.getNameId();
         String serviceEndpoint = this.serviceEndpointBase + TASK + SLASH_CH + nameId;
         HttpHeaders headers = new HttpHeaders();

@@ -5,8 +5,6 @@ import org.art.web.warrior.commons.ServiceResponseStatus;
 import org.art.web.warrior.commons.compiler.dto.CompServiceResp;
 import org.art.web.warrior.commons.compiler.dto.CompilationUnitResp;
 import org.art.web.warrior.commons.execution.dto.ExecutionResp;
-import org.art.web.warrior.commons.tasking.dto.CodingTaskPublicationResp;
-import org.art.web.warrior.commons.tasking.dto.TaskServiceResp;
 
 import java.util.Map;
 

@@ -21,13 +21,8 @@ public class CodingTask {
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
 
-    private String nameId;
-
-    private String name;
-
-    private String description;
-
-    private String methodSign;
+    @Embedded
+    private CodingTaskDescriptor descriptor;
 
     @Lob
     private byte[] runnerClassData;
