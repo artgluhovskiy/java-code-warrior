@@ -1,23 +1,21 @@
 package org.art.web.warrior.commons.compiler.dto;
 
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.ToString;
+import lombok.*;
 import org.art.web.warrior.commons.compiler.validation.ClassNameMatchValidation;
 
 import javax.validation.constraints.NotBlank;
 
-@Getter
-@ToString
+@Data
 @NoArgsConstructor
 @AllArgsConstructor
 @ClassNameMatchValidation
-public class CompilationUnit {
+public class CompilationUnitDto {
 
     @NotBlank(message = "Target class name should not be blank!")
     private String className;
 
     @NotBlank(message = "Source code should not be blank!")
     private String srcCode;
+
+    private byte[] compiledClassBytes;
 }

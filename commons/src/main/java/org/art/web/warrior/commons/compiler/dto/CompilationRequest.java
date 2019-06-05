@@ -10,8 +10,8 @@ import java.util.List;
 @Getter
 @NoArgsConstructor
 @AllArgsConstructor
-public class CompServiceReq {
+public class CompilationRequest {
 
     @Valid
-    private List<CompilationUnit> compUnits;
+    private List<CompilationUnitDto> compUnits;
 }

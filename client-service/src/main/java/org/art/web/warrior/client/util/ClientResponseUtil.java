@@ -2,7 +2,7 @@ package org.art.web.warrior.client.util;
 
 import org.art.web.warrior.client.dto.*;
 import org.art.web.warrior.commons.ServiceResponseStatus;
-import org.art.web.warrior.commons.compiler.dto.CompServiceResp;
+import org.art.web.warrior.commons.compiler.dto.CompilationResponse;
 import org.art.web.warrior.commons.compiler.dto.CompilationUnitResp;
 import org.art.web.warrior.commons.execution.dto.ExecutionResp;
 
@@ -25,7 +25,7 @@ public class ClientResponseUtil {
     }
 
 
-    public static ClientServiceUserResp buildUserTaskCompilationErrorResp(UserTaskCodeData userCodeData, CompServiceResp serviceResp) {
+    public static ClientServiceUserResp buildUserTaskCompilationErrorResp(UserTaskCodeData userCodeData, CompilationResponse serviceResp) {
         CompErrorDetails errorDetails = buildCompilationErrorDetails(serviceResp);
         Map<String, CompilationUnitResp> compUnits = serviceResp.getCompUnitResults();
         CompilationUnitResp unitResult = compUnits.get(userCodeData.getClassName());
@@ -38,7 +38,7 @@ public class ClientResponseUtil {
                 .build();
     }
 
-    public static ClientServiceUserResp buildUserTaskCompilationOkResp(CompServiceResp serviceResp, String className) {
+    public static ClientServiceUserResp buildUserTaskCompilationOkResp(CompilationResponse serviceResp, String className) {
         Map<String, CompilationUnitResp> compUnits = serviceResp.getCompUnitResults();
         CompilationUnitResp unitResult = compUnits.get(className);
         return ClientServiceUserResp.builder()
@@ -96,7 +96,7 @@ public class ClientResponseUtil {
         return builder.build();
     }
 
-    public static ClientServiceAdminResp buildCompilationErrorResp(CompServiceResp serviceResp, AdminTaskPublicationData requestData) {
+    public static ClientServiceAdminResp buildCompilationErrorResp(CompilationResponse serviceResp, AdminTaskPublicationData requestData) {
         if (serviceResp == null) {
             return buildTaskServiceErrorResp(requestData);
         } else {
@@ -113,7 +113,7 @@ public class ClientResponseUtil {
                 .build();
     }
 
-    private static ClientServiceAdminResp buildTaskCompilationErrorResp(CompServiceResp serviceResp, AdminTaskPublicationData requestData) {
+    private static ClientServiceAdminResp buildTaskCompilationErrorResp(CompilationResponse serviceResp, AdminTaskPublicationData requestData) {
         CompErrorDetails errorDetails = buildCompilationErrorDetails(serviceResp);
         return ClientServiceAdminResp.builder()
                 .respStatus(ServiceResponseStatus.COMPILATION_ERROR.getStatusId())
@@ -124,7 +124,7 @@ public class ClientResponseUtil {
                 .build();
     }
 
-    private static CompErrorDetails buildCompilationErrorDetails(CompServiceResp serviceResp) {
+    private static CompErrorDetails buildCompilationErrorDetails(CompilationResponse serviceResp) {
         return CompErrorDetails.builder()
                 .compilerErrorCode(serviceResp.getCompilerErrorCode())
                 .compilerMessage(serviceResp.getCompilerMessage())

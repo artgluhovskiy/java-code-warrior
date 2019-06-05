@@ -3,8 +3,8 @@ package org.art.web.warrior.compiler.config.converter;
 import com.esotericsoftware.kryo.Kryo;
 import com.esotericsoftware.kryo.io.Input;
 import com.esotericsoftware.kryo.io.Output;
-import org.art.web.warrior.commons.compiler.dto.CompServiceResp;
-import org.art.web.warrior.commons.compiler.dto.CompilationUnitResp;
+import org.art.web.warrior.commons.compiler.dto.CompilationResponse;
+import org.art.web.warrior.commons.compiler.dto.CompilationUnitDto;
 import org.springframework.http.HttpInputMessage;
 import org.springframework.http.HttpOutputMessage;
 import org.springframework.http.MediaType;
@@ -18,8 +18,8 @@ public class KryoHttpMessageConverter extends AbstractHttpMessageConverter<Objec
 
     private static final ThreadLocal<Kryo> kryoThreadLocal = ThreadLocal.withInitial(() -> {
         Kryo kryo = new Kryo();
-        kryo.register(CompServiceResp.class, 10);
-        kryo.register(CompilationUnitResp.class, 11);
+        kryo.register(CompilationResponse.class, 10);
+        kryo.register(CompilationUnitDto.class, 11);
         return kryo;
     });
 

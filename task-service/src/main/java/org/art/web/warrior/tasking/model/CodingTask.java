@@ -24,6 +24,8 @@ public class CodingTask {
     @Embedded
     private CodingTaskDescriptor descriptor;
 
+    private String methodSign;
+
     @Lob
     private byte[] runnerClassData;
 

@@ -9,8 +9,8 @@ import org.art.web.warrior.client.service.api.CompServiceClient;
 import org.art.web.warrior.client.service.api.TaskServiceClient;
 import org.art.web.warrior.client.util.ClientRequestUtil;
 import org.art.web.warrior.client.util.ClientResponseUtil;
-import org.art.web.warrior.commons.compiler.dto.CompServiceReq;
-import org.art.web.warrior.commons.compiler.dto.CompServiceResp;
+import org.art.web.warrior.commons.compiler.dto.CompilationRequest;
+import org.art.web.warrior.commons.compiler.dto.CompilationResponse;
 import org.art.web.warrior.commons.tasking.dto.TaskDto;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
@@ -41,12 +41,12 @@ public class AdminController {
     @PostMapping(value = "submit", consumes = MediaType.APPLICATION_JSON_UTF8_VALUE, produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
     public ClientServiceAdminResp publishNewCodingTask(@Valid AdminTaskPublicationData requestData) {
         log.info("Publishing a new Coding Task. Task name ID: {}", requestData.getTaskNameId());
-        CompServiceResp compServiceResp = callCompilerService(requestData);
-        if (compServiceResp == null || compServiceResp.hasErrors()) {
+        CompilationResponse compilationResponse = callCompilerService(requestData);
+        if (compilationResponse == null || compilationResponse.hasErrors()) {
             log.debug("Some errors occurred while task src compilation! Request data: {}", requestData);
-            return ClientResponseUtil.buildCompilationErrorResp(compServiceResp, requestData);
+            return ClientResponseUtil.buildCompilationErrorResp(compilationResponse, requestData);
         }
-        TaskDto taskDto = ClientRequestUtil.buildTaskServiceReq(requestData, compServiceResp);
+        TaskDto taskDto = ClientRequestUtil.buildTaskServiceReq(requestData, compilationResponse);
         TaskServiceResp taskServiceResp = taskServiceClient.publishNewCodingTask(taskDto);
         return ClientResponseUtil.buildClientServiceOkResp(taskServiceResp, requestData);
     }
@@ -60,20 +60,20 @@ public class AdminController {
         if (taskServiceResp == null || taskServiceResp.getTask() == null) {
             return ClientResponseUtil.buildTaskForUpdateNotExistResp(taskNameId);
         }
-        CompServiceResp compServiceResp = callCompilerService(requestData);
-        if (compServiceResp == null || compServiceResp.hasErrors()) {
+        CompilationResponse compilationResponse = callCompilerService(requestData);
+        if (compilationResponse == null || compilationResponse.hasErrors()) {
             log.debug("Some errors occurred while task src compilation! Request data: {}", requestData);
-            return ClientResponseUtil.buildCompilationErrorResp(compServiceResp, requestData);
+            return ClientResponseUtil.buildCompilationErrorResp(compilationResponse, requestData);
         }
-        TaskDto taskDto = ClientRequestUtil.buildTaskServiceReq(requestData, compServiceResp);
+        TaskDto taskDto = ClientRequestUtil.buildTaskServiceReq(requestData, compilationResponse);
         taskServiceResp = taskServiceClient.updateCodingTask(taskDto);
         return ClientResponseUtil.buildClientServiceOkResp(taskServiceResp, requestData);
 
     }
 
-    private CompServiceResp callCompilerService(AdminTaskPublicationData requestData) {
+    private CompilationResponse callCompilerService(AdminTaskPublicationData requestData) {
         log.debug("Compiling coding task source data.");
-        CompServiceReq compServiceReqData = ClientRequestUtil.buildCompilationServiceReq(requestData);
-        return compServiceClient.compileSrc(compServiceReqData);
+        CompilationRequest compilationRequestData = ClientRequestUtil.buildCompilationServiceReq(requestData);
+        return compServiceClient.compileSrc(compilationRequestData);
     }
 }

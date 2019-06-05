@@ -1,7 +1,6 @@
 package org.art.web.warrior.compiler.service;
 
 import org.art.web.warrior.commons.ServiceResponseStatus;
-import org.art.web.warrior.commons.compiler.dto.CompilationUnitResp;
 import org.art.web.warrior.compiler.domain.CompilationMessage;
 import org.art.web.warrior.compiler.domain.CompilationResult;
 import org.art.web.warrior.compiler.domain.CompilationUnit;
@@ -83,11 +82,11 @@ public class InMemoryCompilationService implements CompilationService {
 
     private List<JavaFileObject> generateSourceFileObjects(List<CompilationUnit> units) {
         return units.stream()
-                .map(unit -> {
-                    String className = unit.getClassName();
-                    CharSequence srcCode = unit.getSrcCode();
-                    return new CharSeqJavaSourceFileObject(className, srcCode);
-                }).collect(toList());
+            .map(unit -> {
+                String className = unit.getClassName();
+                CharSequence srcCode = unit.getSrcCode();
+                return new CharSeqJavaSourceFileObject(className, srcCode);
+            }).collect(toList());
     }
 
     private CompilationResult buildCompilationResult(boolean result,
@@ -97,9 +96,9 @@ public class InMemoryCompilationService implements CompilationService {
         CompilationResult compilationResult;
         if (result) {
             compilationResult = new CompilationResult(ServiceResponseStatus.SUCCESS);
-            Map<String, CompilationUnitResp> unitResults = units.stream()
-                    .map(unit -> mapToUnitResult(unit, compiledClassData))
-                    .collect(toMap(CompilationUnitResp::getClassName, Function.identity()));
+            Map<String, CompilationUnit> unitResults = units.stream()
+                .map(unit -> mapToUnitResult(unit, compiledClassData))
+                .collect(toMap(CompilationUnit::getClassName, Function.identity()));
             compilationResult.setCompUnitResults(unitResults);
         } else {
             compilationResult = new CompilationResult(ServiceResponseStatus.COMPILATION_ERROR);
@@ -107,42 +106,41 @@ public class InMemoryCompilationService implements CompilationService {
                 //Reporting the last diagnostic item
                 Diagnostic diagnostic = diagnostics.get(diagnostics.size() - 1);
                 compilationResult.setMessage(buildCompErrorMessage(diagnostic));
-                Map<String, CompilationUnitResp> unitResults = units.stream()
-                        .map(unit -> mapToUnitResult(unit, null))
-                        .collect(toMap(CompilationUnitResp::getClassName, Function.identity()));
+                Map<String, CompilationUnit> unitResults = units.stream()
+                    .map(unit -> mapToUnitResult(unit, null))
+                    .collect(toMap(CompilationUnit::getClassName, Function.identity()));
                 compilationResult.setCompUnitResults(unitResults);
             }
         }
         return compilationResult;
     }
 
-    private CompilationUnitResp mapToUnitResult(CompilationUnit unit, Map<String, byte[]> compClassData) {
-        CompilationUnitResp unitResult = new CompilationUnitResp();
+    private CompilationUnit mapToUnitResult(CompilationUnit unit, Map<String, byte[]> compClassData) {
         String className = unit.getClassName();
-        unitResult.setClassName(className);
-        unitResult.setSrcCode(unit.getSrcCode().toString());
+        String srcCode = unit.getSrcCode().toString();
+        CompilationUnit compUnit = new CompilationUnit(className, srcCode);
         if (compClassData != null) {
-            unitResult.setCompiledClassBytes(compClassData.get(className));
+            compUnit.setCompiledClassBytes(compClassData.get(className));
         }
-        return unitResult;
+        return compUnit;
     }
 
     private CompilationMessage buildCompErrorMessage(Diagnostic diagnostic) {
         return CompilationMessage
-                .builder()
-                .kind(diagnostic.getKind())
-                .errorCode(diagnostic.getCode())
-                .position(diagnostic.getPosition())
-                .codeLine(diagnostic.getLineNumber())
-                .columnNumber(diagnostic.getColumnNumber())
-                .causeMessage(diagnostic.getMessage(Locale.US))
-                .build();
+            .builder()
+            .kind(diagnostic.getKind())
+            .errorCode(diagnostic.getCode())
+            .position(diagnostic.getPosition())
+            .codeLine(diagnostic.getLineNumber())
+            .columnNumber(diagnostic.getColumnNumber())
+            .causeMessage(diagnostic.getMessage(Locale.US))
+            .build();
     }
 
     private Map<String, byte[]> retrieveClassBinData(CustomClassFileManager fileManager) {
         return fileManager.getClassFiles()
-                .entrySet()
-                .stream()
-                .collect(toMap(Map.Entry::getKey, entry -> entry.getValue().getBytes()));
+            .entrySet()
+            .stream()
+            .collect(toMap(Map.Entry::getKey, entry -> entry.getValue().getBytes()));
     }
 }

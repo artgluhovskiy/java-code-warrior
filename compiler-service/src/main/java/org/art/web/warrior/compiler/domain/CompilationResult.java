@@ -5,7 +5,6 @@ import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
 import org.art.web.warrior.commons.ServiceResponseStatus;
-import org.art.web.warrior.commons.compiler.dto.CompilationUnitResp;
 
 import java.util.Map;
 
@@ -23,7 +22,7 @@ public class CompilationResult {
 
     private CompilationMessage message;
 
-    private Map<String, CompilationUnitResp> compUnitResults;
+    private Map<String, CompilationUnit> compUnitResults;
 
     public ServiceResponseStatus getCompStatus() {
         return status;
@@ -33,7 +32,7 @@ public class CompilationResult {
         return message;
     }
 
-    public Map<String, CompilationUnitResp> getCompUnitResults() {
+    public Map<String, CompilationUnit> getCompUnitResults() {
         return compUnitResults;
     }
 }

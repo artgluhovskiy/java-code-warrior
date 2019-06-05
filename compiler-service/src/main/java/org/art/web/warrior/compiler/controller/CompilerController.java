@@ -1,7 +1,7 @@
 package org.art.web.warrior.compiler.controller;
 
-import org.art.web.warrior.commons.compiler.dto.CompServiceReq;
-import org.art.web.warrior.commons.compiler.dto.CompServiceResp;
+import org.art.web.warrior.commons.compiler.dto.CompilationRequest;
+import org.art.web.warrior.commons.compiler.dto.CompilationResponse;
 import org.art.web.warrior.compiler.domain.CompilationResult;
 import org.art.web.warrior.compiler.domain.CompilationUnit;
 import org.art.web.warrior.compiler.exception.CompilationServiceException;
@@ -34,10 +34,10 @@ public class CompilerController {
     }
 
     @PostMapping(consumes = MediaType.APPLICATION_JSON_UTF8_VALUE)
-    public CompServiceResp compile(@Valid @RequestBody CompServiceReq requestData) {
-        LOG.debug("Compilation request. Client request data: {}", requestData);
+    public CompilationResponse compile(@Valid @RequestBody CompilationRequest requestData) {
+        LOG.debug("Making the compilation request. Compilation request data: {}", requestData);
         List<CompilationUnit> requestUnits = requestData.getCompUnits().stream()
-                .map(reqData -> new CompilationUnit(reqData.getClassName(), reqData.getSrcCode()))
+                .map(unitDto -> new CompilationUnit(unitDto.getClassName(), unitDto.getSrcCode()))
                 .collect(toList());
         return submitCompilationRequest(requestUnits);
     }
@@ -47,16 +47,16 @@ public class CompilerController {
         return COMPILER_SERVICE_OK_MESSAGE;
     }
 
-    private CompServiceResp submitCompilationRequest(List<CompilationUnit> units) {
+    private CompilationResponse submitCompilationRequest(List<CompilationUnit> units) {
         try {
             CompilationResult result = compilationService.compileUnits(units);
             return ServiceResponseUtil.buildCompilationResponse(result);
         } catch (CompilationServiceException e) {
             LOG.info("Internal service error occurred while compiling units: {}", units, e);
-            return ServiceResponseUtil.buildInternalServiceErrorResponse(e, units);
+            return ServiceResponseUtil.buildServiceErrorResponse(e, units);
         } catch (Exception e) {
             LOG.info("Unexpected internal service error occurred while compiling units: {}", units, e);
-            return ServiceResponseUtil.buildInternalServiceErrorResponse(e, units);
+            return ServiceResponseUtil.buildServiceErrorResponse(e, units);
         }
     }
 }

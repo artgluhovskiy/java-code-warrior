@@ -7,6 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class TaskServiceImpl implements TaskService {
@@ -20,17 +21,17 @@ public class TaskServiceImpl implements TaskService {
 
     @Override
     public CodingTask publishTask(CodingTask task) {
-        return this.taskRepository.save(task);
+        return taskRepository.save(task);
     }
 
     @Override
-    public CodingTask getTaskByNameId(String nameId) {
-        return this.taskRepository.getCodingTaskByNameId(nameId);
+    public Optional<CodingTask> getTaskByNameId(String nameId) {
+        return taskRepository.getCodingTaskByNameId(nameId);
     }
 
     @Override
     public List<CodingTask> getAllTasks() {
-        return this.taskRepository.findAll();
+        return taskRepository.findAll();
     }
 
     @Override

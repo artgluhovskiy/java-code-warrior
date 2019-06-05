@@ -10,7 +10,7 @@ import java.util.Map;
 @ToString
 @NoArgsConstructor
 @AllArgsConstructor
-public class CompServiceResp {
+public class CompilationResponse {
 
     private int compilerStatusCode;
 
@@ -28,7 +28,7 @@ public class CompServiceResp {
 
     private long errorPosition;
 
-    private Map<String, CompilationUnitResp> compUnitResults;
+    private Map<String, CompilationUnitDto> compUnitResults;
 
     public boolean isCompError() {
         return ServiceResponseStatus.COMPILATION_ERROR.getStatusId().equals(compilerStatus);

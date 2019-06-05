@@ -1,24 +1,25 @@
 package org.art.web.warrior.tasking.controller;
 
 import lombok.extern.slf4j.Slf4j;
-import org.art.web.warrior.commons.tasking.dto.*;
+import org.art.web.warrior.commons.tasking.dto.TaskDescriptorDto;
+import org.art.web.warrior.commons.tasking.dto.TaskDto;
+import org.art.web.warrior.tasking.config.TaskNotFoundException;
 import org.art.web.warrior.tasking.model.CodingTask;
-import org.art.web.warrior.tasking.model.CodingTaskDescriptor;
 import org.art.web.warrior.tasking.service.api.TaskService;
-import org.art.web.warrior.tasking.util.ServiceRequestUtil;
-import org.art.web.warrior.tasking.util.ServiceResponseUtil;
+import org.art.web.warrior.tasking.util.ServiceMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import static org.art.web.warrior.commons.CommonConstants.KRYO_CONTENT_TYPE;
-import static org.art.web.warrior.tasking.ServiceCommonConstants.TASK_SERVICE_OK_MESSAGE;
 
 @Slf4j
 @RestController
+@RequestMapping("/tasks")
 public class TaskServiceController {
 
     private final TaskService taskService;
@@ -28,37 +29,49 @@ public class TaskServiceController {
         this.taskService = taskService;
     }
 
-    @PostMapping(value = "/tasks", consumes = KRYO_CONTENT_TYPE, produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
-    public  publishTask(@Valid @RequestBody TaskDto requestData) {
-        CodingTask codingTask = ServiceRequestUtil.buildCodingTaskFromReqData(requestData);
-        codingTask = this.taskService.publishTask(codingTask);
-        return ServiceResponseUtil.buildCodingTaskPublicationResp(codingTask);
+    @PostMapping(consumes = KRYO_CONTENT_TYPE, produces = KRYO_CONTENT_TYPE)
+    public TaskDto publishTask(@Valid @RequestBody TaskDto taskDto) {
+        log.debug("Making a publishing request for a new coding task. Task data: {}", taskDto);
+        CodingTask codingTask = ServiceMapper.mapToCodingTask(taskDto);
+        codingTask = taskService.publishTask(codingTask);
+        return ServiceMapper.mapToTaskDto(codingTask);
     }
 
-    @GetMapping(value = "/tasks/{nameId}", produces = KRYO_CONTENT_TYPE)
-    public TaskServiceResp getTaskByNameId(@PathVariable String nameId) {
-        CodingTask codingTask = this.taskService.getTaskByNameId(nameId);
-        return ServiceResponseUtil.buildCodingTaskResp(codingTask);
+    @GetMapping(value = "/{nameId}", produces = KRYO_CONTENT_TYPE)
+    public TaskDto getTaskByNameId(@PathVariable String nameId) {
+        log.debug("Making the request for the coding task by its name id. Task name id: {}", nameId);
+        CodingTask codingTask = taskService.getTaskByNameId(nameId)
+            .orElseThrow(() -> new TaskNotFoundException("Cannot find a coding task with such name ID!", nameId));
+        return ServiceMapper.mapToTaskDto(codingTask);
     }
 
-    @GetMapping(value = "/tasks", produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
-    public List<CodingTask> getAllTasks() {
-        return this.taskService.getAllTasks();
+    @GetMapping(produces = KRYO_CONTENT_TYPE)
+    public List<TaskDto> getAllTasks() {
+        log.debug("Making the request for all coding tasks");
+        List<CodingTask> codingTasks = taskService.getAllTasks();
+        return codingTasks.stream()
+            .map(ServiceMapper::mapToTaskDto)
+            .collect(Collectors.toList());
     }
 
-    @GetMapping(value = "/tasks/descriptors", produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
-    public List<CodingTaskDescriptor> getCodingTaskDescriptors() {
-        List<CodingTask> codingTasks = this.taskService.getAllTasks();
-        return ServiceResponseUtil.buildCodingTaskDescriptorsResp(codingTasks);
+    @GetMapping(value = "/descriptors", produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
+    public List<TaskDescriptorDto> getCodingTaskDescriptors() {
+        log.debug("Making the request for all coding task descriptors");
+        List<CodingTask> codingTasks = taskService.getAllTasks();
+        return codingTasks.stream()
+            .map(CodingTask::getDescriptor)
+            .map(ServiceMapper::mapToTaskDescriptorDto)
+            .collect(Collectors.toList());
     }
 
-    @DeleteMapping("/tasks/{nameId}")
+    @DeleteMapping("/{nameId}")
     public void deleteTaskById(@PathVariable String nameId) {
+        log.debug("Making the request for coding task deletion. Task name id: {}", nameId);
         taskService.getTaskByNameId(nameId);
     }
 
     @GetMapping("/ping")
     public String ping() {
-        return TASK_SERVICE_OK_MESSAGE;
+        return "Task Service: OK!";
     }
 }
