@@ -3,8 +3,8 @@ package org.art.web.warrior.client.service;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.art.web.warrior.client.service.api.ExecServiceClient;
-import org.art.web.warrior.commons.execution.dto.ExecutionReq;
-import org.art.web.warrior.commons.execution.dto.ExecutionResp;
+import org.art.web.warrior.commons.execution.dto.ExecutionRequest;
+import org.art.web.warrior.commons.execution.dto.ExecutionResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.env.Environment;
 import org.springframework.http.HttpEntity;
@@ -34,12 +34,12 @@ public class ExecServiceClientImpl implements ExecServiceClient {
     }
 
     @Override
-    public ExecutionResp executeCode(ExecutionReq execRequestData) {
+    public ExecutionResponse executeCode(ExecutionRequest execRequestData) {
         HttpHeaders headers = new HttpHeaders();
         headers.set(HttpHeaders.CONTENT_TYPE, KRYO_CONTENT_TYPE);
-        HttpEntity<ExecutionReq> reqEntity = new HttpEntity<>(execRequestData, headers);
+        HttpEntity<ExecutionRequest> reqEntity = new HttpEntity<>(execRequestData, headers);
         log.debug("Making the request to the Executor service. Endpoint: {}, request data: {}", this.serviceEndpointBase, execRequestData);
-        ResponseEntity<ExecutionResp> serviceResponse = restTemplate.postForEntity(this.serviceEndpointBase, reqEntity, ExecutionResp.class);
+        ResponseEntity<ExecutionResponse> serviceResponse = restTemplate.postForEntity(this.serviceEndpointBase, reqEntity, ExecutionResponse.class);
         return serviceResponse.getBody();
     }
 

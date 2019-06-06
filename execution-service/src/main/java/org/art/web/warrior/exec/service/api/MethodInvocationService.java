@@ -1,6 +1,5 @@
 package org.art.web.warrior.exec.service.api;
 
-import org.art.web.warrior.exec.exception.MethodInvocationException;
 import org.art.web.warrior.exec.domain.api.MethodDescriptor;
 
 /**
@@ -10,5 +9,5 @@ import org.art.web.warrior.exec.domain.api.MethodDescriptor;
  */
 public interface MethodInvocationService {
 
-    Object invokeMethod(MethodDescriptor descriptor) throws MethodInvocationException;
+    Object invokeMethod(MethodDescriptor descriptor);
 }

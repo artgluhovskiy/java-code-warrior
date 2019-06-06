@@ -10,7 +10,7 @@ import static org.art.web.warrior.commons.CommonConstants.NEW_LINE_CH;
  * Thrown to indicate that {@link MethodInvocationService}
  * failed to invoke target method for some internal reasons.
  */
-public class MethodInvocationException extends Exception {
+public class MethodInvocationException extends RuntimeException {
 
     private final MethodDescriptor mDescriptor;
 

@@ -3,7 +3,7 @@ package org.art.web.warrior.tasking.controller;
 import lombok.extern.slf4j.Slf4j;
 import org.art.web.warrior.commons.tasking.dto.TaskDescriptorDto;
 import org.art.web.warrior.commons.tasking.dto.TaskDto;
-import org.art.web.warrior.tasking.config.TaskNotFoundException;
+import org.art.web.warrior.tasking.exception.TaskNotFoundException;
 import org.art.web.warrior.tasking.model.CodingTask;
 import org.art.web.warrior.tasking.service.api.TaskService;
 import org.art.web.warrior.tasking.util.ServiceMapper;

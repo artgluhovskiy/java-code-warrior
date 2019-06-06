@@ -1,6 +1,6 @@
 package org.art.web.warrior.tasking.exchandler;
 
-import org.art.web.warrior.tasking.config.TaskNotFoundException;
+import org.art.web.warrior.tasking.exception.TaskNotFoundException;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
@@ -36,7 +36,7 @@ public class ServiceExceptionHandler {
 
     @ResponseBody
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
-    @ExceptionHandler(RuntimeException.class)
+    @ExceptionHandler(Exception.class)
     public String handleTaskNotFoundException(RuntimeException e) {
         return e.getMessage();
     }

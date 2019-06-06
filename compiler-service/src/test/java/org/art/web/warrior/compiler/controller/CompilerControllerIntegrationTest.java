@@ -3,12 +3,11 @@ package org.art.web.warrior.compiler.controller;
 import com.esotericsoftware.kryo.Kryo;
 import com.esotericsoftware.kryo.io.Input;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import org.art.web.warrior.commons.CustomByteClassLoader;
 import org.art.web.warrior.commons.ServiceResponseStatus;
 import org.art.web.warrior.commons.compiler.dto.CompilationRequest;
 import org.art.web.warrior.commons.compiler.dto.CompilationResponse;
 import org.art.web.warrior.commons.compiler.dto.CompilationUnitDto;
-import org.art.web.warrior.commons.compiler.dto.CompilationUnitResp;
-import org.art.web.warrior.compiler.service.CustomByteClassLoader;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -46,7 +45,7 @@ class CompilerControllerIntegrationTest {
     static void initAll() {
         kryo = new Kryo();
         kryo.register(CompilationResponse.class, 10);
-        kryo.register(CompilationUnitResp.class, 11);
+        kryo.register(CompilationUnitDto.class, 11);
         mapper = new ObjectMapper();
     }
 
@@ -71,9 +70,9 @@ class CompilerControllerIntegrationTest {
         CompilationResponse compilationResponse = (CompilationResponse) kryo.readClassAndObject(new Input(binResponseData));
         assertNotNull(compilationResponse);
         assertEquals(ServiceResponseStatus.SUCCESS.getStatusId(), compilationResponse.getCompilerStatus());
-        CompilationUnitResp unitResult = compilationResponse.getCompUnitResults().get(className);
+        CompilationUnitDto compUnitResult = compilationResponse.getCompUnitResults().get(className);
         CustomByteClassLoader loader = new CustomByteClassLoader();
-        loader.addClassData(className, unitResult.getCompiledClassBytes());
+        loader.addClassData(className, compUnitResult.getCompiledClassBytes());
         Class<?> clazz = loader.loadClass(className);
         assertNotNull(clazz);
         assertEquals(className, clazz.getSimpleName());
@@ -100,9 +99,9 @@ class CompilerControllerIntegrationTest {
         CompilationResponse compilationResponse = (CompilationResponse) kryo.readClassAndObject(new Input(binResponseData));
         assertNotNull(compilationResponse);
         assertEquals(ServiceResponseStatus.SUCCESS.getStatusId(), compilationResponse.getCompilerStatus());
-        CompilationUnitResp unitResult = compilationResponse.getCompUnitResults().get(className);
+        CompilationUnitDto compUnitResult = compilationResponse.getCompUnitResults().get(className);
         CustomByteClassLoader loader = new CustomByteClassLoader();
-        loader.addClassData(className, unitResult.getCompiledClassBytes());
+        loader.addClassData(className, compUnitResult.getCompiledClassBytes());
         Class<?> clazz = loader.loadClass(className);
         assertNotNull(clazz);
         assertEquals(className, clazz.getSimpleName());

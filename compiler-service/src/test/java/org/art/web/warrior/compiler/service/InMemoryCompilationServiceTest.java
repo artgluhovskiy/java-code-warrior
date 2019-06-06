@@ -2,7 +2,6 @@ package org.art.web.warrior.compiler.service;
 
 import org.apache.commons.lang3.StringUtils;
 import org.art.web.warrior.commons.ServiceResponseStatus;
-import org.art.web.warrior.commons.compiler.dto.CompilationUnitResp;
 import org.art.web.warrior.compiler.domain.CompilationMessage;
 import org.art.web.warrior.compiler.domain.CompilationResult;
 import org.art.web.warrior.compiler.domain.CompilationUnit;
@@ -107,9 +106,9 @@ class InMemoryCompilationServiceTest {
 
         CompilationResult result = assertDoesNotThrow(() -> compiler.compileUnits(singletonList(unit)));
         assertNotNull(result);
-        assertSame(ServiceResponseStatus.SUCCESS, result.getCompStatus());
+        assertSame(ServiceResponseStatus.SUCCESS, result.getStatus());
         assertEquals(1, result.getCompUnitResults().size());
-        CompilationUnitResp unitResult = result.getCompUnitResults().get(className);
+        CompilationUnit unitResult = result.getCompUnitResults().get(className);
         assertNotNull(unitResult);
         assertEquals(className, unitResult.getClassName());
         assertNotNull(unitResult.getCompiledClassBytes());
@@ -215,10 +214,10 @@ class InMemoryCompilationServiceTest {
         CompilationResult result = assertDoesNotThrow(() -> compiler.compileUnits(singletonList(unit)));
         assertNotNull(result);
 
-        assertSame(ServiceResponseStatus.SUCCESS, result.getCompStatus());
+        assertSame(ServiceResponseStatus.SUCCESS, result.getStatus());
         assertNull(result.getMessage());
 
-        CompilationUnitResp unitResult = result.getCompUnitResults().get(unit.getClassName());
+        CompilationUnit unitResult = result.getCompUnitResults().get(unit.getClassName());
         assertNotNull(unitResult.getCompiledClassBytes());
         assertEquals(unit.getClassName(), unitResult.getClassName());
     }
@@ -227,8 +226,8 @@ class InMemoryCompilationServiceTest {
         CompilationResult result = assertDoesNotThrow(() -> compiler.compileUnits(singletonList(unit)));
         assertNotNull(result);
 
-        assertSame(ServiceResponseStatus.COMPILATION_ERROR, result.getCompStatus());
-        CompilationUnitResp unitResult = result.getCompUnitResults().get(unit.getClassName());
+        assertSame(ServiceResponseStatus.COMPILATION_ERROR, result.getStatus());
+        CompilationUnit unitResult = result.getCompUnitResults().get(unit.getClassName());
         assertNull(unitResult.getCompiledClassBytes());
 
         CompilationMessage message = result.getMessage();

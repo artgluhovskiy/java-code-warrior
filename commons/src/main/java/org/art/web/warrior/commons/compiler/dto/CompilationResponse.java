@@ -5,9 +5,8 @@ import org.art.web.warrior.commons.ServiceResponseStatus;
 
 import java.util.Map;
 
-@Getter
+@Data
 @Builder
-@ToString
 @NoArgsConstructor
 @AllArgsConstructor
 public class CompilationResponse {

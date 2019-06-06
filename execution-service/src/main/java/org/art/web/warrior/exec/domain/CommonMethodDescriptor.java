@@ -1,9 +1,6 @@
 package org.art.web.warrior.exec.domain;
 
-import lombok.AllArgsConstructor;
-import lombok.RequiredArgsConstructor;
-import lombok.Setter;
-import lombok.ToString;
+import lombok.Data;
 import org.apache.commons.lang3.tuple.Pair;
 import org.art.web.warrior.exec.domain.api.MethodDescriptor;
 
@@ -14,10 +11,7 @@ import java.util.List;
 /**
  * Represents a model, which contains all the information related to method to invoke.
  */
-@ToString
-@Setter
-@RequiredArgsConstructor
-@AllArgsConstructor
+@Data
 public class CommonMethodDescriptor implements MethodDescriptor {
 
     private final Object targetInstance;
@@ -26,7 +20,7 @@ public class CommonMethodDescriptor implements MethodDescriptor {
 
     private Class<?> returnType;
 
-    private List<Pair<Object, Class<?>>> args = Collections.emptyList();
+    private List<Pair<Object, Class<?>>> args;
 
     @Override
     public Object getTargetInstance() {

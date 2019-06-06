@@ -7,8 +7,8 @@ import org.art.web.warrior.commons.ServiceResponseStatus;
 import org.art.web.warrior.commons.compiler.dto.CompilationRequest;
 import org.art.web.warrior.commons.compiler.dto.CompilationResponse;
 import org.art.web.warrior.commons.compiler.dto.CompilationUnitDto;
-import org.art.web.warrior.commons.compiler.dto.CompilationUnitResp;
 import org.art.web.warrior.compiler.domain.CompilationResult;
+import org.art.web.warrior.compiler.domain.CompilationUnit;
 import org.art.web.warrior.compiler.service.api.CompilationService;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.DisplayName;
@@ -53,7 +53,7 @@ class CompilerControllerTest {
     static void initAll() {
         kryo = new Kryo();
         kryo.register(CompilationResponse.class, 10);
-        kryo.register(CompilationUnitResp.class, 11);
+        kryo.register(CompilationUnitDto.class, 11);
         mapper = new ObjectMapper();
     }
 
@@ -80,10 +80,11 @@ class CompilerControllerTest {
         String src = "class TestClass1{}";
         byte[] mockCompiledData = new byte[10];
 
-        org.art.web.warrior.compiler.domain.CompilationUnit unit = new org.art.web.warrior.compiler.domain.CompilationUnit(className, src);
+        CompilationUnit unit = new CompilationUnit(className, src);
         CompilationResult compResult = new CompilationResult(ServiceResponseStatus.SUCCESS);
 
-        CompilationUnitResp mockUnitResult = new CompilationUnitResp(className, src, mockCompiledData);
+        CompilationUnit mockUnitResult = new CompilationUnit(className, src);
+        mockUnitResult.setCompiledClassBytes(mockCompiledData);
         compResult.setCompUnitResults(singletonMap(className, mockUnitResult));
 
         when(compilationService.compileUnits(singletonList(unit))).thenReturn(compResult);
@@ -103,10 +104,10 @@ class CompilerControllerTest {
         CompilationResponse compilationResponse = (CompilationResponse) kryo.readClassAndObject(new Input(binResponseData));
         assertNotNull(compilationResponse);
         assertEquals(ServiceResponseStatus.SUCCESS.getStatusId(), compilationResponse.getCompilerStatus());
-        CompilationUnitResp unitResult = compilationResponse.getCompUnitResults().get(className);
-        assertEquals(className, unitResult.getClassName());
-        assertEquals(src, unitResult.getSrcCode());
-        assertArrayEquals(mockCompiledData, unitResult.getCompiledClassBytes());
+        CompilationUnitDto compUnitResult = compilationResponse.getCompUnitResults().get(className);
+        assertEquals(className, compUnitResult.getClassName());
+        assertEquals(src, compUnitResult.getSrcCode());
+        assertArrayEquals(mockCompiledData, compUnitResult.getCompiledClassBytes());
 
         verify(compilationService).compileUnits(singletonList(unit));
     }

@@ -11,7 +11,7 @@ import static org.art.web.warrior.commons.CommonConstants.NEW_LINE_CH;
 /**
  * Indicates that {@link CompilationService} failed to compile compilation unit for some internal reasons.
  */
-public class CompilationServiceException extends Exception {
+public class CompilationServiceException extends RuntimeException {
 
     private final List<CompilationUnit> units;
 

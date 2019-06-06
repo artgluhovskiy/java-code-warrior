@@ -1,8 +1,8 @@
-package org.art.web.warrior.tasking.config;
+package org.art.web.warrior.tasking.exception;
 
 public class TaskNotFoundException extends RuntimeException {
 
-    private String nameId;
+    private final String nameId;
 
     public TaskNotFoundException(String message, String nameId) {
         super(message);

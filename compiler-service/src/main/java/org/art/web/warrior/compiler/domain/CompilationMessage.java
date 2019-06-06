@@ -30,12 +30,6 @@ public class CompilationMessage {
 
     private long position;
 
-    public CompilationMessage(Diagnostic.Kind kind, String errorCode, String causeMessage) {
-        this.kind = kind;
-        this.errorCode = errorCode;
-        this.causeMessage = causeMessage;
-    }
-
     public Diagnostic.Kind getKind() {
         return kind;
     }

@@ -15,8 +15,8 @@ import org.art.web.warrior.commons.ServiceResponseStatus;
 import org.art.web.warrior.commons.compiler.dto.CompilationRequest;
 import org.art.web.warrior.commons.compiler.dto.CompilationResponse;
 import org.art.web.warrior.commons.compiler.dto.CompilationUnitDto;
-import org.art.web.warrior.commons.execution.dto.ExecutionReq;
-import org.art.web.warrior.commons.execution.dto.ExecutionResp;
+import org.art.web.warrior.commons.execution.dto.ExecutionRequest;
+import org.art.web.warrior.commons.execution.dto.ExecutionResponse;
 import org.art.web.warrior.commons.tasking.dto.TaskServiceResp;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
@@ -77,8 +77,8 @@ public class UserCodeSubmissionController {
         if (!ServiceResponseStatus.SUCCESS.getStatusId().equals(taskServiceResp.getRespStatus())) {
             return ClientResponseUtil.buildUserTaskServiceErrorResp(userTaskData, taskServiceResp);
         }
-        ExecutionReq executionReq = ClientRequestUtil.buildExecutionServiceRequest(compilationResponse, taskServiceResp);
-        ExecutionResp execServiceResp = this.execServiceClient.executeCode(executionReq);
+        ExecutionRequest executionRequest = ClientRequestUtil.buildExecutionServiceRequest(compilationResponse, taskServiceResp);
+        ExecutionResponse execServiceResp = this.execServiceClient.executeCode(executionRequest);
         if (ServiceResponseStatus.SUCCESS.getStatusId().equals(execServiceResp.getRespStatus())) {
             updateUserTaskList(user, userTaskData.getTaskNameId());
         }

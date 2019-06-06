@@ -34,4 +34,11 @@ public class ServiceExceptionHandler {
                 .message(validationErrors)
                 .build();
     }
+
+    @ResponseBody
+    @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
+    @ExceptionHandler(Exception.class)
+    public String handleTaskNotFoundException(RuntimeException e) {
+        return e.getMessage();
+    }
 }

@@ -6,7 +6,7 @@ import org.art.web.warrior.commons.compiler.dto.CompilationRequest;
 import org.art.web.warrior.commons.compiler.dto.CompilationResponse;
 import org.art.web.warrior.commons.compiler.dto.CompilationUnitDto;
 import org.art.web.warrior.commons.compiler.dto.CompilationUnitResp;
-import org.art.web.warrior.commons.execution.dto.ExecutionReq;
+import org.art.web.warrior.commons.execution.dto.ExecutionRequest;
 import org.art.web.warrior.commons.tasking.dto.TaskDto;
 import org.art.web.warrior.commons.util.ParserUtil;
 
@@ -44,9 +44,9 @@ public class ClientRequestUtil {
         return new CompilationRequest(compUnits);
     }
 
-    public static ExecutionReq buildExecutionServiceRequest(CompilationResponse compilationResponse, TaskServiceResp taskServiceResp) {
+    public static ExecutionRequest buildExecutionServiceRequest(CompilationResponse compilationResponse, TaskServiceResp taskServiceResp) {
         CompilationUnitResp solutionClassData = compilationResponse.getCompUnitResults().get(CommonConstants.SOLUTION_CLASS_NAME);
-        return ExecutionReq.builder()
+        return ExecutionRequest.builder()
                 .solutionClassName(solutionClassData.getClassName())
                 .solutionClassData(solutionClassData.getCompiledClassBytes())
                 .runnerClassName(RUNNER_CLASS_NAME)

@@ -3,8 +3,6 @@ package org.art.web.warrior.tasking.config.converter;
 import com.esotericsoftware.kryo.Kryo;
 import com.esotericsoftware.kryo.io.Input;
 import com.esotericsoftware.kryo.io.Output;
-import org.art.web.warrior.commons.compiler.dto.CompilationResponse;
-import org.art.web.warrior.commons.compiler.dto.CompilationUnitResp;
 import org.art.web.warrior.commons.tasking.dto.TaskDescriptorDto;
 import org.art.web.warrior.commons.tasking.dto.TaskDto;
 import org.springframework.http.HttpInputMessage;
@@ -20,8 +18,6 @@ public class KryoHttpMessageConverter extends AbstractHttpMessageConverter<Objec
 
     private static final ThreadLocal<Kryo> kryoThreadLocal = ThreadLocal.withInitial(() -> {
         Kryo kryo = new Kryo();
-        kryo.register(CompilationResponse.class, 10);
-        kryo.register(CompilationUnitResp.class, 11);
         kryo.register(TaskDto.class, 14);
         kryo.register(TaskDescriptorDto.class, 15);
         return kryo;

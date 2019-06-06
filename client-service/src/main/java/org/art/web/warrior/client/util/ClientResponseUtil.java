@@ -4,7 +4,7 @@ import org.art.web.warrior.client.dto.*;
 import org.art.web.warrior.commons.ServiceResponseStatus;
 import org.art.web.warrior.commons.compiler.dto.CompilationResponse;
 import org.art.web.warrior.commons.compiler.dto.CompilationUnitResp;
-import org.art.web.warrior.commons.execution.dto.ExecutionResp;
+import org.art.web.warrior.commons.execution.dto.ExecutionResponse;
 
 import java.util.Map;
 
@@ -74,7 +74,7 @@ public class ClientResponseUtil {
                 .build();
     }
 
-    public static ClientServiceUserResp buildUserTaskExecutionResp(UserTaskCodeData userTaskCodeData, ExecutionResp execServiceResp) {
+    public static ClientServiceUserResp buildUserTaskExecutionResp(UserTaskCodeData userTaskCodeData, ExecutionResponse execServiceResp) {
         return ClientServiceUserResp.builder()
                 .respStatus(execServiceResp.getRespStatus())
                 .message(execServiceResp.getMessage())

@@ -31,7 +31,7 @@ public class MethodHandleInvocationService implements MethodInvocationService {
     private static final MethodHandles.Lookup PUBLIC_LOOKUP = MethodHandles.publicLookup();
 
     @Override
-    public Object invokeMethod(MethodDescriptor descriptor) throws MethodInvocationException {
+    public Object invokeMethod(MethodDescriptor descriptor) {
         Objects.requireNonNull(descriptor, "Method descriptor should not be null!");
         Object instance = descriptor.getTargetInstance();
         String methodName = descriptor.getMethodName();

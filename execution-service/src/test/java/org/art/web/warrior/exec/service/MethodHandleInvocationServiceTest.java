@@ -20,7 +20,7 @@ class MethodHandleInvocationServiceTest {
 
     @Test
     @DisplayName("Method invocation: \"hello\".toUppercase()")
-    void test0() throws Throwable {
+    void test0() {
         String target = "hello";
         String result = "HELLO";
         CommonMethodDescriptor methodDescriptor = new CommonMethodDescriptor(target, "toUpperCase");

@@ -2,17 +2,17 @@ package org.art.web.warrior.commons.execution.dto;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
-import lombok.Getter;
+import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotEmpty;
 
-@Getter
+@Data
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class ExecutionReq {
+public class ExecutionRequest {
 
     @NotBlank(message = "Solution class name should not be blank!")
     private String solutionClassName;
@@ -28,7 +28,7 @@ public class ExecutionReq {
 
     @Override
     public String toString() {
-        return "ExecutionReq{" +
+        return "ExecutionRequest{" +
                 "solutionClassName: '" + solutionClassName + '\'' +
                 ", solutionClassData (byte array length): " + solutionClassData.length +
                 ", runnerClassName: '" + runnerClassName + '\'' +

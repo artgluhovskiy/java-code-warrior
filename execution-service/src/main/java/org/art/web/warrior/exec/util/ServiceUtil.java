@@ -3,15 +3,13 @@ package org.art.web.warrior.exec.util;
 import lombok.extern.slf4j.Slf4j;
 import org.art.web.warrior.commons.CustomByteClassLoader;
 import org.art.web.warrior.commons.ServiceResponseStatus;
-import org.art.web.warrior.commons.driver.exception.ClientCodeExecutionException;
-import org.art.web.warrior.commons.execution.dto.ExecutionReq;
-import org.art.web.warrior.commons.execution.dto.ExecutionResp;
+import org.art.web.warrior.commons.execution.dto.ExecutionRequest;
+import org.art.web.warrior.commons.execution.dto.ExecutionResponse;
 
 import java.lang.reflect.Method;
 
 import static org.art.web.warrior.commons.CommonConstants.SOLUTION_SETTER_METHOD_NAME;
-import static org.art.web.warrior.commons.CommonConstants.SPACE_CH;
-import static org.art.web.warrior.exec.ServiceCommonConstants.*;
+import static org.art.web.warrior.exec.ServiceCommonConstants.CLIENT_CODE_EXEC_OK_MESSAGE;
 
 @Slf4j
 public class ServiceUtil {
@@ -19,7 +17,7 @@ public class ServiceUtil {
     private ServiceUtil() {
     }
 
-    public static Object buildRunnerInstance(ExecutionReq requestData) {
+    public static Object buildRunnerInstance(ExecutionRequest requestData) {
         String solutionClassName = requestData.getSolutionClassName();
         byte[] solutionClassBytes = requestData.getSolutionClassData();
         String runnerClassName = requestData.getRunnerClassName();
@@ -40,25 +38,10 @@ public class ServiceUtil {
         return runnerInstance;
     }
 
-    public static ExecutionResp buildExecutionServiceOkResp() {
-        return ExecutionResp.builder()
+    public static ExecutionResponse buildExecutionServiceOkResp() {
+        return ExecutionResponse.builder()
                 .respStatus(ServiceResponseStatus.SUCCESS.getStatusId())
                 .message(CLIENT_CODE_EXEC_OK_MESSAGE)
-                .build();
-    }
-
-    public static ExecutionResp buildExecutionServiceClientCodeErrorResp(ClientCodeExecutionException e) {
-        return ExecutionResp.builder()
-                .respStatus(ServiceResponseStatus.CODE_EXEC_ERROR.getStatusId())
-                .message(CLIENT_CODE_EXEC_ERROR_MESSAGE)
-                .failedTestMessage(e.getMessage())
-                .build();
-    }
-
-    public static ExecutionResp buildExecutionServiceInternalErrorResp(Exception e) {
-        return ExecutionResp.builder()
-                .respStatus(ServiceResponseStatus.CODE_EXEC_INTERNAL_ERROR.getStatusId())
-                .message(CLIENT_CODE_EXEC_INTERNAL_ERROR_MESSAGE + SPACE_CH + e.getMessage())
                 .build();
     }
 }
