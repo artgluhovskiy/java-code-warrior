@@ -9,6 +9,8 @@ import java.util.Objects;
 
 public class ServiceMapper {
 
+    private ServiceMapper() {}
+
     public static TaskDto mapToTaskDto(CodingTask task) {
         Objects.requireNonNull(task, "Coding task instance, passed to the mapper should not be null!");
         CodingTaskDescriptor taskDescriptor = task.getDescriptor();

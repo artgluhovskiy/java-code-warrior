@@ -36,8 +36,4 @@ public class CompilationResponse {
     public boolean isCompOk() {
         return ServiceResponseStatus.SUCCESS.getStatusId().equals(compilerStatus);
     }
-
-    public boolean hasErrors() {
-        return !isCompOk();
-    }
 }

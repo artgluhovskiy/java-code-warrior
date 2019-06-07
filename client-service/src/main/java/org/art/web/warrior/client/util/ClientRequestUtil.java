@@ -44,13 +44,12 @@ public class ClientRequestUtil {
         return new CompilationRequest(compUnits);
     }
 
-    public static ExecutionRequest buildExecutionServiceRequest(CompilationResponse compilationResponse, TaskServiceResp taskServiceResp) {
-        CompilationUnitResp solutionClassData = compilationResponse.getCompUnitResults().get(CommonConstants.SOLUTION_CLASS_NAME);
+    public static ExecutionRequest buildExecutionServiceRequest(CompilationUnitDto compiledSolutionData, TaskDto taskData) {
         return ExecutionRequest.builder()
-                .solutionClassName(solutionClassData.getClassName())
-                .solutionClassData(solutionClassData.getCompiledClassBytes())
+                .solutionClassName(compiledSolutionData.getClassName())
+                .solutionClassData(compiledSolutionData.getCompiledClassBytes())
                 .runnerClassName(RUNNER_CLASS_NAME)
-                .runnerClassData(taskServiceResp.getRunnerClassData())
+                .runnerClassData(taskData.getRunnerClassData())
                 .build();
     }
 }

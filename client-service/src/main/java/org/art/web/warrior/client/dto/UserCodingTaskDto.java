@@ -4,7 +4,6 @@ import lombok.Data;
 import lombok.RequiredArgsConstructor;
 
 @Data
-@RequiredArgsConstructor
 public class UserCodingTaskDto {
 
     private boolean solved = false;
@@ -14,4 +13,6 @@ public class UserCodingTaskDto {
     private final String name;
 
     private final String description;
+
+    private final int rating;
 }

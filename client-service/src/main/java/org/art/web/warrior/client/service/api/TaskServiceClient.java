@@ -1,14 +1,22 @@
 package org.art.web.warrior.client.service.api;
 
+import org.art.web.warrior.commons.tasking.dto.TaskDescriptorDto;
 import org.art.web.warrior.commons.tasking.dto.TaskDto;
+import org.springframework.http.ResponseEntity;
+
+import java.util.List;
 
 public interface TaskServiceClient {
 
-    TaskServiceResp publishNewCodingTask(TaskDto task);
+    ResponseEntity<TaskDescriptorDto> publishCodingTask(TaskDto task);
 
-    TaskServiceResp getCodingTaskByNameId(String nameId);
+    ResponseEntity<TaskDto> getCodingTaskByNameId(String nameId);
 
-    TaskServiceResp updateCodingTask(TaskDto task);
+    ResponseEntity<TaskDescriptorDto> updateCodingTask(TaskDto task);
 
-    CodingTaskDescriptorsResp getCodingTaskDescriptors();
+    ResponseEntity<List<TaskDto>> getAllTasks();
+
+    ResponseEntity<List<TaskDescriptorDto>> getCodingTaskDescriptors();
+
+    void deleteTask(String nameId);
 }

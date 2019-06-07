@@ -1,5 +1,6 @@
 package org.art.web.warrior.tasking.exchandler;
 
+import org.art.web.warrior.commons.tasking.dto.TaskDto;
 import org.art.web.warrior.tasking.exception.TaskNotFoundException;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.MethodArgumentNotValidException;
@@ -30,14 +31,14 @@ public class ServiceExceptionHandler {
     @ResponseBody
     @ResponseStatus(HttpStatus.NOT_FOUND)
     @ExceptionHandler(TaskNotFoundException.class)
-    public String handleTaskNotFoundException(TaskNotFoundException e) {
-        return e.getMessage();
+    public TaskDto handleTaskNotFoundException(TaskNotFoundException e) {
+        return new TaskDto();
     }
 
     @ResponseBody
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
     @ExceptionHandler(Exception.class)
-    public String handleTaskNotFoundException(RuntimeException e) {
+    public String handleException(Exception e) {
         return e.getMessage();
     }
 }

@@ -29,19 +29,27 @@ public class TaskServiceController {
         this.taskService = taskService;
     }
 
-    @PostMapping(consumes = KRYO_CONTENT_TYPE, produces = KRYO_CONTENT_TYPE)
-    public TaskDto publishTask(@Valid @RequestBody TaskDto taskDto) {
+    @PostMapping(consumes = KRYO_CONTENT_TYPE, produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
+    public TaskDescriptorDto publishTask(@Valid @RequestBody TaskDto taskDto) {
         log.debug("Making a publishing request for a new coding task. Task data: {}", taskDto);
         CodingTask codingTask = ServiceMapper.mapToCodingTask(taskDto);
         codingTask = taskService.publishTask(codingTask);
-        return ServiceMapper.mapToTaskDto(codingTask);
+        return ServiceMapper.mapToTaskDescriptorDto(codingTask.getDescriptor());
+    }
+
+    @PutMapping(consumes = KRYO_CONTENT_TYPE, produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
+    public TaskDescriptorDto updateTask(@Valid @RequestBody TaskDto taskDto) {
+        log.debug("Making an update request for the coding task. Task data: {}", taskDto);
+        CodingTask codingTask = ServiceMapper.mapToCodingTask(taskDto);
+        codingTask = taskService.updateTask(codingTask);
+        return ServiceMapper.mapToTaskDescriptorDto(codingTask.getDescriptor());
     }
 
     @GetMapping(value = "/{nameId}", produces = KRYO_CONTENT_TYPE)
     public TaskDto getTaskByNameId(@PathVariable String nameId) {
         log.debug("Making the request for the coding task by its name id. Task name id: {}", nameId);
         CodingTask codingTask = taskService.getTaskByNameId(nameId)
-            .orElseThrow(() -> new TaskNotFoundException("Cannot find a coding task with such name ID!", nameId));
+                .orElseThrow(() -> new TaskNotFoundException("Cannot find a coding task with such name ID!", nameId));
         return ServiceMapper.mapToTaskDto(codingTask);
     }
 
@@ -50,18 +58,18 @@ public class TaskServiceController {
         log.debug("Making the request for all coding tasks");
         List<CodingTask> codingTasks = taskService.getAllTasks();
         return codingTasks.stream()
-            .map(ServiceMapper::mapToTaskDto)
-            .collect(Collectors.toList());
+                .map(ServiceMapper::mapToTaskDto)
+                .collect(Collectors.toList());
     }
 
     @GetMapping(value = "/descriptors", produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
-    public List<TaskDescriptorDto> getCodingTaskDescriptors() {
+    public List<TaskDescriptorDto> getAllTaskDescriptors() {
         log.debug("Making the request for all coding task descriptors");
         List<CodingTask> codingTasks = taskService.getAllTasks();
         return codingTasks.stream()
-            .map(CodingTask::getDescriptor)
-            .map(ServiceMapper::mapToTaskDescriptorDto)
-            .collect(Collectors.toList());
+                .map(CodingTask::getDescriptor)
+                .map(ServiceMapper::mapToTaskDescriptorDto)
+                .collect(Collectors.toList());
     }
 
     @DeleteMapping("/{nameId}")

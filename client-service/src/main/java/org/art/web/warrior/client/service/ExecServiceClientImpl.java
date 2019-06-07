@@ -34,13 +34,12 @@ public class ExecServiceClientImpl implements ExecServiceClient {
     }
 
     @Override
-    public ExecutionResponse executeCode(ExecutionRequest execRequestData) {
+    public ResponseEntity<ExecutionResponse> executeCode(ExecutionRequest execRequestData) {
         HttpHeaders headers = new HttpHeaders();
         headers.set(HttpHeaders.CONTENT_TYPE, KRYO_CONTENT_TYPE);
         HttpEntity<ExecutionRequest> reqEntity = new HttpEntity<>(execRequestData, headers);
-        log.debug("Making the request to the Executor service. Endpoint: {}, request data: {}", this.serviceEndpointBase, execRequestData);
-        ResponseEntity<ExecutionResponse> serviceResponse = restTemplate.postForEntity(this.serviceEndpointBase, reqEntity, ExecutionResponse.class);
-        return serviceResponse.getBody();
+        log.debug("Making the request to the Executor service. Request data: {}, endpoint: {}", execRequestData, serviceEndpointBase);
+        return restTemplate.postForEntity(serviceEndpointBase, reqEntity, ExecutionResponse.class);
     }
 
     private String getServiceEndpointBase() {

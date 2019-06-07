@@ -3,12 +3,16 @@ package org.art.web.warrior.client.service;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.art.web.warrior.client.service.api.TaskServiceClient;
+import org.art.web.warrior.commons.tasking.dto.TaskDescriptorDto;
 import org.art.web.warrior.commons.tasking.dto.TaskDto;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.core.env.Environment;
 import org.springframework.http.*;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
+
+import java.util.List;
 
 import static org.art.web.warrior.client.CommonServiceConstants.*;
 import static org.art.web.warrior.commons.CommonConstants.*;
@@ -17,7 +21,6 @@ import static org.art.web.warrior.commons.CommonConstants.*;
 @Service
 public class TaskServiceClientImpl implements TaskServiceClient {
 
-    private static final String TASK = "task";
     private static final String DESCRIPTORS = "descriptors";
 
     private Environment env;
@@ -34,46 +37,59 @@ public class TaskServiceClientImpl implements TaskServiceClient {
     }
 
     @Override
-    public TaskServiceResp publishNewCodingTask(TaskDto taskData) {
-        String serviceEndpoint = this.serviceEndpointBase + TASK;
+    public ResponseEntity<TaskDescriptorDto> publishCodingTask(TaskDto task) {
         HttpHeaders headers = new HttpHeaders();
         headers.set(HttpHeaders.CONTENT_TYPE, KRYO_CONTENT_TYPE);
         headers.set(HttpHeaders.ACCEPT, MediaType.APPLICATION_JSON_UTF8_VALUE);
-        HttpEntity<TaskDto> reqEntity = new HttpEntity<>(taskData, headers);
-        log.debug("Making task publication request to the Task Service. Endpoint: {}, request data: {}", serviceEndpoint, taskData);
-        ResponseEntity<CodingTaskPublicationResp> serviceResponse = restTemplate.postForEntity(serviceEndpoint, reqEntity, CodingTaskPublicationResp.class);
-        return serviceResponse.getBody();
+        HttpEntity<TaskDto> reqEntity = new HttpEntity<>(task, headers);
+        log.debug("Making task publication request to the Task Service. Request data: {}, endpoint: {}", task, serviceEndpointBase);
+        return restTemplate.postForEntity(serviceEndpointBase, reqEntity, TaskDescriptorDto.class);
     }
 
     @Override
-    public TaskServiceResp getCodingTaskByNameId(String nameId) {
-        String serviceEndpoint = this.serviceEndpointBase + TASK + SLASH_CH + nameId;
+    public ResponseEntity<TaskDto> getCodingTaskByNameId(String nameId) {
+        String serviceEndpoint = serviceEndpointBase + SLASH_CH + nameId;
         HttpHeaders headers = new HttpHeaders();
         headers.set(HttpHeaders.ACCEPT, KRYO_CONTENT_TYPE);
-        HttpEntity reqEntity = new HttpEntity<>(headers);
-        log.debug("Making the request for the task by name id to the Task Service. Endpoint: {}", serviceEndpoint);
-        ResponseEntity<TaskServiceResp> serviceResponse = restTemplate.exchange(serviceEndpoint, HttpMethod.GET, reqEntity, TaskServiceResp.class);
-        return serviceResponse.getBody();
+        HttpEntity<?> reqEntity = new HttpEntity<>(headers);
+        log.debug("Making the request for the task by name id to the Task Service. Task name id: {}, endpoint: {}", nameId, serviceEndpoint);
+        return restTemplate.exchange(serviceEndpoint, HttpMethod.GET, reqEntity, TaskDto.class);
     }
 
     @Override
-    public TaskServiceResp updateCodingTask(TaskDto task) {
-        String nameId = task.getNameId();
-        String serviceEndpoint = this.serviceEndpointBase + TASK + SLASH_CH + nameId;
+    public ResponseEntity<TaskDescriptorDto> updateCodingTask(TaskDto task) {
+        HttpHeaders headers = new HttpHeaders();
+        headers.set(HttpHeaders.CONTENT_TYPE, KRYO_CONTENT_TYPE);
+        headers.set(HttpHeaders.ACCEPT, MediaType.APPLICATION_JSON_UTF8_VALUE);
+        HttpEntity<?> reqEntity = new HttpEntity<>(headers);
+        log.debug("Making the request for the task update to the Task Service. Request data: {}, endpoint: {}", task, serviceEndpointBase);
+        return restTemplate.exchange(serviceEndpointBase, HttpMethod.PUT, reqEntity, TaskDescriptorDto.class);
+    }
+
+    @Override
+    public ResponseEntity<List<TaskDto>> getAllTasks() {
         HttpHeaders headers = new HttpHeaders();
         headers.set(HttpHeaders.ACCEPT, KRYO_CONTENT_TYPE);
-        HttpEntity reqEntity = new HttpEntity<>(headers);
-        log.debug("Making the request for the task update to the Task Service. Endpoint: {}", serviceEndpoint);
-        ResponseEntity<TaskServiceResp> serviceResponse = restTemplate.exchange(serviceEndpoint, HttpMethod.PUT, reqEntity, TaskServiceResp.class);
-        return serviceResponse.getBody();
+        HttpEntity<?> reqEntity = new HttpEntity<>(headers);
+        log.debug("Making the request for all tasks to the Task Service. Endpoint: {}", serviceEndpointBase);
+        return restTemplate.exchange(serviceEndpointBase, HttpMethod.GET, reqEntity, new ParameterizedTypeReference<List<TaskDto>>() {});
     }
 
     @Override
-    public CodingTaskDescriptorsResp getCodingTaskDescriptors() {
-        String serviceEndpoint = this.serviceEndpointBase + TASK + SLASH_CH + DESCRIPTORS;
+    public ResponseEntity<List<TaskDescriptorDto>> getCodingTaskDescriptors() {
+        String serviceEndpoint = this.serviceEndpointBase + SLASH_CH + DESCRIPTORS;
+        HttpHeaders headers = new HttpHeaders();
+        headers.set(HttpHeaders.ACCEPT, MediaType.APPLICATION_JSON_UTF8_VALUE);
+        HttpEntity<?> reqEntity = new HttpEntity<>(headers);
         log.debug("Making the request for coding task descriptors to the Task Service. Endpoint: {}", serviceEndpoint);
-        ResponseEntity<CodingTaskDescriptorsResp> serviceResponse = restTemplate.getForEntity(serviceEndpoint, CodingTaskDescriptorsResp.class);
-        return serviceResponse.getBody();
+        return restTemplate.exchange(serviceEndpoint, HttpMethod.GET, reqEntity, new ParameterizedTypeReference<List<TaskDescriptorDto>>() {});
+    }
+
+    @Override
+    public void deleteTask(String nameId) {
+        String serviceEndpoint = serviceEndpointBase + SLASH_CH + nameId;
+        log.debug("Making the request for coding task deletion to the Task Service. Task name id: {}, endpoint: {}", nameId, serviceEndpoint);
+        restTemplate.delete(serviceEndpoint);
     }
 
     private String getServiceEndpointBase() {

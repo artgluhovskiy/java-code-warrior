@@ -1,5 +1,6 @@
 package org.art.web.warrior.tasking.service;
 
+import org.art.web.warrior.tasking.exception.TaskNotFoundException;
 import org.art.web.warrior.tasking.model.CodingTask;
 import org.art.web.warrior.tasking.repository.CodingTaskRepository;
 import org.art.web.warrior.tasking.service.api.TaskService;
@@ -21,6 +22,15 @@ public class TaskServiceImpl implements TaskService {
 
     @Override
     public CodingTask publishTask(CodingTask task) {
+        return taskRepository.save(task);
+    }
+
+    @Override
+    public CodingTask updateTask(CodingTask task) {
+        String targetTaskNameId = task.getDescriptor().getNameId();
+        CodingTask targetTask = taskRepository.getCodingTaskByNameId(targetTaskNameId)
+                .orElseThrow(() -> new TaskNotFoundException("Cannot find a coding task with such name ID!", targetTaskNameId));
+        task.setId(targetTask.getId());
         return taskRepository.save(task);
     }
 

@@ -31,6 +31,7 @@ public class ServiceExceptionHandler {
         return CompilationResponse.builder()
                 .compilerStatus(ServiceResponseStatus.BAD_REQUEST.getStatusId())
                 .compilerStatusCode(ServiceResponseStatus.BAD_REQUEST.getStatusCode())
+                .compilerMessage(validationErrors)
                 .message(validationErrors)
                 .build();
     }
@@ -38,7 +39,12 @@ public class ServiceExceptionHandler {
     @ResponseBody
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
     @ExceptionHandler(Exception.class)
-    public String handleTaskNotFoundException(RuntimeException e) {
-        return e.getMessage();
+    public CompilationResponse handleException(Exception e) {
+       return CompilationResponse.builder()
+               .compilerErrorCode(ServiceResponseStatus.INTERNAL_SERVICE_ERROR.getStatusId())
+               .compilerStatusCode(ServiceResponseStatus.INTERNAL_SERVICE_ERROR.getStatusCode())
+               .compilerMessage(e.getMessage())
+               .message(e.getMessage())
+               .build();
     }
 }

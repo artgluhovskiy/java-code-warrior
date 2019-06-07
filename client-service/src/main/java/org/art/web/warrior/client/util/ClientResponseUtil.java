@@ -1,12 +1,14 @@
 package org.art.web.warrior.client.util;
 
-import org.art.web.warrior.client.dto.*;
+import org.apache.commons.collections4.MapUtils;
+import org.art.web.warrior.client.dto.ClientServiceResponse;
+import org.art.web.warrior.client.dto.CompErrorDetails;
 import org.art.web.warrior.commons.ServiceResponseStatus;
 import org.art.web.warrior.commons.compiler.dto.CompilationResponse;
-import org.art.web.warrior.commons.compiler.dto.CompilationUnitResp;
 import org.art.web.warrior.commons.execution.dto.ExecutionResponse;
-
-import java.util.Map;
+import org.art.web.warrior.commons.tasking.dto.TaskDto;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 
 import static org.art.web.warrior.client.CommonServiceConstants.*;
 
@@ -15,111 +17,65 @@ public class ClientResponseUtil {
     private ClientResponseUtil() {
     }
 
-    public static ClientServiceUserResp buildUserTaskEmptyBodyResp(UserTaskCodeData clientReqData) {
-        return ClientServiceUserResp.builder()
-                .respStatus(ServiceResponseStatus.INTERNAL_SERVICE_ERROR.getStatusId())
-                .message(INTERNAL_SERVICE_ERROR_MESSAGE)
-                .className(clientReqData.getClassName())
-                .srcCode(clientReqData.getSrcCode())
-                .build();
+    public static boolean isCompServiceOkResponse(ResponseEntity<CompilationResponse> serviceResponse) {
+        HttpStatus statusCode = serviceResponse.getStatusCode();
+        CompilationResponse respBody = serviceResponse.getBody();
+        return statusCode == HttpStatus.OK
+                && (respBody != null && MapUtils.isNotEmpty(respBody.getCompUnitResults()))
+                && respBody.isCompOk();
     }
 
-
-    public static ClientServiceUserResp buildUserTaskCompilationErrorResp(UserTaskCodeData userCodeData, CompilationResponse serviceResp) {
-        CompErrorDetails errorDetails = buildCompilationErrorDetails(serviceResp);
-        Map<String, CompilationUnitResp> compUnits = serviceResp.getCompUnitResults();
-        CompilationUnitResp unitResult = compUnits.get(userCodeData.getClassName());
-        return ClientServiceUserResp.builder()
-                .respStatus(ServiceResponseStatus.COMPILATION_ERROR.getStatusId())
-                .message(COMPILATION_ERROR_MESSAGE)
-                .className(unitResult.getClassName())
-                .srcCode(unitResult.getSrcCode())
-                .compErrorDetails(errorDetails)
-                .build();
-    }
-
-    public static ClientServiceUserResp buildUserTaskCompilationOkResp(CompilationResponse serviceResp, String className) {
-        Map<String, CompilationUnitResp> compUnits = serviceResp.getCompUnitResults();
-        CompilationUnitResp unitResult = compUnits.get(className);
-        return ClientServiceUserResp.builder()
-                .respStatus(ServiceResponseStatus.SUCCESS.getStatusId())
-                .message(COMPILATION_OK_MESSAGE)
-                .className(unitResult.getClassName())
-                .srcCode(unitResult.getSrcCode())
-                .build();
-    }
-
-    public static ClientServiceAdminResp buildAdminTaskCompilationOkResp(String solutionSrcCode, String runnerSrcCode) {
-        return ClientServiceAdminResp.builder()
-                .respStatus(ServiceResponseStatus.SUCCESS.getStatusId())
-                .message(TASK_PUBLISHING_OK_MESSAGE)
-                .solutionSrcCode(solutionSrcCode)
-                .runnerSrcCode(runnerSrcCode)
-                .build();
-    }
-
-    public static ClientServiceAdminResp buildClientServiceOkResp(TaskServiceResp taskServiceResp, AdminTaskPublicationData requestData) {
-        return ClientServiceAdminResp.builder()
-                .respStatus(taskServiceResp.getRespStatus())
-                .message(taskServiceResp.getMessage())
-                .runnerSrcCode(requestData.getRunnerSrcCode())
-                .solutionSrcCode(requestData.getSolutionSrcCode())
-                .build();
-    }
-
-    public static ClientServiceAdminResp buildTaskForUpdateNotExistResp(String taskNameId) {
-        return ClientServiceAdminResp.builder()
-                .respStatus(ServiceResponseStatus.NOT_FOUND.getStatusId())
-                .message("Coding task with such name ID doesn't exist: " + taskNameId + ". Please, publish it firstly!")
-                .build();
-    }
-
-    public static ClientServiceUserResp buildUserTaskExecutionResp(UserTaskCodeData userTaskCodeData, ExecutionResponse execServiceResp) {
-        return ClientServiceUserResp.builder()
-                .respStatus(execServiceResp.getRespStatus())
-                .message(execServiceResp.getMessage())
-                .execMessage(execServiceResp.getFailedTestMessage())
-                .className(userTaskCodeData.getClassName())
-                .srcCode(userTaskCodeData.getSrcCode())
-                .build();
-    }
-
-    public static ClientServiceUserResp buildUserTaskServiceErrorResp(UserTaskCodeData userTaskData, TaskServiceResp taskServiceResp) {
-        ClientServiceUserResp.ClientServiceUserRespBuilder builder = ClientServiceUserResp.builder();
-        builder.className(userTaskData.getClassName())
-                .srcCode(userTaskData.getSrcCode())
-                .message(TASK_EXECUTION_ERROR_MESSAGE);
-        if (ServiceResponseStatus.NOT_FOUND.getStatusId().equals(taskServiceResp.getRespStatus())) {
-            builder.respStatus(taskServiceResp.getRespStatus())
-                    .execMessage(TASK_NOT_FOUND_ERROR_MESSAGE);
+    public static ClientServiceResponse buildCompServiceErrorResponse(ResponseEntity<CompilationResponse> serviceResponse) {
+        CompilationResponse respBody = serviceResponse.getBody();
+        if (respBody == null) {
+            return buildEmptyBodyResp();
         }
-        return builder.build();
-    }
-
-    public static ClientServiceAdminResp buildCompilationErrorResp(CompilationResponse serviceResp, AdminTaskPublicationData requestData) {
-        if (serviceResp == null) {
-            return buildTaskServiceErrorResp(requestData);
-        } else {
-            return buildTaskCompilationErrorResp(serviceResp, requestData);
+        HttpStatus respStatus = serviceResponse.getStatusCode();
+        switch (respStatus) {
+            case OK:
+                return buildSrcCompilationErrorResponse(respBody);
+            case UNPROCESSABLE_ENTITY:
+                return buildUnprocessableEntityCompServiceResponse(respBody);
+            case INTERNAL_SERVER_ERROR:
+                return buildInternalCompServiceErrorResponse(respBody);
+            default:
+                return buildUnexpectedErrorResp();
         }
     }
 
-    private static ClientServiceAdminResp buildTaskServiceErrorResp(AdminTaskPublicationData requestData) {
-        return ClientServiceAdminResp.builder()
-                .respStatus(ServiceResponseStatus.INTERNAL_SERVICE_ERROR.getStatusId())
-                .message(INTERNAL_SERVICE_ERROR_MESSAGE)
-                .solutionSrcCode(requestData.getSolutionSrcCode())
-                .runnerSrcCode(requestData.getRunnerSrcCode())
+    private static ClientServiceResponse buildUnprocessableEntityCompServiceResponse(CompilationResponse respBody) {
+        return ClientServiceResponse.builder()
+                .respStatus(respBody.getCompilerStatus())
+                .message(respBody.getMessage())
                 .build();
     }
 
-    private static ClientServiceAdminResp buildTaskCompilationErrorResp(CompilationResponse serviceResp, AdminTaskPublicationData requestData) {
-        CompErrorDetails errorDetails = buildCompilationErrorDetails(serviceResp);
-        return ClientServiceAdminResp.builder()
+    private static ClientServiceResponse buildInternalCompServiceErrorResponse(CompilationResponse respBody) {
+        return ClientServiceResponse.builder()
+                .respStatus(respBody.getCompilerStatus())
+                .message(respBody.getMessage())
+                .build();
+    }
+
+    private static ClientServiceResponse buildEmptyBodyResp() {
+        return ClientServiceResponse.builder()
+                .respStatus(ServiceResponseStatus.INTERNAL_SERVICE_ERROR.getStatusId())
+                .message(INTERNAL_SERVICE_ERROR_MESSAGE)
+                .build();
+    }
+
+    private static ClientServiceResponse buildUnexpectedErrorResp() {
+        return ClientServiceResponse.builder()
+                .respStatus(ServiceResponseStatus.INTERNAL_SERVICE_ERROR.getStatusId())
+                .message(UNEXPECTED_SERVICE_ERROR_MESSAGE)
+                .build();
+    }
+
+    private static ClientServiceResponse buildSrcCompilationErrorResponse(CompilationResponse respBody) {
+        CompErrorDetails errorDetails = buildCompilationErrorDetails(respBody);
+        return ClientServiceResponse.builder()
                 .respStatus(ServiceResponseStatus.COMPILATION_ERROR.getStatusId())
                 .message(COMPILATION_ERROR_MESSAGE)
-                .solutionSrcCode(requestData.getSolutionSrcCode())
-                .runnerSrcCode(requestData.getRunnerSrcCode())
                 .compErrorDetails(errorDetails)
                 .build();
     }
@@ -131,5 +87,70 @@ public class ClientResponseUtil {
                 .errorCodeLine(serviceResp.getErrorCodeLine())
                 .errorPosition(serviceResp.getErrorPosition())
                 .build();
+    }
+
+    public static boolean isTaskServiceOkResponse(ResponseEntity<TaskDto> serviceResponse) {
+        HttpStatus statusCode = serviceResponse.getStatusCode();
+        TaskDto respBody = serviceResponse.getBody();
+        return statusCode == HttpStatus.OK && respBody != null;
+    }
+
+    public static ClientServiceResponse buildTaskServiceErrorResp(ResponseEntity<TaskDto> serviceResponse) {
+        TaskDto respBody = serviceResponse.getBody();
+        if (respBody == null) {
+            return buildEmptyBodyResp();
+        }
+        HttpStatus respStatus = serviceResponse.getStatusCode();
+        switch (respStatus) {
+            case NOT_FOUND:
+                return buildTaskNotFoundResponse();
+            case UNPROCESSABLE_ENTITY:
+                return buildUnprocessableEntityTaskServiceResponse(respBody);
+            case INTERNAL_SERVER_ERROR:
+                return buildInternalTaskServiceErrorResponse(respBody);
+            default:
+                return buildUnexpectedErrorResp();
+        }
+    }
+
+    private static ClientServiceResponse buildInternalTaskServiceErrorResponse(TaskDto respBody) {
+        //TODO
+        return null;
+    }
+
+    private static ClientServiceResponse buildUnprocessableEntityTaskServiceResponse(TaskDto respBody) {
+        //TODO
+        return null;
+    }
+
+    private static ClientServiceResponse buildTaskNotFoundResponse() {
+        return ClientServiceResponse.builder()
+                .respStatus(ServiceResponseStatus.NOT_FOUND.getStatusId())
+                .message(TASK_NOT_FOUND_ERROR_MESSAGE)
+                .build();
+    }
+
+    public static boolean isExecServiceOkResponse(ResponseEntity<ExecutionResponse> serviceResponse) {
+        HttpStatus statusCode = serviceResponse.getStatusCode();
+        ExecutionResponse respBody = serviceResponse.getBody();
+        return statusCode == HttpStatus.OK && respBody != null && ServiceResponseStatus.SUCCESS.getStatusId().equals(respBody.getRespStatus());
+    }
+
+    public static ClientServiceResponse buildExecServiceErrorResp(ResponseEntity<ExecutionResponse> execServiceResponse) {
+        TaskDto respBody = serviceResponse.getBody();
+        if (respBody == null) {
+            return buildEmptyBodyResp();
+        }
+        HttpStatus respStatus = serviceResponse.getStatusCode();
+        switch (respStatus) {
+            case NOT_FOUND:
+                return buildTaskNotFoundResponse();
+            case UNPROCESSABLE_ENTITY:
+                return buildUnprocessableEntityTaskServiceResponse(respBody);
+            case INTERNAL_SERVER_ERROR:
+                return buildInternalTaskServiceErrorResponse(respBody);
+            default:
+                return buildUnexpectedErrorResp();
+        }
     }
 }

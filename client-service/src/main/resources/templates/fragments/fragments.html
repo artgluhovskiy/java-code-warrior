@@ -106,6 +106,7 @@
                             <th>Task Name</th>
                             <th>Task Description</th>
                             <th>Status</th>
+                            <th>Task Rating</th>
                             <th>Task Link</th>
                         </tr>
                     </thead>
@@ -114,7 +115,8 @@
                             <td><span th:text="${taskInfo.name}">Task Name</span></td>
                             <td><span th:text="${taskInfo.description}">Task Description</span></td>
                             <td><span th:text="${taskInfo.solved}">Status</span></td>
-                            <td><a th:href="@{/user/task/{taskNameId}(taskNameId=${taskInfo.nameId})}">Task Link</a></td>
+                            <td><span th:text="${taskInfo.rating}">Task Rating</span></td>
+                            <td><a th:href="@{/user/tasks/{taskNameId}(taskNameId=${taskInfo.nameId})}">Task Link</a></td>
                         </tr>
                     </tbody>
                 </table>
@@ -138,7 +140,7 @@ public class Solution {
 }
                             </textarea>
                             <input type="hidden" id="class-name" class="form-control" value="Solution">
-                            <input type="hidden" id="task-name-id" class="form-control" th:value="${task.nameId}">
+                            <input type="hidden" id="task-name-id" class="form-control" th:value="${task.descriptor.nameId}">
                         </div>
                         <button type="submit" class="btn btn-default submit-code">Submit Code</button>
                     </form>

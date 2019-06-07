@@ -1,6 +1,6 @@
 package org.art.web.warrior.client.exception;
 
-public class EmailExistsException extends Exception {
+public class EmailExistsException extends RuntimeException {
 
     private String email;
 

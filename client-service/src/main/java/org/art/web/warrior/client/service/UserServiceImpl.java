@@ -8,12 +8,10 @@ import org.art.web.warrior.client.repository.RoleRepository;
 import org.art.web.warrior.client.repository.UserRepository;
 import org.art.web.warrior.client.service.api.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.Collections;
-import java.util.HashSet;
 
 import static org.art.web.warrior.client.CommonServiceConstants.ROLE_USER;
 
@@ -34,7 +32,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public User registerNewUserAccount(UserDto userDto) throws EmailExistsException {
+    public User registerNewUserAccount(UserDto userDto) {
         if (emailExist(userDto.getEmail())) {
             throw new EmailExistsException("Account with such email already exists!", userDto.getEmail());
         }
@@ -49,6 +47,11 @@ public class UserServiceImpl implements UserService {
     @Override
     public User updateUser(User user) {
         return userRepository.save(user);
+    }
+
+    @Override
+    public void deleteUserByEmail(String email) {
+        userRepository.deleteUserByEmail(email);
     }
 
     private boolean emailExist(String email) {

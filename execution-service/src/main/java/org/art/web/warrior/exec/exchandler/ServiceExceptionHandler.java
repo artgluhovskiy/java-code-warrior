@@ -10,31 +10,35 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.ResponseStatus;
 
-import java.util.HashMap;
-import java.util.Map;
+import java.util.stream.Collectors;
 
-import static org.art.web.warrior.commons.CommonConstants.SPACE_CH;
+import static org.art.web.warrior.commons.CommonConstants.*;
 import static org.art.web.warrior.exec.ServiceCommonConstants.CLIENT_CODE_EXEC_ERROR_MESSAGE;
 import static org.art.web.warrior.exec.ServiceCommonConstants.CLIENT_CODE_EXEC_INTERNAL_ERROR_MESSAGE;
 
 @ControllerAdvice
 public class ServiceExceptionHandler {
 
+    private static final String VALIDATION_ERROR_PREF = "Validation error: field \"";
+
     @ResponseBody
     @ResponseStatus(HttpStatus.UNPROCESSABLE_ENTITY)
     @ExceptionHandler(MethodArgumentNotValidException.class)
-    public Map<String, String> handleMethodArgumentNotValidException(MethodArgumentNotValidException e) {
-        Map<String, String> errors = new HashMap<>();
-        e.getBindingResult().getAllErrors().forEach(er -> {
-            String fieldName = er.getObjectName();
-            String errorMessage = er.getDefaultMessage();
-            errors.put(fieldName, errorMessage);
-        });
-        return errors;
+    public ExecutionResponse handleMethodArgumentNotValidException(MethodArgumentNotValidException e) {
+        String validationErrors = e.getBindingResult().getAllErrors().stream()
+                .map(er -> {
+                    String fieldName = er.getObjectName();
+                    String errorMessage = er.getDefaultMessage();
+                    return VALIDATION_ERROR_PREF + fieldName + QUOTE_CH + DOT_CH + SPACE_CH + errorMessage;
+                }).collect(Collectors.joining(NEW_LINE));
+        return ExecutionResponse.builder()
+                .respStatus(ServiceResponseStatus.BAD_REQUEST.getStatusId())
+                .message(validationErrors)
+                .build();
     }
 
     @ResponseBody
-    @ResponseStatus(HttpStatus.OK)
+    @ResponseStatus(HttpStatus.EXPECTATION_FAILED)
     @ExceptionHandler(ClientCodeExecutionException.class)
     public ExecutionResponse handleClientCodeExecutionException(ClientCodeExecutionException e) {
         return ExecutionResponse.builder()
