@@ -1,5 +1,6 @@
 package org.art.web.warrior.commons.tasking.dto;
 
+import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -9,6 +10,7 @@ import javax.validation.constraints.NotBlank;
 @Data
 @Builder
 @NoArgsConstructor
+@AllArgsConstructor
 public class TaskDescriptorDto {
 
     @NotBlank(message = "Task Name ID should not be blank!")

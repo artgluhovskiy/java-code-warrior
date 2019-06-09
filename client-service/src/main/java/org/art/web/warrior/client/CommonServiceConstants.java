@@ -56,13 +56,15 @@ public class CommonServiceConstants {
     public static final MessageFormat EXECUTION_SERVICE_ENDPOINT_FORMAT = new MessageFormat("http://{0}:{1}/executor/execute");
     public static final MessageFormat TASK_SERVICE_ENDPOINT_FORMAT = new MessageFormat("http://{0}:{1}/tasking/tasks");
 
-    public static final String INTERNAL_SERVICE_ERROR_MESSAGE = "Internal service error occurred! Compilation service responded with empty body.";
-    public static final String UNEXPECTED_SERVICE_ERROR_MESSAGE = "Unexpected error occurred while compiling source code!";
+    public static final String INTERNAL_SERVICE_ERROR_MESSAGE = "Internal service error occurred! Service responded with an empty body.";
+    public static final String UNEXPECTED_SERVICE_ERROR_MESSAGE = "Unexpected service error occurred! Service responded with unknown status code.";
+
     public static final String COMPILATION_ERROR_MESSAGE = "Compilation errors occurred while compiling client source code!";
-    public static final String COMPILATION_OK_MESSAGE = "Client source code was successfully compiled!";
-    public static final String TASK_PUBLISHING_OK_MESSAGE = "New coding task was successfully compiled and published!";
-    public static final String TASK_EXECUTION_ERROR_MESSAGE = "Some problems occurred while task execution.";
-    public static final String TASK_NOT_FOUND_ERROR_MESSAGE = "Coding task with such name wasn't found.";
+
+    public static final String TASK_PUBLICATION_OK_MESSAGE = "Coding task was successfully published!";
+    public static final String TASK_UPDATE_OK_MESSAGE = "Coding task was successfully updated!";
+    public static final String TASK_NOT_FOUND_ERROR_MESSAGE = "Coding task with such name id wasn't found.";
+    public static final String TASK_UNPROCESSABLE_ENTITY_ERROR_MESSAGE = "Cannot process task request data. Task data is incorrect.";
 
     public static final String EMAIL_REGEXP = "^[a-z0-9._%+-]+@[a-z0-9.-]+\\.[a-z]{2,6}$";
 }

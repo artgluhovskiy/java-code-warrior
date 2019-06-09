@@ -14,7 +14,7 @@ import javax.validation.constraints.NotBlank;
 @ToString
 @AllArgsConstructor
 @NoArgsConstructor
-public class AdminTaskPublicationData {
+public class AdminTaskDto {
 
     @NotBlank(message = "Task Name ID should not be blank!", groups = {OnPublishing.class, OnUpdate.class})
     private String taskNameId;

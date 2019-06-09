@@ -10,6 +10,7 @@ import java.time.LocalDateTime;
 @Data
 @Builder
 @NoArgsConstructor
+@AllArgsConstructor
 public class TaskDto {
 
     @Valid

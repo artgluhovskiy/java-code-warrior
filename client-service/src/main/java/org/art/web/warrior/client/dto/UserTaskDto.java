@@ -13,7 +13,7 @@ import javax.validation.constraints.NotBlank;
 @NoArgsConstructor
 @AllArgsConstructor
 @ClassNameMatchValidation
-public class UserTaskCodeData {
+public class UserTaskDto {
 
     @NotBlank(message = "Task name ID should not be blank!")
     private String taskNameId;

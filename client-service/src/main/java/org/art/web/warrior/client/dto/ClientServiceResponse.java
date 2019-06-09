@@ -9,14 +9,6 @@ import lombok.*;
 @AllArgsConstructor
 public class ClientServiceResponse {
 
-//    private String className;
-//
-//    private String srcCode;
-//
-//    private String solutionSrcCode;
-//
-//    private String runnerSrcCode;
-
     private String message;
 
     private String execMessage;
