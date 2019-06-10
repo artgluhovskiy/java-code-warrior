@@ -6,14 +6,20 @@ import org.art.web.warrior.commons.compiler.validation.ClassNameMatchValidation;
 import javax.validation.constraints.NotBlank;
 
 @Data
+@NoArgsConstructor
 @ClassNameMatchValidation
 public class CompilationUnitDto {
 
     @NotBlank(message = "Target class name should not be blank!")
-    private final String className;
+    private String className;
 
     @NotBlank(message = "Source code should not be blank!")
-    private final String srcCode;
+    private String srcCode;
 
     private byte[] compiledClassBytes;
+
+    public CompilationUnitDto(String className, String srcCode) {
+        this.className = className;
+        this.srcCode = srcCode;
+    }
 }

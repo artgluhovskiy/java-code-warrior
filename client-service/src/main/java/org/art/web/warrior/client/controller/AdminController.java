@@ -18,10 +18,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 import java.util.Map;
@@ -47,7 +44,7 @@ public class AdminController {
 
     @Validated(OnPublishing.class)
     @PostMapping(value = "/submit", consumes = MediaType.APPLICATION_JSON_UTF8_VALUE, produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
-    public ClientServiceResponse publishNewCodingTask(@Valid AdminTaskDto adminTaskData) {
+    public ClientServiceResponse publishNewCodingTask(@Valid @RequestBody AdminTaskDto adminTaskData) {
         log.info("Publishing the new Coding Task. Task name ID: {}", adminTaskData.getTaskNameId());
         ResponseEntity<CompilationResponse> compServiceResponse = callCompilerService(adminTaskData);
         if (ServiceResponseUtil.isCompServiceErrorResponse(compServiceResponse)) {
@@ -64,7 +61,7 @@ public class AdminController {
 
     @Validated(OnUpdate.class)
     @PutMapping(value = "/submit", consumes = MediaType.APPLICATION_JSON_UTF8_VALUE, produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
-    public ClientServiceResponse updateCodingTask(@Valid AdminTaskDto adminTaskData) {
+    public ClientServiceResponse updateCodingTask(@Valid @RequestBody AdminTaskDto adminTaskData) {
         String taskNameId = adminTaskData.getTaskNameId();
         log.info("Updating the Coding Task. Task name ID: {}", taskNameId);
         ResponseEntity<TaskDto> taskServiceResponse = taskServiceClient.getCodingTaskByNameId(taskNameId);

@@ -35,7 +35,7 @@ public class ServiceUtil {
         return compUnits.entrySet().stream()
                 .collect(toMap(Map.Entry::getKey, entry -> {
                     CompilationUnit compUnit = entry.getValue();
-                    CompilationUnitDto compUnitDto = new CompilationUnitDto(compUnit.getClassName(), compUnit.getClassName());
+                    CompilationUnitDto compUnitDto = new CompilationUnitDto(compUnit.getClassName(), compUnit.getSrcCode());
                     compUnitDto.setCompiledClassBytes(compUnit.getCompiledClassBytes());
                     return compUnitDto;
                 }));

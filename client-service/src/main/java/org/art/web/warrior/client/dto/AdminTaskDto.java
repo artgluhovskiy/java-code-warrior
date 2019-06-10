@@ -1,17 +1,14 @@
 package org.art.web.warrior.client.dto;
 
 import lombok.AllArgsConstructor;
-import lombok.Getter;
+import lombok.Data;
 import lombok.NoArgsConstructor;
-import lombok.ToString;
 import org.art.web.warrior.client.config.validation.groups.OnPublishing;
 import org.art.web.warrior.client.config.validation.groups.OnUpdate;
-import org.springframework.validation.annotation.Validated;
 
 import javax.validation.constraints.NotBlank;
 
-@Getter
-@ToString
+@Data
 @AllArgsConstructor
 @NoArgsConstructor
 public class AdminTaskDto {

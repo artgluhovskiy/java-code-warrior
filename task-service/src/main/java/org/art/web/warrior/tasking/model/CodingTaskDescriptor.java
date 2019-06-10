@@ -1,14 +1,13 @@
 package org.art.web.warrior.tasking.model;
 
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import javax.persistence.Embeddable;
 
 @Data
 @Builder
 @NoArgsConstructor
+@AllArgsConstructor
 @Embeddable
 public class CodingTaskDescriptor {
 

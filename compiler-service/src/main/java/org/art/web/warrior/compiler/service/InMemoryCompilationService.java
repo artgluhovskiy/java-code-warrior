@@ -47,6 +47,7 @@ public class InMemoryCompilationService implements CompilationService {
     @Override
     public CompilationResult compileUnits(List<CompilationUnit> units) {
         Objects.requireNonNull(units, COMP_UNITS_ARG_SHOULD_NOT_BE_NULL_MESSAGE);
+        validateCompilationUnits(units);
         LOG.debug("Compiling units: {}", units);
         DiagnosticCollector<JavaFileObject> diagnostics = new DiagnosticCollector<>();
         StandardJavaFileManager stdFileManager = compiler.getStandardFileManager(diagnostics, null, null);
@@ -64,6 +65,18 @@ public class InMemoryCompilationService implements CompilationService {
             }
         } catch (Exception e) {
             throw new CompilationServiceException(UNEXPECTED_INTERNAL_ERROR_MESSAGE, units, e);
+        }
+    }
+
+    private void validateCompilationUnits(List<? extends CompilationUnit> units) {
+        List<CompilationUnit> notValidUnits = new ArrayList<>();
+        for (CompilationUnit unit : units) {
+            if (!unit.isValid()) {
+                notValidUnits.add(unit);
+            }
+        }
+        if (!notValidUnits.isEmpty()) {
+            throw new CompilationServiceException(NOT_VALID_COMPILATION_UNITS_MESSAGE, notValidUnits);
         }
     }
 
