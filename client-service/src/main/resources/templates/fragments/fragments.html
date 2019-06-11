@@ -116,7 +116,7 @@
                             <td><span th:text="${taskInfo.description}">Task Description</span></td>
                             <td><span th:text="${taskInfo.solved}">Status</span></td>
                             <td><span th:text="${taskInfo.rating}">Task Rating</span></td>
-                            <td><a th:href="@{/user/tasks/{taskNameId}(taskNameId=${taskInfo.nameId})}">Task Link</a></td>
+                            <td><a th:href="@{/user/tasks/{taskNameId}(taskNameId=${taskInfo.nameId})}">Solve -></a></td>
                         </tr>
                     </tbody>
                 </table>

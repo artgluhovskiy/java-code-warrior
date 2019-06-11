@@ -1,7 +1,6 @@
 package org.art.web.warrior.client.dto;
 
 import lombok.Data;
-import lombok.RequiredArgsConstructor;
 
 @Data
 public class UserCodingTaskDto {

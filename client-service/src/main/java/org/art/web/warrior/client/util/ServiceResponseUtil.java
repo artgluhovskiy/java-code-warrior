@@ -18,11 +18,11 @@ public class ServiceResponseUtil {
 
     /* Client Service Utils */
 
-    public static ClientServiceResponse buildClientServiceOkResp(String message) {
+    public static ClientServiceResponse buildClientServiceOkResponse(String message) {
         return ClientServiceResponse.builder()
-            .respStatus(ServiceResponseStatus.SUCCESS.getStatusId())
-            .message(message)
-            .build();
+                .respStatus(ServiceResponseStatus.SUCCESS.getStatusId())
+                .message(message)
+                .build();
     }
 
     /* Compilation Service Utils */
@@ -31,9 +31,9 @@ public class ServiceResponseUtil {
         HttpStatus statusCode = serviceResp.getStatusCode();
         CompilationResponse respBody = serviceResp.getBody();
         return statusCode != HttpStatus.OK
-            || respBody == null
-            || MapUtils.isEmpty(respBody.getCompUnitResults())
-            || respBody.isCompError();
+                || respBody == null
+                || MapUtils.isEmpty(respBody.getCompUnitResults())
+                || respBody.isCompError();
     }
 
     public static ClientServiceResponse buildCompServiceErrorResponse(ResponseEntity<CompilationResponse> serviceResp) {
@@ -56,26 +56,26 @@ public class ServiceResponseUtil {
     private static ClientServiceResponse buildSrcCompilationErrorResponse(CompilationResponse respBody) {
         CompErrorDetails errorDetails = buildCompilationErrorDetails(respBody);
         return ClientServiceResponse.builder()
-            .respStatus(ServiceResponseStatus.COMPILATION_ERROR.getStatusId())
-            .message(COMPILATION_ERROR_MESSAGE)
-            .compErrorDetails(errorDetails)
-            .build();
+                .respStatus(ServiceResponseStatus.COMPILATION_ERROR.getStatusId())
+                .message(COMPILATION_ERROR_MESSAGE)
+                .compErrorDetails(errorDetails)
+                .build();
     }
 
     private static CompErrorDetails buildCompilationErrorDetails(CompilationResponse serviceResp) {
         return CompErrorDetails.builder()
-            .compilerErrorCode(serviceResp.getCompilerErrorCode())
-            .compilerMessage(serviceResp.getCompilerMessage())
-            .errorCodeLine(serviceResp.getErrorCodeLine())
-            .errorPosition(serviceResp.getErrorPosition())
-            .build();
+                .compilerErrorCode(serviceResp.getCompilerErrorCode())
+                .compilerMessage(serviceResp.getCompilerMessage())
+                .errorCodeLine(serviceResp.getErrorCodeLine())
+                .errorPosition(serviceResp.getErrorPosition())
+                .build();
     }
 
     private static ClientServiceResponse buildCompServiceCommonErrorResponse(CompilationResponse respBody) {
         return ClientServiceResponse.builder()
-            .respStatus(respBody.getCompilerStatus())
-            .message(respBody.getMessage())
-            .build();
+                .respStatus(respBody.getCompilerStatus())
+                .message(respBody.getMessage())
+                .build();
     }
 
     /* Task Service Utils */
@@ -105,23 +105,23 @@ public class ServiceResponseUtil {
 
     private static ClientServiceResponse buildTaskNotFoundResponse() {
         return ClientServiceResponse.builder()
-            .respStatus(ServiceResponseStatus.NOT_FOUND.getStatusId())
-            .message(TASK_NOT_FOUND_ERROR_MESSAGE)
-            .build();
+                .respStatus(ServiceResponseStatus.NOT_FOUND.getStatusId())
+                .message(TASK_NOT_FOUND_ERROR_MESSAGE)
+                .build();
     }
 
     private static ClientServiceResponse buildUnprocessableEntityTaskServiceResponse() {
         return ClientServiceResponse.builder()
-            .respStatus(ServiceResponseStatus.BAD_REQUEST.getStatusId())
-            .message(TASK_UNPROCESSABLE_ENTITY_ERROR_MESSAGE)
-            .build();
+                .respStatus(ServiceResponseStatus.BAD_REQUEST.getStatusId())
+                .message(TASK_UNPROCESSABLE_ENTITY_ERROR_MESSAGE)
+                .build();
     }
 
     private static ClientServiceResponse buildInternalTaskServiceErrorResponse() {
         return ClientServiceResponse.builder()
-            .respStatus(ServiceResponseStatus.INTERNAL_SERVICE_ERROR.getStatusId())
-            .message(INTERNAL_SERVICE_ERROR_MESSAGE)
-            .build();
+                .respStatus(ServiceResponseStatus.INTERNAL_SERVICE_ERROR.getStatusId())
+                .message(INTERNAL_SERVICE_ERROR_MESSAGE)
+                .build();
     }
 
     /* Execution Service Utils */
@@ -130,8 +130,8 @@ public class ServiceResponseUtil {
         HttpStatus statusCode = serviceResponse.getStatusCode();
         ExecutionResponse respBody = serviceResponse.getBody();
         return statusCode != HttpStatus.OK
-            || respBody == null
-            || !ServiceResponseStatus.SUCCESS.getStatusId().equals(respBody.getRespStatus());
+                || respBody == null
+                || !ServiceResponseStatus.SUCCESS.getStatusId().equals(respBody.getRespStatus());
     }
 
     public static ClientServiceResponse buildExecServiceErrorResp(ResponseEntity<ExecutionResponse> serviceResponse) {
@@ -153,30 +153,30 @@ public class ServiceResponseUtil {
 
     private static ClientServiceResponse buildExecServiceCommonErrorResponse(ExecutionResponse respBody) {
         return ClientServiceResponse.builder()
-            .respStatus(respBody.getRespStatus())
-            .message(respBody.getMessage())
-            .build();
+                .respStatus(respBody.getRespStatus())
+                .message(respBody.getMessage())
+                .build();
     }
 
     public static ClientServiceResponse buildUserTaskExecutionResponse(ExecutionResponse serviceResponse) {
         return ClientServiceResponse.builder()
-            .respStatus(serviceResponse.getRespStatus())
-            .message(serviceResponse.getMessage())
-            .execMessage(serviceResponse.getFailedTestMessage())
-            .build();
+                .respStatus(serviceResponse.getRespStatus())
+                .message(serviceResponse.getMessage())
+                .execMessage(serviceResponse.getFailedTestMessage())
+                .build();
     }
 
     private static ClientServiceResponse buildEmptyBodyResp() {
         return ClientServiceResponse.builder()
-            .respStatus(ServiceResponseStatus.INTERNAL_SERVICE_ERROR.getStatusId())
-            .message(INTERNAL_SERVICE_ERROR_MESSAGE)
-            .build();
+                .respStatus(ServiceResponseStatus.INTERNAL_SERVICE_ERROR.getStatusId())
+                .message(INTERNAL_SERVICE_ERROR_MESSAGE)
+                .build();
     }
 
     private static ClientServiceResponse buildUnexpectedErrorResp() {
         return ClientServiceResponse.builder()
-            .respStatus(ServiceResponseStatus.INTERNAL_SERVICE_ERROR.getStatusId())
-            .message(UNEXPECTED_SERVICE_ERROR_MESSAGE)
-            .build();
+                .respStatus(ServiceResponseStatus.INTERNAL_SERVICE_ERROR.getStatusId())
+                .message(UNEXPECTED_SERVICE_ERROR_MESSAGE)
+                .build();
     }
 }

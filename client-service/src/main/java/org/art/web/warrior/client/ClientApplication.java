@@ -3,7 +3,6 @@ package org.art.web.warrior.client;
 import org.art.web.warrior.client.config.converter.KryoHttpMessageConverter;
 import org.art.web.warrior.client.config.interceptor.RequestLogger;
 import org.art.web.warrior.client.config.properties.ServiceConfigProperties;
-import org.art.web.warrior.client.dto.AdminTaskDto;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;

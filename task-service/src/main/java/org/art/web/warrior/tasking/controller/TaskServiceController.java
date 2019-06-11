@@ -75,7 +75,7 @@ public class TaskServiceController {
     @DeleteMapping("/{nameId}")
     public void deleteTaskById(@PathVariable String nameId) {
         log.debug("Making the request for coding task deletion. Task name id: {}", nameId);
-        taskService.getTaskByNameId(nameId);
+        taskService.deleteTaskByNameId(nameId);
     }
 
     @GetMapping("/ping")

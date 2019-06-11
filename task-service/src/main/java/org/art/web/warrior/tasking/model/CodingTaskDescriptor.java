@@ -2,6 +2,7 @@ package org.art.web.warrior.tasking.model;
 
 import lombok.*;
 
+import javax.persistence.Column;
 import javax.persistence.Embeddable;
 
 @Data
@@ -11,6 +12,7 @@ import javax.persistence.Embeddable;
 @Embeddable
 public class CodingTaskDescriptor {
 
+    @Column(unique = true)
     private String nameId;
 
     private String name;

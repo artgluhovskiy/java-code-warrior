@@ -1,8 +1,8 @@
 package org.art.web.warrior.client.controller;
 
 import lombok.extern.slf4j.Slf4j;
-import org.art.web.warrior.client.config.validation.groups.OnPublishing;
-import org.art.web.warrior.client.config.validation.groups.OnUpdate;
+import org.art.web.warrior.client.config.validation.groups.OnDelete;
+import org.art.web.warrior.client.config.validation.groups.OnPublishOrUpdate;
 import org.art.web.warrior.client.dto.AdminTaskDto;
 import org.art.web.warrior.client.dto.ClientServiceResponse;
 import org.art.web.warrior.client.service.api.CompServiceClient;
@@ -20,16 +20,14 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
-import javax.validation.Valid;
 import java.util.Map;
 
-import static org.art.web.warrior.client.CommonServiceConstants.TASK_PUBLICATION_OK_MESSAGE;
-import static org.art.web.warrior.client.CommonServiceConstants.TASK_UPDATE_OK_MESSAGE;
+import static org.art.web.warrior.client.CommonServiceConstants.*;
 import static org.art.web.warrior.commons.CommonConstants.RUNNER_CLASS_NAME;
 
 @Slf4j
 @RestController
-@RequestMapping("/admin")
+@RequestMapping("/admin/submit")
 public class AdminController {
 
     private final CompServiceClient compServiceClient;
@@ -42,11 +40,11 @@ public class AdminController {
         this.taskServiceClient = taskServiceClient;
     }
 
-    @Validated(OnPublishing.class)
-    @PostMapping(value = "/submit", consumes = MediaType.APPLICATION_JSON_UTF8_VALUE, produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
-    public ClientServiceResponse publishNewCodingTask(@Valid @RequestBody AdminTaskDto adminTaskData) {
+
+    @PostMapping(consumes = MediaType.APPLICATION_JSON_UTF8_VALUE, produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
+    public ClientServiceResponse publishNewCodingTask(@Validated(OnPublishOrUpdate.class) @RequestBody AdminTaskDto adminTaskData) {
         log.info("Publishing the new Coding Task. Task name ID: {}", adminTaskData.getTaskNameId());
-        ResponseEntity<CompilationResponse> compServiceResponse = callCompilerService(adminTaskData);
+        ResponseEntity<CompilationResponse> compServiceResponse = callCompilationService(adminTaskData);
         if (ServiceResponseUtil.isCompServiceErrorResponse(compServiceResponse)) {
             return ServiceResponseUtil.buildCompServiceErrorResponse(compServiceResponse);
         }
@@ -56,19 +54,18 @@ public class AdminController {
         if (ServiceResponseUtil.isTaskServiceErrorResponse(taskServiceResponse)) {
             return ServiceResponseUtil.buildTaskServiceErrorResp(taskServiceResponse);
         }
-        return ServiceResponseUtil.buildClientServiceOkResp(TASK_PUBLICATION_OK_MESSAGE);
+        return ServiceResponseUtil.buildClientServiceOkResponse(TASK_PUBLICATION_OK_MESSAGE);
     }
 
-    @Validated(OnUpdate.class)
-    @PutMapping(value = "/submit", consumes = MediaType.APPLICATION_JSON_UTF8_VALUE, produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
-    public ClientServiceResponse updateCodingTask(@Valid @RequestBody AdminTaskDto adminTaskData) {
+    @PutMapping(consumes = MediaType.APPLICATION_JSON_UTF8_VALUE, produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
+    public ClientServiceResponse updateCodingTask(@Validated(OnPublishOrUpdate.class) @RequestBody AdminTaskDto adminTaskData) {
         String taskNameId = adminTaskData.getTaskNameId();
         log.info("Updating the Coding Task. Task name ID: {}", taskNameId);
         ResponseEntity<TaskDto> taskServiceResponse = taskServiceClient.getCodingTaskByNameId(taskNameId);
         if (ServiceResponseUtil.isTaskServiceErrorResponse(taskServiceResponse)) {
             return ServiceResponseUtil.buildTaskServiceErrorResp(taskServiceResponse);
         }
-        ResponseEntity<CompilationResponse> compServiceResponse = callCompilerService(adminTaskData);
+        ResponseEntity<CompilationResponse> compServiceResponse = callCompilationService(adminTaskData);
         if (ServiceResponseUtil.isCompServiceErrorResponse(compServiceResponse)) {
             return ServiceResponseUtil.buildCompServiceErrorResponse(compServiceResponse);
         }
@@ -78,12 +75,20 @@ public class AdminController {
         if (ServiceResponseUtil.isTaskServiceErrorResponse(taskServiceUpdateResponse)) {
             return ServiceResponseUtil.buildTaskServiceErrorResp(taskServiceUpdateResponse);
         }
-        return ServiceResponseUtil.buildClientServiceOkResp(TASK_UPDATE_OK_MESSAGE);
+        return ServiceResponseUtil.buildClientServiceOkResponse(TASK_UPDATE_OK_MESSAGE);
     }
 
-    private ResponseEntity<CompilationResponse> callCompilerService(AdminTaskDto taskData) {
+    @DeleteMapping(consumes = MediaType.APPLICATION_JSON_UTF8_VALUE, produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
+    public ClientServiceResponse deleteCodingTask(@Validated(OnDelete.class) @RequestBody AdminTaskDto adminTaskData) {
+        String taskNameId = adminTaskData.getTaskNameId();
+        log.info("Deleting the Coding Task. Task name ID: {}", taskNameId);
+        taskServiceClient.deleteTask(taskNameId);
+        return ServiceResponseUtil.buildClientServiceOkResponse(TASK_DELETE_OK_MESSAGE);
+    }
+
+    private ResponseEntity<CompilationResponse> callCompilationService(AdminTaskDto taskData) {
         log.debug("Compiling coding task source data.");
-        CompilationRequest compilationRequestData = ServiceRequestUtil.buildCompilationServiceReq(taskData);
+        CompilationRequest compilationRequestData = ServiceRequestUtil.buildCompilationServiceRequest(taskData);
         return compServiceClient.compileSrc(compilationRequestData);
     }
 

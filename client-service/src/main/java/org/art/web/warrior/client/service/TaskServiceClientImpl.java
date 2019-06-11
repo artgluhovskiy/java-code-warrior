@@ -61,7 +61,7 @@ public class TaskServiceClientImpl implements TaskServiceClient {
         HttpHeaders headers = new HttpHeaders();
         headers.set(HttpHeaders.CONTENT_TYPE, KRYO_CONTENT_TYPE);
         headers.set(HttpHeaders.ACCEPT, MediaType.APPLICATION_JSON_UTF8_VALUE);
-        HttpEntity<?> reqEntity = new HttpEntity<>(headers);
+        HttpEntity<?> reqEntity = new HttpEntity<>(task, headers);
         log.debug("Making the request for the task update to the Task Service. Request data: {}, endpoint: {}", task, serviceEndpointBase);
         return restTemplate.exchange(serviceEndpointBase, HttpMethod.PUT, reqEntity, TaskDescriptorDto.class);
     }
@@ -72,7 +72,8 @@ public class TaskServiceClientImpl implements TaskServiceClient {
         headers.set(HttpHeaders.ACCEPT, KRYO_CONTENT_TYPE);
         HttpEntity<?> reqEntity = new HttpEntity<>(headers);
         log.debug("Making the request for all tasks to the Task Service. Endpoint: {}", serviceEndpointBase);
-        return restTemplate.exchange(serviceEndpointBase, HttpMethod.GET, reqEntity, new ParameterizedTypeReference<List<TaskDto>>() {});
+        return restTemplate.exchange(serviceEndpointBase, HttpMethod.GET, reqEntity, new ParameterizedTypeReference<List<TaskDto>>() {
+        });
     }
 
     @Override
@@ -82,7 +83,8 @@ public class TaskServiceClientImpl implements TaskServiceClient {
         headers.set(HttpHeaders.ACCEPT, MediaType.APPLICATION_JSON_UTF8_VALUE);
         HttpEntity<?> reqEntity = new HttpEntity<>(headers);
         log.debug("Making the request for coding task descriptors to the Task Service. Endpoint: {}", serviceEndpoint);
-        return restTemplate.exchange(serviceEndpoint, HttpMethod.GET, reqEntity, new ParameterizedTypeReference<List<TaskDescriptorDto>>() {});
+        return restTemplate.exchange(serviceEndpoint, HttpMethod.GET, reqEntity, new ParameterizedTypeReference<List<TaskDescriptorDto>>() {
+        });
     }
 
     @Override

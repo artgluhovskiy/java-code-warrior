@@ -4,8 +4,6 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import org.hibernate.annotations.CreationTimestamp;
-import org.hibernate.annotations.UpdateTimestamp;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
@@ -29,9 +27,17 @@ public class CodingTask {
     @Lob
     private byte[] runnerClassData;
 
-    @CreationTimestamp
     private LocalDateTime publicationDate;
 
-    @UpdateTimestamp
     private LocalDateTime updateDate;
+
+    @PrePersist
+    protected void onPublish() {
+        this.publicationDate = LocalDateTime.now();
+    }
+
+    @PreUpdate
+    protected void noUpdate() {
+        this.updateDate = LocalDateTime.now();
+    }
 }

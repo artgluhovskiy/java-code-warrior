@@ -63,6 +63,7 @@ public class CommonServiceConstants {
 
     public static final String TASK_PUBLICATION_OK_MESSAGE = "Coding task was successfully published!";
     public static final String TASK_UPDATE_OK_MESSAGE = "Coding task was successfully updated!";
+    public static final String TASK_DELETE_OK_MESSAGE = "Coding task was successfully deleted!";
     public static final String TASK_NOT_FOUND_ERROR_MESSAGE = "Coding task with such name id wasn't found.";
     public static final String TASK_UNPROCESSABLE_ENTITY_ERROR_MESSAGE = "Cannot process task request data. Task data is incorrect.";
 

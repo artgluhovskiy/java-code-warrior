@@ -7,9 +7,21 @@ $(function () {
     var taskDescriptionField = $('#task-description');
     var taskMethodSignField = $('#task-method-sign');
 
-    $(form).submit(function (event) {
-        event.preventDefault();
+    var baseUrl = $(form).attr('action');
 
+    $('#btn-publish').click(function() {
+        sendRequest({'url' : baseUrl, 'method' : 'POST'})
+    });
+
+    $('#btn-update').click(function() {
+        sendRequest({'url' : baseUrl, 'method' : 'PUT'})
+    });
+
+    $('#btn-delete').click(function() {
+        sendRequest({'url' : baseUrl, 'method' : 'DELETE'})
+    });
+
+    function sendRequest(requestData) {
         var solutionSrcCode = solutionCodeArea.val();
         var runnerSrcCode = runnerCodeArea.val();
         var taskNameId = taskNameIdField.val();
@@ -29,17 +41,17 @@ $(function () {
         var submitResultArea = $('#submit-result');
 
         $.ajax({
-            type: 'POST',
+            type: requestData.method,
             contentType: 'application/json;charset=utf-8',
             dataType: 'json',
-            url: $(form).attr('action'),
+            url: requestData.url,
             data: formData
         }).done(function (response) {
             processOkResponse(response, submitResultArea)
         }).fail(function (data) {
             processErrorResponse(data, submitResultArea)
         });
-    });
+    }
 
     function processOkResponse(response, targetArea) {
         if (response.respStatus === 'success') {

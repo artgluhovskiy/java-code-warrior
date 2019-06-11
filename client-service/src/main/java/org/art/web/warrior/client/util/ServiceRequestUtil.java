@@ -22,18 +22,18 @@ public class ServiceRequestUtil {
 
     public static TaskDto buildTaskServicePublicationRequest(AdminTaskDto requestData, byte[] runnerClassData) {
         TaskDescriptorDto descriptorDto = TaskDescriptorDto.builder()
-            .nameId(requestData.getTaskNameId())
-            .name(requestData.getTaskName())
-            .description(requestData.getTaskDescription())
-            .build();
+                .nameId(requestData.getTaskNameId())
+                .name(requestData.getTaskName())
+                .description(requestData.getTaskDescription())
+                .build();
         return TaskDto.builder()
-            .descriptor(descriptorDto)
-            .methodSign(requestData.getTaskMethodSign())
-            .runnerClassData(runnerClassData)
-            .build();
+                .descriptor(descriptorDto)
+                .methodSign(requestData.getTaskMethodSign())
+                .runnerClassData(runnerClassData)
+                .build();
     }
 
-    public static CompilationRequest buildCompilationServiceReq(AdminTaskDto requestData) {
+    public static CompilationRequest buildCompilationServiceRequest(AdminTaskDto requestData) {
         String solutionSrcCode = requestData.getSolutionSrcCode();
         String solutionClassName = ParserUtil.parseClassNameFromSrcString(solutionSrcCode);
         CompilationUnitDto solutionCompUnit = new CompilationUnitDto(solutionClassName, solutionSrcCode);
@@ -46,11 +46,11 @@ public class ServiceRequestUtil {
 
     public static ExecutionRequest buildExecutionServiceRequest(byte[] solutionClassData, byte[] runnerClassData) {
         return ExecutionRequest.builder()
-            .solutionClassName(SOLUTION_CLASS_NAME)
-            .solutionClassData(solutionClassData)
-            .runnerClassName(RUNNER_CLASS_NAME)
-            .runnerClassData(runnerClassData)
-            .build();
+                .solutionClassName(SOLUTION_CLASS_NAME)
+                .solutionClassData(solutionClassData)
+                .runnerClassName(RUNNER_CLASS_NAME)
+                .runnerClassData(runnerClassData)
+                .build();
     }
 
     public static CompilationRequest buildCompilationServiceRequest(String className, String srcCode) {

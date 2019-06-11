@@ -17,6 +17,7 @@ import org.art.web.warrior.commons.compiler.dto.CompilationResponse;
 import org.art.web.warrior.commons.compiler.dto.CompilationUnitDto;
 import org.art.web.warrior.commons.execution.dto.ExecutionRequest;
 import org.art.web.warrior.commons.execution.dto.ExecutionResponse;
+import org.art.web.warrior.commons.tasking.dto.TaskDescriptorDto;
 import org.art.web.warrior.commons.tasking.dto.TaskDto;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
@@ -31,9 +32,9 @@ import static org.art.web.warrior.client.CommonServiceConstants.USER_ATTR_NAME;
 @RestController
 @SessionAttributes(USER_ATTR_NAME)
 @RequestMapping(
-    value = "/user",
-    consumes = MediaType.APPLICATION_JSON_UTF8_VALUE,
-    produces = MediaType.APPLICATION_JSON_UTF8_VALUE
+        value = "/user",
+        consumes = MediaType.APPLICATION_JSON_UTF8_VALUE,
+        produces = MediaType.APPLICATION_JSON_UTF8_VALUE
 )
 public class UserCodeSubmissionController {
 
@@ -78,6 +79,7 @@ public class UserCodeSubmissionController {
             return ServiceResponseUtil.buildExecServiceErrorResp(execServiceResponse);
         }
         updateUserTaskList(user, taskNameId);
+        increaseCodingTaskRating(taskDto);
         return ServiceResponseUtil.buildUserTaskExecutionResponse(execServiceResponse.getBody());
     }
 
@@ -86,5 +88,11 @@ public class UserCodeSubmissionController {
         user.getSolvedTaskNameIds().add(taskNameId);
         userService.updateUser(user);
         userDto.getSolvedTaskNameIds().add(taskNameId);
+    }
+
+    private void increaseCodingTaskRating(TaskDto task) {
+        TaskDescriptorDto taskDescriptor = task.getDescriptor();
+        task.getDescriptor().setRating(taskDescriptor.getRating() + 1);
+        taskServiceClient.updateCodingTask(task);
     }
 }
