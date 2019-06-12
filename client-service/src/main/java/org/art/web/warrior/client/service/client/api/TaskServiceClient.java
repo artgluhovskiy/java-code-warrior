@@ -1,4 +1,4 @@
-package org.art.web.warrior.client.service.api;
+package org.art.web.warrior.client.service.client.api;
 
 import org.art.web.warrior.commons.tasking.dto.TaskDescriptorDto;
 import org.art.web.warrior.commons.tasking.dto.TaskDto;

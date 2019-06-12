@@ -62,18 +62,20 @@ dependencies {
     
     implementation('org.springframework.boot:spring-boot-devtools')
     implementation('org.springframework.boot:spring-boot-starter-actuator')
+
+    implementation('org.springframework.cloud:spring-cloud-starter-netflix-eureka-client')
+    implementation('org.springframework.cloud:spring-cloud-starter-openfeign')
     
     testImplementation('org.springframework.boot:spring-boot-starter-test')
     testImplementation('org.springframework.security:spring-security-test')
     
     implementation('org.thymeleaf.extras:thymeleaf-extras-springsecurity5')
 
-    implementation('com.esotericsoftware:kryo:4.0.0')
-
     /* *** DB *** */
     runtime('mysql:mysql-connector-java')
 
     /* *** Common Libs *** */
+    implementation('com.esotericsoftware:kryo:4.0.0')
     implementation('org.apache.commons:commons-lang3:3.1')
     implementation('org.apache.commons:commons-collections4:4.0')
 
@@ -89,6 +91,12 @@ dependencies {
 
     testImplementation('org.mockito:mockito-junit-jupiter:2.18.3')
     testImplementation('org.mockito:mockito-core:2.+')
+}
+
+dependencyManagement {
+    imports {
+        mavenBom 'org.springframework.cloud:spring-cloud-dependencies:Greenwich.RELEASE'
+    }
 }
 
 task collectResourcesToDir(type: Copy, dependsOn: build) {

@@ -1,0 +1,13 @@
+spring:
+  application:
+    name: executor-service
+server:
+  port: 8081
+  servlet:
+    context-path: /executor
+eureka:
+  client:
+    service-url:
+      default-zone: http://localhost:8761/eureka
+  instance:
+    prefer-ip-address: true

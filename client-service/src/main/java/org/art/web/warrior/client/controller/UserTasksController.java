@@ -4,7 +4,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.art.web.warrior.client.dto.UserCodingTaskDto;
 import org.art.web.warrior.client.dto.UserDto;
 import org.art.web.warrior.client.model.User;
-import org.art.web.warrior.client.service.api.TaskServiceClient;
+import org.art.web.warrior.client.service.client.api.TaskServiceClient;
 import org.art.web.warrior.client.service.api.UserService;
 import org.art.web.warrior.client.util.ServiceResponseUtil;
 import org.art.web.warrior.commons.tasking.dto.TaskDescriptorDto;

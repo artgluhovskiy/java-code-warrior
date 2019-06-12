@@ -10,10 +10,6 @@ buildscript {
     }
 }
 
-plugins {
-    id 'net.saliman.cobertura' version '2.6.0'
-}
-
 ext {
     springBootVersion = '2.1.2.RELEASE'
     targetResourceDir = '/docker'
@@ -27,7 +23,7 @@ sourceCompatibility = 1.8
 targetCompatibility = 1.8
 
 bootJar {
-    baseName = 'task-service-boot'
+    baseName = 'service-registry-boot'
 }
 
 repositories {
@@ -48,38 +44,9 @@ test {
 }
 
 dependencies {
-    
-    implementation project(':commons')
-        
+         
     /* *** Spring *** */
-    implementation('org.springframework.boot:spring-boot-starter')
-    implementation('org.springframework.boot:spring-boot-starter-web')
-    implementation('org.springframework.boot:spring-boot-starter-data-jpa')
-
-    implementation('org.springframework.cloud:spring-cloud-starter-netflix-eureka-client')
-    
-    testImplementation('org.springframework.boot:spring-boot-starter-test')
-
-    /* *** Common Libs *** */
-    implementation('com.esotericsoftware:kryo:4.0.0')
-    implementation('org.apache.commons:commons-lang3:3.1')
-    implementation('org.apache.commons:commons-collections4:4.0')
-    
-    implementation('ch.qos.logback:logback-core:1.2.3')
-    implementation('org.slf4j:slf4j-api:1.7.26')
-
-    implementation('org.projectlombok:lombok:1.18.4')
-    annotationProcessor('org.projectlombok:lombok:1.18.4')
-    
-    /* *** DB *** */
-    runtime('mysql:mysql-connector-java')
-
-    /* *** TDD *** */
-    testImplementation('org.junit.jupiter:junit-jupiter-api:5.3.1')
-    testRuntimeOnly('org.junit.jupiter:junit-jupiter-engine:5.3.1')
-
-    testImplementation('org.mockito:mockito-junit-jupiter:2.18.3')
-    testImplementation('org.mockito:mockito-core:2.+')
+    implementation('org.springframework.cloud:spring-cloud-starter-netflix-eureka-server')
 }
 
 dependencyManagement {

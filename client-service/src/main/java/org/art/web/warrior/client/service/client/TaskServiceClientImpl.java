@@ -1,8 +1,8 @@
-package org.art.web.warrior.client.service;
+package org.art.web.warrior.client.service.client;
 
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
-import org.art.web.warrior.client.service.api.TaskServiceClient;
+import org.art.web.warrior.client.service.client.api.TaskServiceClient;
 import org.art.web.warrior.commons.tasking.dto.TaskDescriptorDto;
 import org.art.web.warrior.commons.tasking.dto.TaskDto;
 import org.springframework.beans.factory.annotation.Autowired;

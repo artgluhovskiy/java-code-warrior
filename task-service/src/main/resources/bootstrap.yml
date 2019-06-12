@@ -12,3 +12,9 @@ server:
   port: 8083
   servlet:
     context-path: /tasking
+eureka:
+  client:
+    service-url:
+      default-zone: http://localhost:8761/eureka
+  instance:
+    prefer-ip-address: true
