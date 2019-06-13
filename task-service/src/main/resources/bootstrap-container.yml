@@ -12,3 +12,9 @@ server:
   port: 8083
   servlet:
     context-path: /tasking
+eureka:
+  client:
+    service-url:
+      defaultZone: http://${SERVICE_REGISTRY_HOST}:${SERVICE_REGISTRY_PORT}/eureka
+  instance:
+    prefer-ip-address: true

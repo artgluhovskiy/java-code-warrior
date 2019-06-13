@@ -15,3 +15,11 @@ server:
 client:
   request:
     logging: false
+eureka:
+  client:
+    register-with-eureka: false
+    fetch-registry: true
+    service-url:
+      defaultZone: http://${SERVICE_REGISTRY_HOST}:${SERVICE_REGISTRY_PORT}/eureka
+  instance:
+    prefer-ip-address: true

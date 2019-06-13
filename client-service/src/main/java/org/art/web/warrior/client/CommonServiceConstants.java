@@ -68,4 +68,10 @@ public class CommonServiceConstants {
     public static final String TASK_UNPROCESSABLE_ENTITY_ERROR_MESSAGE = "Cannot process task request data. Task data is incorrect.";
 
     public static final String EMAIL_REGEXP = "^[a-z0-9._%+-]+@[a-z0-9.-]+\\.[a-z]{2,6}$";
+
+    //Eureka Discovery
+
+    public static final String EXECUTION_SERVICE_NAME = "executor-service";
+    public static final String COMPILER_SERVICE_NAME = "compiler-service";
+    public static final String TASK_SERVICE_NAME = "task-service";
 }

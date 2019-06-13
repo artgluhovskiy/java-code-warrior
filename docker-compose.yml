@@ -2,11 +2,24 @@ version: '3'
 
 services:
 
+  # Netflix Eureka Service Registry
+  service-registry:
+    container_name: service-registry
+    build:
+      context: ./service-registry
+    ports:
+      - "8761:8761"
+      - "8791:8791"
+    environment:
+      SERVICE_REGISTRY_HOST: service-registry
+      SERVICE_REGISTRY_PORT: 8761
+
   # Client Service
   client-service:
     container_name: client-service
     depends_on:
-      - compiler-service
+      - service-registry
+      - mysqldb
     build:
       context: ./client-service
     environment:
@@ -24,6 +37,9 @@ services:
       DATABASE_USER: root
       DATABASE_PASSWORD: rootpassword
       DATABASE_NAME: users
+
+      SERVICE_REGISTRY_HOST: service-registry
+      SERVICE_REGISTRY_PORT: 8761
     ports:
       - "8082:8082"
       - "8092:8092"
@@ -31,8 +47,13 @@ services:
   # Compiler Service
   compiler-service:
     container_name: compiler-service
+    depends_on:
+      - service-registry
     build:
       context: ./compiler-service
+    environment:
+      SERVICE_REGISTRY_HOST: service-registry
+      SERVICE_REGISTRY_PORT: 8761
     ports:
       - "8080:8080"
       - "8090:8090"
@@ -42,8 +63,13 @@ services:
   # Execution Service
   execution-service:
     container_name: execution-service
+    depends_on:
+      - service-registry
     build:
       context: ./execution-service
+    environment:
+      SERVICE_REGISTRY_HOST: service-registry
+      SERVICE_REGISTRY_PORT: 8761
     ports:
       - "8081:8081"
       - "8091:8091"
@@ -52,6 +78,7 @@ services:
   task-service:
     container_name: task-service
     depends_on:
+      - service-registry
       - mysqldb
     environment:
       DATABASE_HOST: mysqldb
@@ -59,13 +86,16 @@ services:
       DATABASE_USER: root
       DATABASE_PASSWORD: rootpassword
       DATABASE_NAME: tasks
+
+      SERVICE_REGISTRY_HOST: service-registry
+      SERVICE_REGISTRY_PORT: 8761
     build:
       context: ./task-service
     ports:
       - "8083:8083"
       - "8093:8093"
 
-  # MySQL Coding Task Container
+  # MySQL DB
   mysqldb:
     image: mysql:5.7
     container_name: mysqldb

@@ -1,0 +1,11 @@
+spring:
+  application:
+    name: service-registry
+server:
+  port: ${SERVICE_REGISTRY_PORT}
+eureka:
+  instance:
+    hostname: ${SERVICE_REGISTRY_HOST}
+  client:
+    register-with-eureka: false
+    fetch-registry: false
