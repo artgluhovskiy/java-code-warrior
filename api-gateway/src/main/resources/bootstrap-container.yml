@@ -1,20 +1,23 @@
 spring:
   application:
-    name: client-service
-  datasource:
-    url: jdbc:mysql://${DATABASE_HOST}:${DATABASE_PORT}/${DATABASE_NAME}?createDatabaseIfNotExist=true
-    password: ${DATABASE_PASSWORD}
-    username: ${DATABASE_USER}
-  jpa:
-    hibernate:
-      ddl-auto: update
+    name: api-gateway
 server:
-  port: 8082
-  servlet:
-    context-path: /client
-client:
-  request:
-    logging: false
+  port: 8080
+zuul:
+  ignored-services: '*'
+  routes:
+    executor:
+      path: /executor/**
+      serviceId: executor-service
+      stripPrefix: false
+    compiler:
+      path: /compiler/**
+      serviceId: compiler-service
+      stripPrefix: false
+    tasking:
+      path: /tasking/**
+      serviceId: task-service
+      stripPrefix: false
 eureka:
   client:
     register-with-eureka: false

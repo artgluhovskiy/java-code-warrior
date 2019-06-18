@@ -14,6 +14,20 @@ services:
       SERVICE_REGISTRY_HOST: service-registry
       SERVICE_REGISTRY_PORT: 8761
 
+  # Netflix Zuul Api Gateway
+  api-gateway:
+    container_name: api-gateway
+    depends_on:
+      - service-registry
+    build:
+      context: ./api-gateway
+    ports:
+      - "8080:8080"
+      - "8090:8090"
+    environment:
+      SERVICE_REGISTRY_HOST: service-registry
+      SERVICE_REGISTRY_PORT: 8761
+
   # Client Service
   client-service:
     container_name: client-service
@@ -24,13 +38,13 @@ services:
       context: ./client-service
     environment:
       COMPILER_SERVICE_HOST: compiler-service
-      COMPILER_SERVICE_PORT: 8080
+      COMPILER_SERVICE_PORT: 8082
 
       EXECUTION_SERVICE_HOST: execution-service
-      EXECUTION_SERVICE_PORT: 8081
+      EXECUTION_SERVICE_PORT: 8083
 
       TASK_SERVICE_HOST: task-service
-      TASK_SERVICE_PORT: 8083
+      TASK_SERVICE_PORT: 8084
 
       DATABASE_HOST: mysqldb
       DATABASE_PORT: 3306
@@ -41,8 +55,8 @@ services:
       SERVICE_REGISTRY_HOST: service-registry
       SERVICE_REGISTRY_PORT: 8761
     ports:
-      - "8082:8082"
-      - "8092:8092"
+      - "8085:8085"
+      - "8095:8095"
 
   # Compiler Service
   compiler-service:
@@ -55,8 +69,8 @@ services:
       SERVICE_REGISTRY_HOST: service-registry
       SERVICE_REGISTRY_PORT: 8761
     ports:
-      - "8080:8080"
-      - "8090:8090"
+      - "8082:8082"
+      - "8092:8092"
     volumes:
       - "./app/logs:/app/logs"
 
@@ -71,8 +85,8 @@ services:
       SERVICE_REGISTRY_HOST: service-registry
       SERVICE_REGISTRY_PORT: 8761
     ports:
-      - "8081:8081"
-      - "8091:8091"
+      - "8083:8083"
+      - "8093:8093"
 
   # Task Service
   task-service:
@@ -92,8 +106,8 @@ services:
     build:
       context: ./task-service
     ports:
-      - "8083:8083"
-      - "8093:8093"
+      - "8084:8084"
+      - "8094:8094"
 
   # MySQL DB
   mysqldb:
