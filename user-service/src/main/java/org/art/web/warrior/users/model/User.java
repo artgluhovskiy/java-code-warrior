@@ -1,0 +1,51 @@
+package org.art.web.warrior.users.model;
+
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+import org.hibernate.annotations.CreationTimestamp;
+
+import javax.persistence.*;
+import java.time.LocalDateTime;
+import java.util.Collections;
+import java.util.List;
+import java.util.Set;
+
+@Data
+@Entity
+@Table(name = "users")
+@Builder
+@AllArgsConstructor
+@NoArgsConstructor
+public class User {
+
+    @Id
+    @GeneratedValue
+    private Long id;
+
+    private boolean enabled;
+
+    private String firstName;
+
+    private String lastName;
+
+    private String email;
+
+    private String password;
+
+    @ManyToMany(fetch = FetchType.EAGER)
+    @JoinTable(
+            name = "users_roles",
+            joinColumns = @JoinColumn(
+                    name = "user_id", referencedColumnName = "id"),
+            inverseJoinColumns = @JoinColumn(
+                    name = "role_id", referencedColumnName = "id"))
+    private List<Role> roles;
+
+    @ElementCollection(fetch = FetchType.EAGER)
+    private Set<String> solvedTaskNameIds = Collections.emptySet();
+
+    @CreationTimestamp
+    private LocalDateTime regDate;
+}

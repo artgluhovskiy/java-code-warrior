@@ -1,6 +1,7 @@
 rootProject.name = 'java-code-warrior'
 
 include 'api-gateway'
+include 'user-service'
 include 'service-registry'
 include 'commons'
 include 'client-service'
