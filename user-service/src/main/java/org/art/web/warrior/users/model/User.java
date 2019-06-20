@@ -7,44 +7,50 @@ import lombok.NoArgsConstructor;
 import org.hibernate.annotations.CreationTimestamp;
 
 import javax.persistence.*;
+import javax.validation.constraints.NotBlank;
 import java.time.LocalDateTime;
-import java.util.Collections;
 import java.util.List;
-import java.util.Set;
 
 @Data
-@Entity
-@Table(name = "users")
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
+@Entity
+@Table(name = "users")
 public class User {
 
     @Id
     @GeneratedValue
     private Long id;
 
+    @Column(name = "enabled")
     private boolean enabled;
 
+    @Column(name = "first_name")
     private String firstName;
 
+    @Column(name = "last_name")
     private String lastName;
 
+    @Column(name = "email")
+    @NotBlank
     private String email;
 
+    @Column(name = "password")
+    @NotBlank
     private String password;
 
     @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(
-            name = "users_roles",
-            joinColumns = @JoinColumn(
-                    name = "user_id", referencedColumnName = "id"),
-            inverseJoinColumns = @JoinColumn(
-                    name = "role_id", referencedColumnName = "id"))
+        name = "user_roles",
+        joinColumns = @JoinColumn(
+            name = "user_id", referencedColumnName = "id"),
+        inverseJoinColumns = @JoinColumn(
+            name = "role_id", referencedColumnName = "id"))
     private List<Role> roles;
 
-    @ElementCollection(fetch = FetchType.EAGER)
-    private Set<String> solvedTaskNameIds = Collections.emptySet();
+    @OneToMany(cascade = CascadeType.ALL)
+    private List<TaskOrder> taskOrders;
 
     @CreationTimestamp
     private LocalDateTime regDate;
