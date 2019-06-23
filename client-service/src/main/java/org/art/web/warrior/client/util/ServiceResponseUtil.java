@@ -6,6 +6,7 @@ import org.art.web.warrior.client.dto.CompErrorDetails;
 import org.art.web.warrior.commons.ServiceResponseStatus;
 import org.art.web.warrior.commons.compiler.dto.CompilationResponse;
 import org.art.web.warrior.commons.execution.dto.ExecutionResponse;
+import org.art.web.warrior.commons.users.dto.UserDto;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 
@@ -23,6 +24,13 @@ public class ServiceResponseUtil {
                 .respStatus(ServiceResponseStatus.SUCCESS.getStatusId())
                 .message(message)
                 .build();
+    }
+
+    /* User Service Utils */
+
+    public static boolean isUserServiceErrorResponse(ResponseEntity<UserDto> serviceResp) {
+        HttpStatus statusCode = serviceResp.getStatusCode();
+        return statusCode != HttpStatus.OK || serviceResp.getBody() == null;
     }
 
     /* Compilation Service Utils */

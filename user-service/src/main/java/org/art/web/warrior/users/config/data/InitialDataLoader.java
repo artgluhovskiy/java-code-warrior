@@ -14,8 +14,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
-import java.util.Arrays;
-import java.util.Collections;
+import java.util.*;
 
 @Component
 public class InitialDataLoader implements ApplicationListener<ContextRefreshedEvent> {
@@ -48,9 +47,9 @@ public class InitialDataLoader implements ApplicationListener<ContextRefreshedEv
 
     @Transactional
     protected void createRoleIfNotFound(String name) {
-        Role role = roleRepository.findByName(name);
-        if (role == null) {
-            role = new Role();
+        Optional<Role> roleOptional = roleRepository.findByName(name);
+        if (!roleOptional.isPresent()) {
+            Role role = new Role();
             role.setName(name);
             roleRepository.save(role);
         }
@@ -68,7 +67,8 @@ public class InitialDataLoader implements ApplicationListener<ContextRefreshedEv
                 .password(encoder.encode("admin"))
                 .email(email)
                 .regDate(LocalDateTime.now());
-            Role adminRole = roleRepository.findByName(CommonServiceConstants.ROLE_ADMIN);
+            Role adminRole = roleRepository.findByName(CommonServiceConstants.ROLE_ADMIN)
+                .orElseThrow(() -> new RuntimeException("Cannot find ROLE_ADMIN in the repository during ADMIN initialization!"));
             builder.roles(Collections.singletonList(adminRole));
             admin = builder.build();
             userRepository.save(admin);
@@ -87,7 +87,8 @@ public class InitialDataLoader implements ApplicationListener<ContextRefreshedEv
                 .password(encoder.encode("user"))
                 .email(email)
                 .regDate(LocalDateTime.now());
-            Role adminRole = roleRepository.findByName(CommonServiceConstants.ROLE_USER);
+            Role adminRole = roleRepository.findByName(CommonServiceConstants.ROLE_USER)
+                .orElseThrow(() -> new RuntimeException("Cannot find ROLE_USER in the repository during USER initialization!"));
             builder.roles(Collections.singletonList(adminRole));
             user = builder.build();
 
@@ -107,7 +108,10 @@ public class InitialDataLoader implements ApplicationListener<ContextRefreshedEv
                 .user(user)
                 .build();
 
-            user.setTaskOrders(Arrays.asList(order1, order2));
+            Set<TaskOrder> taskOrders = new HashSet<>();
+            taskOrders.add(order1);
+            taskOrders.add(order2);
+            user.setTaskOrders(taskOrders);
             userRepository.save(user);
         }
     }

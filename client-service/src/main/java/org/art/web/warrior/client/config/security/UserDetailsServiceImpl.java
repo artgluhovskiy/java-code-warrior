@@ -1,9 +1,11 @@
 package org.art.web.warrior.client.config.security;
 
-import org.art.web.warrior.client.model.Role;
-import org.art.web.warrior.client.model.User;
-import org.art.web.warrior.client.repository.UserRepository;
+import org.art.web.warrior.client.service.client.api.UserServiceClient;
+import org.art.web.warrior.client.util.ServiceResponseUtil;
+import org.art.web.warrior.commons.users.dto.RoleDto;
+import org.art.web.warrior.commons.users.dto.UserDto;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -17,28 +19,34 @@ import java.util.List;
 @Service("userDetailsService")
 public class UserDetailsServiceImpl implements UserDetailsService {
 
-    private final UserRepository userRepository;
+    private final UserServiceClient userServiceClient;
 
     @Autowired
-    public UserDetailsServiceImpl(UserRepository userRepository) {
-        this.userRepository = userRepository;
+    public UserDetailsServiceImpl(UserServiceClient userServiceClient) {
+        this.userServiceClient = userServiceClient;
     }
 
     @Override
     public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
-        User user = userRepository.findUserByEmail(email);
-        if (user == null) {
+        ResponseEntity<UserDto> userServiceResponse = userServiceClient.findUserByEmail(email);
+        if (ServiceResponseUtil.isUserServiceErrorResponse(userServiceResponse)) {
             throw new UsernameNotFoundException("No user found with email: " + email);
         }
-        return new org.springframework.security.core.userdetails.User(user.getEmail(),
-                user.getPassword(), user.isEnabled(), true, true,
-                true, getAuthorities(user.getRoles()));
+        UserDto user = userServiceResponse.getBody();
+        return new org.springframework.security.core.userdetails.User(
+            user.getEmail(),
+            user.getPassword(),
+            user.isEnabled(),
+            true,
+            true,
+            true,
+            getAuthorities(user.getRoles()));
 
     }
 
-    private List<GrantedAuthority> getAuthorities(List<Role> roles) {
+    private List<GrantedAuthority> getAuthorities(List<RoleDto> roles) {
         List<GrantedAuthority> authorities = new ArrayList<>();
-        for (Role role : roles) {
+        for (RoleDto role : roles) {
             authorities.add(new SimpleGrantedAuthority(role.getName()));
         }
         return authorities;

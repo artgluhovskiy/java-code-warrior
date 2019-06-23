@@ -1,9 +1,6 @@
 package org.art.web.warrior.users.model;
 
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotBlank;
@@ -33,9 +30,12 @@ public class TaskOrder {
     private String description;
 
     @Column(name = "reg_date")
+    @EqualsAndHashCode.Exclude
     private LocalDateTime regDate;
 
     @ManyToOne
     @JoinColumn(name = "user_id")
+    @EqualsAndHashCode.Exclude
+    @ToString.Exclude
     private User user;
 }

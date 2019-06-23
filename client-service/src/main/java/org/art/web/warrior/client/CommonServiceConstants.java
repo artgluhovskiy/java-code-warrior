@@ -35,10 +35,6 @@ public class CommonServiceConstants {
     public static final String REGISTRATION = "registration";
     public static final String REDIRECT = "redirect:";
 
-    //Roles
-    public static final String ROLE_ADMIN = "ROLE_ADMIN";
-    public static final String ROLE_USER = "ROLE_USER";
-
     public static final String COMPILER_SERVICE_HOST_ENV_PROP_NAME = "COMPILER_SERVICE_HOST";
     public static final String COMPILER_SERVICE_PORT_ENV_PROP_NAME = "COMPILER_SERVICE_PORT";
 
@@ -48,10 +44,15 @@ public class CommonServiceConstants {
     public static final String TASK_SERVICE_HOST_ENV_PROP_NAME = "TASK_SERVICE_HOST";
     public static final String TASK_SERVICE_PORT_ENV_PROP_NAME = "TASK_SERVICE_PORT";
 
-    public static final String COMP_SERVICE_PORT_NO_PROFILE = "8080";
-    public static final String EXEC_SERVICE_PORT_NO_PROFILE = "8081";
-    public static final String TASK_SERVICE_PORT_NO_PROFILE = "8083";
+    public static final String USER_SERVICE_HOST_ENV_PROP_NAME = "USER_SERVICE_HOST";
+    public static final String USER_SERVICE_PORT_ENV_PROP_NAME = "USER_SERVICE_PORT";
 
+    public static final String USER_SERVICE_PORT_NO_PROFILE = "8081";
+    public static final String COMP_SERVICE_PORT_NO_PROFILE = "8082";
+    public static final String EXEC_SERVICE_PORT_NO_PROFILE = "8083";
+    public static final String TASK_SERVICE_PORT_NO_PROFILE = "8084";
+
+    public static final MessageFormat USER_SERVICE_ENDPOINT_FORMAT = new MessageFormat("http://{0}:{1}/users");
     public static final MessageFormat COMPILATION_SERVICE_ENDPOINT_FORMAT = new MessageFormat("http://{0}:{1}/compiler/compile");
     public static final MessageFormat EXECUTION_SERVICE_ENDPOINT_FORMAT = new MessageFormat("http://{0}:{1}/executor/execute");
     public static final MessageFormat TASK_SERVICE_ENDPOINT_FORMAT = new MessageFormat("http://{0}:{1}/tasking/tasks");
@@ -66,8 +67,6 @@ public class CommonServiceConstants {
     public static final String TASK_DELETE_OK_MESSAGE = "Coding task was successfully deleted!";
     public static final String TASK_NOT_FOUND_ERROR_MESSAGE = "Coding task with such name id wasn't found.";
     public static final String TASK_UNPROCESSABLE_ENTITY_ERROR_MESSAGE = "Cannot process task request data. Task data is incorrect.";
-
-    public static final String EMAIL_REGEXP = "^[a-z0-9._%+-]+@[a-z0-9.-]+\\.[a-z]{2,6}$";
 
     //Eureka Discovery
 

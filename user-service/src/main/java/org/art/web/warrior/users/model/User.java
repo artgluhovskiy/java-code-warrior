@@ -1,15 +1,14 @@
 package org.art.web.warrior.users.model;
 
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotBlank;
 import java.time.LocalDateTime;
+import java.util.Collections;
 import java.util.List;
+import java.util.Set;
 
 @Data
 @Builder
@@ -47,11 +46,13 @@ public class User {
             name = "user_id", referencedColumnName = "id"),
         inverseJoinColumns = @JoinColumn(
             name = "role_id", referencedColumnName = "id"))
-    private List<Role> roles;
+    private List<Role> roles = Collections.emptyList();
 
     @OneToMany(cascade = CascadeType.ALL)
-    private List<TaskOrder> taskOrders;
+    @EqualsAndHashCode.Exclude
+    private Set<TaskOrder> taskOrders = Collections.emptySet();
 
     @CreationTimestamp
+    @EqualsAndHashCode.Exclude
     private LocalDateTime regDate;
 }

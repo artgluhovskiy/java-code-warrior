@@ -23,7 +23,7 @@ public class UserNotFoundException extends RuntimeException {
     public String getMessage() {
         String message = super.getMessage();
         if (StringUtils.isNotBlank(email)) {
-            message += "User email: " + email;
+            message += " User email: " + email;
         }
         return message;
     }

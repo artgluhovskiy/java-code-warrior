@@ -1,7 +1,7 @@
 package org.art.web.warrior.client.controller;
 
 import lombok.extern.slf4j.Slf4j;
-import org.art.web.warrior.client.dto.UserDto;
+import org.art.web.warrior.commons.users.dto.UserDto;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.GetMapping;

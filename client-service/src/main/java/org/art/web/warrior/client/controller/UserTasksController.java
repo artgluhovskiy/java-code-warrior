@@ -2,13 +2,13 @@ package org.art.web.warrior.client.controller;
 
 import lombok.extern.slf4j.Slf4j;
 import org.art.web.warrior.client.dto.UserCodingTaskDto;
-import org.art.web.warrior.client.dto.UserDto;
-import org.art.web.warrior.client.model.User;
 import org.art.web.warrior.client.service.client.api.TaskServiceClient;
-import org.art.web.warrior.client.service.api.UserService;
+import org.art.web.warrior.client.service.client.api.UserServiceClient;
 import org.art.web.warrior.client.util.ServiceResponseUtil;
 import org.art.web.warrior.commons.tasking.dto.TaskDescriptorDto;
 import org.art.web.warrior.commons.tasking.dto.TaskDto;
+import org.art.web.warrior.commons.users.dto.TaskOrderDto;
+import org.art.web.warrior.commons.users.dto.UserDto;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
@@ -30,20 +30,20 @@ import static org.art.web.warrior.client.CommonServiceConstants.*;
 @RequestMapping("/user/tasks")
 public class UserTasksController {
 
-    private final UserService userService;
+    private final UserServiceClient userServiceClient;
 
     private final TaskServiceClient taskServiceClient;
 
     @Autowired
-    public UserTasksController(UserService userService, TaskServiceClient taskServiceClient) {
-        this.userService = userService;
+    public UserTasksController(UserServiceClient userServiceClient, TaskServiceClient taskServiceClient) {
+        this.userServiceClient = userServiceClient;
         this.taskServiceClient = taskServiceClient;
     }
 
     @GetMapping
     public ModelAndView showTasksPage(ModelMap model) {
-        UserDto user = (UserDto) model.get(USER_ATTR_NAME);
-        log.debug("Task list page request. User: {}", user.getEmail());
+        UserDto userDto = (UserDto) model.get(USER_ATTR_NAME);
+        log.debug("Task list page request. User: {}", userDto.getEmail());
         List<TaskDescriptorDto> taskDescriptors;
         ResponseEntity<List<TaskDescriptorDto>> taskServiceResponse = taskServiceClient.getCodingTaskDescriptors();
         if (!ServiceResponseUtil.isTaskServiceErrorResponse(taskServiceResponse)) {
@@ -51,7 +51,7 @@ public class UserTasksController {
         } else {
             taskDescriptors = Collections.emptyList();
         }
-        List<UserCodingTaskDto> userCodingTaskList = mapToUserCodingTaskDto(user.getSolvedTaskNameIds(), taskDescriptors);
+        List<UserCodingTaskDto> userCodingTaskList = mapToUserCodingTaskDto(userDto.getTaskOrders(), taskDescriptors);
         model.addAttribute(USER_TASK_LIST_ATTR_NAME, userCodingTaskList);
         model.addAttribute(VIEW_FRAGMENT, TASKS_FRAGMENT);
         return new ModelAndView(LAYOUT_VIEW_NAME, model);
@@ -77,29 +77,25 @@ public class UserTasksController {
         UserDto userDto = (UserDto) model.get(USER_ATTR_NAME);
         if (userDto == null) {
             String userName = principal.getName();
-            User user = userService.findUserByEmail(userName);
-            userDto = populateUserDto(user);
-            model.addAttribute(USER_ATTR_NAME, userDto);
+            ResponseEntity<UserDto> userServiceResponse = userServiceClient.findUserByEmail(userName);
+            if (!ServiceResponseUtil.isUserServiceErrorResponse(userServiceResponse)) {
+                userDto = userServiceResponse.getBody();
+                model.addAttribute(USER_ATTR_NAME, userDto);
+            }
         }
     }
 
-    private UserDto populateUserDto(User user) {
-        return UserDto.builder()
-                .firstName(user.getFirstName())
-                .lastName(user.getLastName())
-                .email(user.getEmail())
-                .solvedTaskNameIds(user.getSolvedTaskNameIds())
-                .build();
-    }
-
-    private List<UserCodingTaskDto> mapToUserCodingTaskDto(Set<String> solvedUserTasks, List<TaskDescriptorDto> taskDescriptors) {
+    private List<UserCodingTaskDto> mapToUserCodingTaskDto(Set<TaskOrderDto> solvedUserTasks, List<TaskDescriptorDto> taskDescriptors) {
+        Set<String> solvedTaskIds = solvedUserTasks.stream()
+            .map(TaskOrderDto::getNameId)
+            .collect(Collectors.toSet());
         return taskDescriptors.stream()
-                .map(desc -> {
-                    UserCodingTaskDto codingTaskDto = new UserCodingTaskDto(desc.getNameId(), desc.getName(), desc.getDescription(), desc.getRating());
-                    if (solvedUserTasks.contains(desc.getNameId())) {
-                        codingTaskDto.setSolved(true);
-                    }
-                    return codingTaskDto;
-                }).collect(Collectors.toList());
+            .map(desc -> {
+                UserCodingTaskDto codingTaskDto = new UserCodingTaskDto(desc.getNameId(), desc.getName(), desc.getDescription(), desc.getRating());
+                if (solvedTaskIds.contains(desc.getNameId())) {
+                    codingTaskDto.setSolved(true);
+                }
+                return codingTaskDto;
+            }).collect(Collectors.toList());
     }
 }

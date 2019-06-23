@@ -2,13 +2,13 @@ package org.art.web.warrior.client.controller;
 
 import lombok.extern.slf4j.Slf4j;
 import org.art.web.warrior.client.dto.ClientServiceResponse;
-import org.art.web.warrior.client.dto.UserDto;
+import org.art.web.warrior.client.service.client.api.UserServiceClient;
+import org.art.web.warrior.commons.users.dto.TaskOrderDto;
+import org.art.web.warrior.commons.users.dto.UserDto;
 import org.art.web.warrior.client.dto.UserTaskDto;
-import org.art.web.warrior.client.model.User;
 import org.art.web.warrior.client.service.client.api.CompServiceClient;
 import org.art.web.warrior.client.service.client.api.ExecServiceClient;
 import org.art.web.warrior.client.service.client.api.TaskServiceClient;
-import org.art.web.warrior.client.service.api.UserService;
 import org.art.web.warrior.client.util.ServiceRequestUtil;
 import org.art.web.warrior.client.util.ServiceResponseUtil;
 import org.art.web.warrior.commons.CommonConstants;
@@ -22,6 +22,7 @@ import org.art.web.warrior.commons.tasking.dto.TaskDto;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
@@ -29,7 +30,7 @@ import javax.validation.Valid;
 import static org.art.web.warrior.client.CommonServiceConstants.USER_ATTR_NAME;
 
 @Slf4j
-@RestController
+@Controller
 @SessionAttributes(USER_ATTR_NAME)
 @RequestMapping(
         value = "/user",
@@ -44,20 +45,22 @@ public class UserCodeSubmissionController {
 
     private final TaskServiceClient taskServiceClient;
 
-    private final UserService userService;
+    private final UserServiceClient userServiceClient;
+
 
     @Autowired
     public UserCodeSubmissionController(CompServiceClient compServiceClient, ExecServiceClient execServiceClient,
-                                        TaskServiceClient taskServiceClient, UserService userService) {
+                                        TaskServiceClient taskServiceClient, UserServiceClient userServiceClient) {
         this.compServiceClient = compServiceClient;
         this.execServiceClient = execServiceClient;
         this.taskServiceClient = taskServiceClient;
-        this.userService = userService;
+        this.userServiceClient = userServiceClient;
     }
 
+    @ResponseBody
     @PostMapping("/submit")
     public ClientServiceResponse submitClientCode(@Valid @RequestBody UserTaskDto userTaskData,
-                                                  @ModelAttribute(USER_ATTR_NAME) UserDto user) {
+                                                  @ModelAttribute(USER_ATTR_NAME) UserDto userDto) {
         String className = userTaskData.getClassName();
         String srcCode = userTaskData.getSrcCode();
         String taskNameId = userTaskData.getTaskNameId();
@@ -78,16 +81,10 @@ public class UserCodeSubmissionController {
         if (ServiceResponseUtil.isExecServiceErrorResponse(execServiceResponse)) {
             return ServiceResponseUtil.buildExecServiceErrorResp(execServiceResponse);
         }
-        updateUserTaskList(user, taskNameId);
+        TaskOrderDto taskOrderDto = ServiceRequestUtil.buildTaskOrderDto(taskDto);
+        userServiceClient.addTaskOrder(userDto.getEmail(), taskOrderDto);
         increaseCodingTaskRating(taskDto);
         return ServiceResponseUtil.buildUserTaskExecutionResponse(execServiceResponse.getBody());
-    }
-
-    private void updateUserTaskList(UserDto userDto, String taskNameId) {
-        User user = userService.findUserByEmail(userDto.getEmail());
-        user.getSolvedTaskNameIds().add(taskNameId);
-        userService.updateUser(user);
-        userDto.getSolvedTaskNameIds().add(taskNameId);
     }
 
     private void increaseCodingTaskRating(TaskDto task) {

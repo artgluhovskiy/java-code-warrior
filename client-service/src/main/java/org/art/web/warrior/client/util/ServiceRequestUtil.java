@@ -6,8 +6,10 @@ import org.art.web.warrior.commons.compiler.dto.CompilationUnitDto;
 import org.art.web.warrior.commons.execution.dto.ExecutionRequest;
 import org.art.web.warrior.commons.tasking.dto.TaskDescriptorDto;
 import org.art.web.warrior.commons.tasking.dto.TaskDto;
+import org.art.web.warrior.commons.users.dto.TaskOrderDto;
 import org.art.web.warrior.commons.util.ParserUtil;
 
+import javax.validation.Valid;
 import java.util.Arrays;
 import java.util.List;
 
@@ -31,6 +33,15 @@ public class ServiceRequestUtil {
                 .methodSign(requestData.getTaskMethodSign())
                 .runnerClassData(runnerClassData)
                 .build();
+    }
+
+    public static TaskOrderDto buildTaskOrderDto(TaskDto taskDto) {
+        TaskDescriptorDto taskDescriptor = taskDto.getDescriptor();
+        return TaskOrderDto.builder()
+            .nameId(taskDescriptor.getNameId())
+            .name(taskDescriptor.getName())
+            .description(taskDescriptor.getDescription())
+            .build();
     }
 
     public static CompilationRequest buildCompilationServiceRequest(AdminTaskDto requestData) {

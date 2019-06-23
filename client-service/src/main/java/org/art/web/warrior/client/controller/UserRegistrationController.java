@@ -1,11 +1,12 @@
 package org.art.web.warrior.client.controller;
 
 import lombok.extern.slf4j.Slf4j;
-import org.art.web.warrior.client.dto.UserDto;
 import org.art.web.warrior.client.exception.EmailExistsException;
-import org.art.web.warrior.client.model.User;
-import org.art.web.warrior.client.service.api.UserService;
+import org.art.web.warrior.client.service.client.api.UserServiceClient;
+import org.art.web.warrior.client.util.ServiceResponseUtil;
+import org.art.web.warrior.commons.users.dto.UserDto;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
 import org.springframework.validation.BindingResult;
@@ -24,11 +25,11 @@ import static org.art.web.warrior.client.CommonServiceConstants.*;
 @RequestMapping("user")
 public class UserRegistrationController {
 
-    private final UserService userService;
+    private final UserServiceClient userServiceClient;
 
     @Autowired
-    public UserRegistrationController(UserService userService) {
-        this.userService = userService;
+    public UserRegistrationController(UserServiceClient userServiceClient) {
+        this.userServiceClient = userServiceClient;
     }
 
     @GetMapping("registration")
@@ -39,33 +40,21 @@ public class UserRegistrationController {
 
     @PostMapping("registration")
     public ModelAndView registerUserAccount(@Valid @ModelAttribute(USER_ATTR_NAME) UserDto userDto, BindingResult result, ModelMap model) {
-        User user = new User();
         if (!result.hasErrors()) {
-            user = createUserAccount(userDto);
-        }
-        if (user == null) {
-            result.rejectValue("email", "messages.regError");
-        }
-        if (result.hasErrors()) {
+            ResponseEntity<UserDto> userServiceResponse = userServiceClient.registerNewUserAccount(userDto);
+            if (ServiceResponseUtil.isUserServiceErrorResponse(userServiceResponse)) {
+                model.addAttribute(VIEW_FRAGMENT, REGISTRATION_FRAGMENT);
+                return new ModelAndView(LAYOUT_VIEW_NAME, model);
+            }
+            return new ModelAndView(REDIRECT + TASKS);
+        } else {
             model.addAttribute(VIEW_FRAGMENT, REGISTRATION_FRAGMENT);
             return new ModelAndView(LAYOUT_VIEW_NAME, model);
-        } else {
-            return new ModelAndView(REDIRECT + TASKS);
         }
     }
 
     @ModelAttribute(USER_ATTR_NAME)
     public UserDto user() {
         return new UserDto();
-    }
-
-    private User createUserAccount(UserDto userDto) {
-        User registered;
-        try {
-            registered = userService.registerNewUserAccount(userDto);
-        } catch (EmailExistsException e) {
-            return null;
-        }
-        return registered;
     }
 }

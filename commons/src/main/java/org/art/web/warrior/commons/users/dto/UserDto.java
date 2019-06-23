@@ -1,4 +1,4 @@
-package org.art.web.warrior.client.dto;
+package org.art.web.warrior.commons.users.dto;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -8,17 +8,21 @@ import org.art.web.warrior.commons.compiler.validation.PasswordMatches;
 
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;
+import java.time.LocalDateTime;
 import java.util.Collections;
+import java.util.List;
 import java.util.Set;
 
-import static org.art.web.warrior.client.CommonServiceConstants.EMAIL_REGEXP;
+import static org.art.web.warrior.commons.CommonConstants.EMAIL_REGEXP;
 
 @Data
+@Builder
 @NoArgsConstructor
 @AllArgsConstructor
-@Builder
 @PasswordMatches
 public class UserDto {
+
+    private boolean enabled;
 
     @NotBlank(message = "First name should not be blank!")
     private String firstName;
@@ -35,5 +39,9 @@ public class UserDto {
     @NotBlank(message = "Matching password should not be blank!")
     private String matchingPassword;
 
-    private Set<String> solvedTaskNameIds = Collections.emptySet();
+    private List<RoleDto> roles = Collections.emptyList();
+
+    private Set<TaskOrderDto> taskOrders = Collections.emptySet();
+
+    private LocalDateTime regDate;
 }

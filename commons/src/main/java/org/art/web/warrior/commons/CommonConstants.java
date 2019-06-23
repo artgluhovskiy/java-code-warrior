@@ -32,4 +32,6 @@ public class CommonConstants {
 
     public static final String SOLUTION_SETTER_METHOD_NAME = "setSolution";
     public static final String RUNNER_RUN_METHOD_NAME = "run";
+
+    public static final String EMAIL_REGEXP = "^[a-z0-9._%+-]+@[a-z0-9.-]+\\.[a-z]{2,6}$";
 }
