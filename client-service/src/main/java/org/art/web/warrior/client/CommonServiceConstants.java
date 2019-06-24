@@ -68,6 +68,8 @@ public class CommonServiceConstants {
     public static final String TASK_NOT_FOUND_ERROR_MESSAGE = "Coding task with such name id wasn't found.";
     public static final String TASK_UNPROCESSABLE_ENTITY_ERROR_MESSAGE = "Cannot process task request data. Task data is incorrect.";
 
+    public static final String EXTERNAL_SERVICE_ERROR_MESSAGE = "Some errors occurred while external service invocation!";
+
     //Eureka Discovery
 
     public static final String EXECUTION_SERVICE_NAME = "executor-service";

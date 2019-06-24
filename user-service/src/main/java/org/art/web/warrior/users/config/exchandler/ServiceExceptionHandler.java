@@ -1,17 +1,17 @@
 package org.art.web.warrior.users.config.exchandler;
 
-import org.art.web.warrior.commons.users.dto.UserDto;
+import org.art.web.warrior.commons.ServiceResponseStatus;
+import org.art.web.warrior.commons.common.CommonApiError;
 import org.art.web.warrior.users.exception.RoleNotFoundException;
 import org.art.web.warrior.users.exception.UserNotFoundException;
-import org.art.web.warrior.users.model.User;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.ResponseStatus;
 
+import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -34,11 +34,14 @@ public class ServiceExceptionHandler {
     @ResponseBody
     @ResponseStatus(HttpStatus.NOT_FOUND)
     @ExceptionHandler({UserNotFoundException.class, RoleNotFoundException.class})
-    public ResponseEntity<UserDto> handleNotFoundException(Exception e) {
-        UserDto userDto = UserDto.builder()
-                .firstName("Hello")
-                .build();
-        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(userDto);
+    public CommonApiError handleNotFoundException(Exception e) {
+        int respStatusCode = ServiceResponseStatus.NOT_FOUND.getStatusCode();
+        String respStatus = ServiceResponseStatus.NOT_FOUND.getStatusId();
+        String message = e.getMessage();
+        return buildApiErrorResponse(respStatusCode, respStatus, message);
+    }
 
+    private CommonApiError buildApiErrorResponse(int respStatusCode, String respStatus, String message) {
+        return new CommonApiError(respStatusCode, respStatus, message, LocalDateTime.now());
     }
 }

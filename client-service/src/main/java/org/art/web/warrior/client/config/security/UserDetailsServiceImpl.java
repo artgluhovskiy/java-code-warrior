@@ -1,7 +1,7 @@
 package org.art.web.warrior.client.config.security;
 
+import org.art.web.warrior.client.exception.ExternalServiceInvocationException;
 import org.art.web.warrior.client.service.client.api.UserServiceClient;
-import org.art.web.warrior.client.util.ServiceResponseUtil;
 import org.art.web.warrior.commons.users.dto.RoleDto;
 import org.art.web.warrior.commons.users.dto.UserDto;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -28,9 +28,11 @@ public class UserDetailsServiceImpl implements UserDetailsService {
 
     @Override
     public UserDetails loadUserByUsername(String email) {
-        ResponseEntity<UserDto> userServiceResponse = userServiceClient.findUserByEmail(email);
-        if (ServiceResponseUtil.isUserServiceErrorResponse(userServiceResponse)) {
-            throw new UsernameNotFoundException("No user found with email: " + email);
+        ResponseEntity<UserDto> userServiceResponse;
+        try {
+            userServiceResponse = userServiceClient.findUserByEmail(email);
+        } catch (ExternalServiceInvocationException e) {
+            throw new UsernameNotFoundException("No user found with such email: " + email);
         }
         UserDto user = userServiceResponse.getBody();
         return new org.springframework.security.core.userdetails.User(
@@ -41,7 +43,6 @@ public class UserDetailsServiceImpl implements UserDetailsService {
             true,
             true,
             getAuthorities(user.getRoles()));
-
     }
 
     private List<GrantedAuthority> getAuthorities(List<RoleDto> roles) {

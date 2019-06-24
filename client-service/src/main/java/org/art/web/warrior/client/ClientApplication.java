@@ -1,6 +1,7 @@
 package org.art.web.warrior.client;
 
 import org.art.web.warrior.client.config.converter.KryoHttpMessageConverter;
+import org.art.web.warrior.client.config.exchandler.CustomRestTemplateErrorHandler;
 import org.art.web.warrior.client.config.interceptor.RequestLogger;
 import org.art.web.warrior.client.config.properties.ServiceConfigProperties;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -32,8 +33,9 @@ public class ClientApplication {
     @Bean
     public RestTemplate restTemplate() {
         return restTemplateBuilder
-                .additionalInterceptors(requestLogger())
-                .additionalMessageConverters(new KryoHttpMessageConverter())
-                .build();
+            .additionalInterceptors(requestLogger())
+            .additionalMessageConverters(new KryoHttpMessageConverter())
+            .errorHandler(new CustomRestTemplateErrorHandler())
+            .build();
     }
 }

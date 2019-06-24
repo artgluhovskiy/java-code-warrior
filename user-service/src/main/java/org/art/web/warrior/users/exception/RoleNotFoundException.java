@@ -6,14 +6,6 @@ public class RoleNotFoundException extends RuntimeException {
 
     private String roleName;
 
-    public RoleNotFoundException(String message) {
-        super(message);
-    }
-
-    public RoleNotFoundException(String message, Throwable cause) {
-        super(message, cause);
-    }
-
     public RoleNotFoundException(String message, String roleName) {
         super(message);
         this.roleName = roleName;
@@ -26,5 +18,9 @@ public class RoleNotFoundException extends RuntimeException {
             message += " Role name: " + roleName;
         }
         return message;
+    }
+
+    public String getRoleName() {
+        return roleName;
     }
 }

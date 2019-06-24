@@ -39,8 +39,10 @@ public class UserDto {
     @NotBlank(message = "Matching password should not be blank!")
     private String matchingPassword;
 
+    @Builder.Default
     private List<RoleDto> roles = Collections.emptyList();
 
+    @Builder.Default
     private Set<TaskOrderDto> taskOrders = Collections.emptySet();
 
     private LocalDateTime regDate;
