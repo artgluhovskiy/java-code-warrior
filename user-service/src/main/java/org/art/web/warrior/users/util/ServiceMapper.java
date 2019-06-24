@@ -1,7 +1,7 @@
 package org.art.web.warrior.users.util;
 
 import org.art.web.warrior.commons.users.dto.TaskOrderDto;
-import org.art.web.warrior.users.dto.UserDto;
+import org.art.web.warrior.commons.users.dto.UserDto;
 import org.art.web.warrior.users.model.TaskOrder;
 import org.art.web.warrior.users.model.User;
 import org.springframework.security.crypto.password.PasswordEncoder;

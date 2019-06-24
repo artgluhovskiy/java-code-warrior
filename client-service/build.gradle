@@ -71,9 +71,6 @@ dependencies {
     
     implementation('org.thymeleaf.extras:thymeleaf-extras-springsecurity5')
 
-    /* *** DB *** */
-    runtime('mysql:mysql-connector-java')
-
     /* *** Common Libs *** */
     implementation('com.esotericsoftware:kryo:4.0.0')
     implementation('org.apache.commons:commons-lang3:3.1')

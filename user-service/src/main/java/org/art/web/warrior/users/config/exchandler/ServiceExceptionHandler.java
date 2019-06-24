@@ -1,6 +1,11 @@
 package org.art.web.warrior.users.config.exchandler;
 
+import org.art.web.warrior.commons.users.dto.UserDto;
+import org.art.web.warrior.users.exception.RoleNotFoundException;
+import org.art.web.warrior.users.exception.UserNotFoundException;
+import org.art.web.warrior.users.model.User;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -24,5 +29,16 @@ public class ServiceExceptionHandler {
             errors.put(fieldName, errorMessage);
         });
         return errors;
+    }
+
+    @ResponseBody
+    @ResponseStatus(HttpStatus.NOT_FOUND)
+    @ExceptionHandler({UserNotFoundException.class, RoleNotFoundException.class})
+    public ResponseEntity<UserDto> handleNotFoundException(Exception e) {
+        UserDto userDto = UserDto.builder()
+                .firstName("Hello")
+                .build();
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(userDto);
+
     }
 }

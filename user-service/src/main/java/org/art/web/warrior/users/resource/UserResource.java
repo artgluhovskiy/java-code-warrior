@@ -1,8 +1,9 @@
 package org.art.web.warrior.users.resource;
 
+import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import org.art.web.warrior.commons.users.dto.TaskOrderDto;
-import org.art.web.warrior.users.dto.UserDto;
+import org.art.web.warrior.commons.users.dto.UserDto;
 import org.art.web.warrior.users.exception.RoleNotFoundException;
 import org.art.web.warrior.users.exception.UserNotFoundException;
 import org.art.web.warrior.users.model.Role;
@@ -17,6 +18,9 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
+import java.io.UnsupportedEncodingException;
+import java.net.URLDecoder;
+import java.nio.charset.StandardCharsets;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
@@ -46,15 +50,17 @@ public class UserResource {
     public User registerUser(@Valid @RequestBody UserDto userDto) {
         User user = ServiceMapper.mapToUser(userDto, passwordEncoder);
         Role role = roleRepository.findByName(ROLE_USER)
-            .orElseThrow(() -> new RoleNotFoundException("Cannot find role with such name.", ROLE_USER));
+                .orElseThrow(() -> new RoleNotFoundException("Cannot find role with such name.", ROLE_USER));
         user.getRoles().add(role);
         return userRepository.save(user);
     }
 
+    @SneakyThrows(UnsupportedEncodingException.class)
     @GetMapping("/{email}")
     public User findUserByEmail(@PathVariable("email") String email) {
-        return userRepository.findUserByEmail(email)
-            .orElseThrow(() -> new UserNotFoundException("Cannot find user with such email.", email));
+        String decEmail = URLDecoder.decode(email, StandardCharsets.UTF_8.toString());
+        return userRepository.findUserByEmail(decEmail)
+                .orElseThrow(() -> new UserNotFoundException("Cannot find user with such email.", decEmail));
     }
 
     @GetMapping
@@ -80,7 +86,7 @@ public class UserResource {
     @PutMapping("/{email}")
     public void addTaskOrder(@Valid @RequestBody TaskOrderDto taskOrderDto, @PathVariable("email") String userEmail) {
         User user = userRepository.findUserByEmail(userEmail)
-            .orElseThrow(() -> new UserNotFoundException("Cannot find user with such email.", userEmail));
+                .orElseThrow(() -> new UserNotFoundException("Cannot find user with such email.", userEmail));
         TaskOrder taskOrder = ServiceMapper.mapToTaskOrder(taskOrderDto);
         if (!user.getTaskOrders().contains(taskOrder)) {
             taskOrder.setRegDate(LocalDateTime.now());

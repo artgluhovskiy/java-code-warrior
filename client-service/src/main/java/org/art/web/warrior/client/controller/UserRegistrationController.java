@@ -1,7 +1,6 @@
 package org.art.web.warrior.client.controller;
 
 import lombok.extern.slf4j.Slf4j;
-import org.art.web.warrior.client.exception.EmailExistsException;
 import org.art.web.warrior.client.service.client.api.UserServiceClient;
 import org.art.web.warrior.client.util.ServiceResponseUtil;
 import org.art.web.warrior.commons.users.dto.UserDto;

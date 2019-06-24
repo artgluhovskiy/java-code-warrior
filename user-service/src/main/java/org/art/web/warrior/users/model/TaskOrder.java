@@ -1,5 +1,6 @@
 package org.art.web.warrior.users.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.*;
 
 import javax.persistence.*;
@@ -37,5 +38,6 @@ public class TaskOrder {
     @JoinColumn(name = "user_id")
     @EqualsAndHashCode.Exclude
     @ToString.Exclude
+    @JsonIgnore
     private User user;
 }

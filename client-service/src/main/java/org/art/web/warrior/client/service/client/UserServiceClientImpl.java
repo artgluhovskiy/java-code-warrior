@@ -1,11 +1,11 @@
 package org.art.web.warrior.client.service.client;
 
+import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
+import org.art.web.warrior.client.service.client.api.UserServiceClient;
 import org.art.web.warrior.commons.users.dto.TaskOrderDto;
 import org.art.web.warrior.commons.users.dto.UserDto;
-import org.art.web.warrior.client.exception.EmailExistsException;
-import org.art.web.warrior.client.service.client.api.UserServiceClient;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.env.Environment;
 import org.springframework.http.HttpEntity;
@@ -14,6 +14,10 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
+
+import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
 
 import static org.art.web.warrior.client.CommonServiceConstants.*;
 import static org.art.web.warrior.commons.CommonConstants.*;
@@ -36,7 +40,7 @@ public class UserServiceClientImpl implements UserServiceClient {
     }
 
     @Override
-    public ResponseEntity<UserDto> registerNewUserAccount(UserDto userDto) throws EmailExistsException {
+    public ResponseEntity<UserDto> registerNewUserAccount(UserDto userDto) {
         HttpHeaders headers = new HttpHeaders();
         headers.set(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_UTF8_VALUE);
         headers.set(HttpHeaders.ACCEPT, MediaType.APPLICATION_JSON_UTF8_VALUE);
@@ -46,10 +50,12 @@ public class UserServiceClientImpl implements UserServiceClient {
     }
 
     @Override
+    @SneakyThrows(UnsupportedEncodingException.class)
     public ResponseEntity<UserDto> findUserByEmail(String email) {
-        String serviceEndpoint = serviceEndpointBase + SLASH_CH + email;
+        String encEmail = URLEncoder.encode(email, StandardCharsets.UTF_8.toString());
+        String serviceEndpoint = serviceEndpointBase + SLASH_CH + encEmail;
         log.debug("Making the request to the User Service for the user by its email. User email: {}, endpoint: {}", email, serviceEndpoint);
-        return restTemplate.getForEntity(serviceEndpointBase, UserDto.class);
+        return restTemplate.getForEntity(serviceEndpoint, UserDto.class);
     }
 
     @Override

@@ -39,6 +39,7 @@ public class User {
     @NotBlank
     private String password;
 
+    @Builder.Default
     @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(
         name = "user_roles",
@@ -48,6 +49,7 @@ public class User {
             name = "role_id", referencedColumnName = "id"))
     private List<Role> roles = Collections.emptyList();
 
+    @Builder.Default
     @OneToMany(cascade = CascadeType.ALL)
     @EqualsAndHashCode.Exclude
     private Set<TaskOrder> taskOrders = Collections.emptySet();
