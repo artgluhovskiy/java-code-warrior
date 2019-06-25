@@ -4,6 +4,8 @@ import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import org.art.web.warrior.commons.users.dto.TaskOrderDto;
 import org.art.web.warrior.commons.users.dto.UserDto;
+import org.art.web.warrior.commons.users.validation.groups.OnCreate;
+import org.art.web.warrior.commons.users.validation.groups.OnUpdate;
 import org.art.web.warrior.users.exception.RoleNotFoundException;
 import org.art.web.warrior.users.exception.UserNotFoundException;
 import org.art.web.warrior.users.model.Role;
@@ -15,6 +17,8 @@ import org.art.web.warrior.users.util.ServiceMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.transaction.annotation.Transactional;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
@@ -28,6 +32,7 @@ import java.util.Optional;
 import static org.art.web.warrior.users.CommonServiceConstants.ROLE_USER;
 
 @Slf4j
+@Transactional
 @RestController
 @RequestMapping("/users")
 public class UserResource {
@@ -47,7 +52,7 @@ public class UserResource {
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    public User registerUser(@Valid @RequestBody UserDto userDto) {
+    public User registerUser(@Validated(OnCreate.class) @RequestBody UserDto userDto) {
         User user = ServiceMapper.mapToUser(userDto, passwordEncoder);
         Role role = roleRepository.findByName(ROLE_USER)
                 .orElseThrow(() -> new RoleNotFoundException("Cannot find role with such name.", ROLE_USER));
@@ -57,7 +62,7 @@ public class UserResource {
 
     @SneakyThrows(UnsupportedEncodingException.class)
     @GetMapping("/{email}")
-    public User findUserByEmail(@PathVariable("email") String email) {
+    public User findUserByEmail(@PathVariable String email) {
         String decEmail = URLDecoder.decode(email, StandardCharsets.UTF_8.toString());
         return userRepository.findUserByEmail(decEmail)
                 .orElseThrow(() -> new UserNotFoundException("Cannot find user with such email.", decEmail));
@@ -69,7 +74,7 @@ public class UserResource {
     }
 
     @PutMapping
-    public void updateUser(@Valid @RequestBody UserDto userDto) {
+    public void updateUser(@Validated(OnUpdate.class) @RequestBody UserDto userDto) {
         User user;
         String email = userDto.getEmail();
         Optional<User> userOptional = userRepository.findUserByEmail(email);
@@ -84,9 +89,9 @@ public class UserResource {
     }
 
     @PutMapping("/{email}")
-    public void addTaskOrder(@Valid @RequestBody TaskOrderDto taskOrderDto, @PathVariable("email") String userEmail) {
-        User user = userRepository.findUserByEmail(userEmail)
-                .orElseThrow(() -> new UserNotFoundException("Cannot find user with such email.", userEmail));
+    public void addTaskOrder(@Valid @RequestBody TaskOrderDto taskOrderDto, @PathVariable String email) {
+        User user = userRepository.findUserByEmail(email)
+                .orElseThrow(() -> new UserNotFoundException("Cannot find user with such email.", email));
         TaskOrder taskOrder = ServiceMapper.mapToTaskOrder(taskOrderDto);
         if (!user.getTaskOrders().contains(taskOrder)) {
             taskOrder.setRegDate(LocalDateTime.now());
@@ -97,7 +102,7 @@ public class UserResource {
     }
 
     @DeleteMapping("/{email}")
-    public void deleteUser(@PathVariable("email") String email) {
+    public void deleteUser(@PathVariable String email) {
         userRepository.deleteUserByEmail(email);
     }
 }

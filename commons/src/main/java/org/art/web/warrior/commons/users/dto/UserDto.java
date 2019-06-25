@@ -5,6 +5,8 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.art.web.warrior.commons.compiler.validation.PasswordMatches;
+import org.art.web.warrior.commons.users.validation.groups.OnCreate;
+import org.art.web.warrior.commons.users.validation.groups.OnUpdate;
 
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;
@@ -19,24 +21,24 @@ import static org.art.web.warrior.commons.CommonConstants.EMAIL_REGEXP;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-@PasswordMatches
+@PasswordMatches(groups = OnCreate.class)
 public class UserDto {
 
     private boolean enabled;
 
-    @NotBlank(message = "First name should not be blank!")
+    @NotBlank(message = "First name should not be blank!", groups = OnCreate.class)
     private String firstName;
 
-    @NotBlank(message = "Last name should not be blank!")
+    @NotBlank(message = "Last name should not be blank!", groups = OnCreate.class)
     private String lastName;
 
-    @Email(regexp = EMAIL_REGEXP, message = "Invalid email address!")
+    @Email(regexp = EMAIL_REGEXP, message = "Invalid email address!", groups = {OnCreate.class, OnUpdate.class})
     private String email;
 
-    @NotBlank(message = "Password should not be blank!")
+    @NotBlank(message = "Password should not be blank!", groups = {OnCreate.class, OnUpdate.class})
     private String password;
 
-    @NotBlank(message = "Matching password should not be blank!")
+    @NotBlank(message = "Matching password should not be blank!", groups = OnCreate.class)
     private String matchingPassword;
 
     @Builder.Default

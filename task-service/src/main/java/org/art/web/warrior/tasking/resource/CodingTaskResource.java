@@ -1,4 +1,4 @@
-package org.art.web.warrior.tasking.controller;
+package org.art.web.warrior.tasking.resource;
 
 import lombok.extern.slf4j.Slf4j;
 import org.art.web.warrior.commons.tasking.dto.TaskDescriptorDto;
@@ -20,12 +20,12 @@ import static org.art.web.warrior.commons.CommonConstants.KRYO_CONTENT_TYPE;
 @Slf4j
 @RestController
 @RequestMapping("/tasks")
-public class TaskServiceController {
+public class CodingTaskResource {
 
     private final TaskService taskService;
 
     @Autowired
-    public TaskServiceController(TaskService taskService) {
+    public CodingTaskResource(TaskService taskService) {
         this.taskService = taskService;
     }
 

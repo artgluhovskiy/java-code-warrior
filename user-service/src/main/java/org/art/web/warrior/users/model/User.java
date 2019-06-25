@@ -6,9 +6,7 @@ import org.hibernate.annotations.CreationTimestamp;
 import javax.persistence.*;
 import javax.validation.constraints.NotBlank;
 import java.time.LocalDateTime;
-import java.util.Collections;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 @Data
 @Builder
@@ -47,12 +45,12 @@ public class User {
             name = "user_id", referencedColumnName = "id"),
         inverseJoinColumns = @JoinColumn(
             name = "role_id", referencedColumnName = "id"))
-    private List<Role> roles = Collections.emptyList();
+    private List<Role> roles = new ArrayList<>();
 
     @Builder.Default
     @OneToMany(cascade = CascadeType.ALL)
     @EqualsAndHashCode.Exclude
-    private Set<TaskOrder> taskOrders = Collections.emptySet();
+    private Set<TaskOrder> taskOrders = new HashSet<>();
 
     @CreationTimestamp
     @EqualsAndHashCode.Exclude

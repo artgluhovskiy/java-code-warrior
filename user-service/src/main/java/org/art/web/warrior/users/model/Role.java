@@ -8,6 +8,7 @@ import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotBlank;
+import java.util.HashSet;
 import java.util.Set;
 
 @Data
@@ -28,5 +29,5 @@ public class Role {
 
     @ManyToMany(mappedBy = "roles")
     @JsonIgnore
-    private Set<User> users;
+    private Set<User> users = new HashSet<>();
 }
