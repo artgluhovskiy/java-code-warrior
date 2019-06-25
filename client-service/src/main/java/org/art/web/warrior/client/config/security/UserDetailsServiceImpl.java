@@ -28,13 +28,12 @@ public class UserDetailsServiceImpl implements UserDetailsService {
 
     @Override
     public UserDetails loadUserByUsername(String email) {
-        ResponseEntity<UserDto> userServiceResponse;
+        UserDto user;
         try {
-            userServiceResponse = userServiceClient.findUserByEmail(email);
+            user = userServiceClient.findUserByEmail(email);
         } catch (ExternalServiceInvocationException e) {
             throw new UsernameNotFoundException("No user found with such email: " + email);
         }
-        UserDto user = userServiceResponse.getBody();
         return new org.springframework.security.core.userdetails.User(
             user.getEmail(),
             user.getPassword(),

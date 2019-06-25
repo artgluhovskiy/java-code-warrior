@@ -6,6 +6,7 @@ import org.art.web.warrior.commons.users.dto.TaskOrderDto;
 import org.art.web.warrior.commons.users.dto.UserDto;
 import org.art.web.warrior.commons.users.validation.groups.OnCreate;
 import org.art.web.warrior.commons.users.validation.groups.OnUpdate;
+import org.art.web.warrior.users.exception.EmailExistsException;
 import org.art.web.warrior.users.exception.RoleNotFoundException;
 import org.art.web.warrior.users.exception.UserNotFoundException;
 import org.art.web.warrior.users.model.Role;
@@ -53,7 +54,12 @@ public class UserResource {
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
     public User registerUser(@Validated(OnCreate.class) @RequestBody UserDto userDto) {
-        User user = ServiceMapper.mapToUser(userDto, passwordEncoder);
+        String email = userDto.getEmail();
+        User user = userRepository.findUserByEmail(email).orElse(null);
+        if (user != null) {
+            throw new EmailExistsException("User with such email already exists!", email);
+        }
+        user = ServiceMapper.mapToUser(userDto, passwordEncoder);
         Role role = roleRepository.findByName(ROLE_USER)
                 .orElseThrow(() -> new RoleNotFoundException("Cannot find role with such name.", ROLE_USER));
         user.getRoles().add(role);

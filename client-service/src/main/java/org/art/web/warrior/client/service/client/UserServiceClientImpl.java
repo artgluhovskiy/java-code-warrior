@@ -11,7 +11,6 @@ import org.springframework.core.env.Environment;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
@@ -40,22 +39,22 @@ public class UserServiceClientImpl implements UserServiceClient {
     }
 
     @Override
-    public ResponseEntity<UserDto> registerNewUserAccount(UserDto userDto) {
+    public UserDto registerNewUserAccount(UserDto userDto) {
         HttpHeaders headers = new HttpHeaders();
         headers.set(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_UTF8_VALUE);
         headers.set(HttpHeaders.ACCEPT, MediaType.APPLICATION_JSON_UTF8_VALUE);
         HttpEntity<UserDto> reqEntity = new HttpEntity<>(userDto, headers);
         log.debug("Making user registration request to the User Service. Request data: {}, endpoint: {}", userDto, serviceEndpointBase);
-        return restTemplate.postForEntity(serviceEndpointBase, reqEntity, UserDto.class);
+        return restTemplate.postForEntity(serviceEndpointBase, reqEntity, UserDto.class).getBody();
     }
 
     @Override
     @SneakyThrows(UnsupportedEncodingException.class)
-    public ResponseEntity<UserDto> findUserByEmail(String email) {
+    public UserDto findUserByEmail(String email) {
         String encEmail = URLEncoder.encode(email, StandardCharsets.UTF_8.toString());
         String serviceEndpoint = serviceEndpointBase + SLASH_CH + encEmail;
         log.debug("Making the request to the User Service for the user by its email. User email: {}, endpoint: {}", email, serviceEndpoint);
-        return restTemplate.getForEntity(serviceEndpoint, UserDto.class);
+        return restTemplate.getForEntity(serviceEndpoint, UserDto.class).getBody();
     }
 
     @Override

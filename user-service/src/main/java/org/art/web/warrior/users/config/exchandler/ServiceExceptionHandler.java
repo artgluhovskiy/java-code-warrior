@@ -2,6 +2,7 @@ package org.art.web.warrior.users.config.exchandler;
 
 import org.art.web.warrior.commons.ServiceResponseStatus;
 import org.art.web.warrior.commons.common.CommonApiError;
+import org.art.web.warrior.users.exception.EmailExistsException;
 import org.art.web.warrior.users.exception.RoleNotFoundException;
 import org.art.web.warrior.users.exception.UserNotFoundException;
 import org.springframework.http.HttpStatus;
@@ -41,6 +42,15 @@ public class ServiceExceptionHandler {
     public CommonApiError handleNotFoundException(Exception e) {
         int respStatusCode = ServiceResponseStatus.NOT_FOUND.getStatusCode();
         String respStatus = ServiceResponseStatus.NOT_FOUND.getStatusId();
+        String message = e.getMessage();
+        return buildApiErrorResponse(respStatusCode, respStatus, message);
+    }
+
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    @ExceptionHandler(EmailExistsException.class)
+    public CommonApiError handleEmailExistsException(EmailExistsException e) {
+        int respStatusCode = ServiceResponseStatus.BAD_REQUEST.getStatusCode();
+        String respStatus = ServiceResponseStatus.BAD_REQUEST.getStatusId();
         String message = e.getMessage();
         return buildApiErrorResponse(respStatusCode, respStatus, message);
     }

@@ -35,13 +35,13 @@ public class CompServiceClientImpl implements CompServiceClient {
     }
 
     @Override
-    public ResponseEntity<CompilationResponse> compileSrc(CompilationRequest compRequestData) {
+    public CompilationResponse compileSrc(CompilationRequest compRequestData) {
         HttpHeaders headers = new HttpHeaders();
         headers.set(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_UTF8_VALUE);
         headers.set(HttpHeaders.ACCEPT, KRYO_CONTENT_TYPE);
         HttpEntity<CompilationRequest> reqEntity = new HttpEntity<>(compRequestData, headers);
         log.debug("Making the request to the Compilation service. Endpoint: {}, request data: {}", serviceEndpointBase, compRequestData);
-        return restTemplate.postForEntity(serviceEndpointBase, reqEntity, CompilationResponse.class);
+        return restTemplate.postForEntity(serviceEndpointBase, reqEntity, CompilationResponse.class).getBody();
     }
 
     private String getServiceEndpointBase() {

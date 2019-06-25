@@ -25,6 +25,7 @@ public class CommonServiceConstants {
     public static final String USER_ATTR_NAME = "user";
     public static final String USER_TASK_LIST_ATTR_NAME = "userTaskList";
     public static final String TASK_ATTR_NAME = "task";
+    public static final String API_ERROR_ATTR_NAME = "apiError";
 
     //Request URL Mapping
     public static final String USER = "user";
