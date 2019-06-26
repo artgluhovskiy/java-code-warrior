@@ -5,7 +5,6 @@ import org.art.web.warrior.client.service.client.api.UserServiceClient;
 import org.art.web.warrior.commons.users.dto.RoleDto;
 import org.art.web.warrior.commons.users.dto.UserDto;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;

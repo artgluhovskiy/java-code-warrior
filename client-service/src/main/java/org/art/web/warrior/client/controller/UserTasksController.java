@@ -5,13 +5,11 @@ import org.art.web.warrior.client.dto.UserCodingTaskDto;
 import org.art.web.warrior.client.exception.ExternalServiceInvocationException;
 import org.art.web.warrior.client.service.client.api.TaskServiceClient;
 import org.art.web.warrior.client.service.client.api.UserServiceClient;
-import org.art.web.warrior.client.util.ServiceResponseUtil;
 import org.art.web.warrior.commons.tasking.dto.TaskDescriptorDto;
 import org.art.web.warrior.commons.tasking.dto.TaskDto;
 import org.art.web.warrior.commons.users.dto.TaskOrderDto;
 import org.art.web.warrior.commons.users.dto.UserDto;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.*;
@@ -90,15 +88,15 @@ public class UserTasksController {
 
     private List<UserCodingTaskDto> mapToUserCodingTaskDto(Set<TaskOrderDto> solvedUserTasks, List<TaskDescriptorDto> taskDescriptors) {
         Set<String> solvedTaskIds = solvedUserTasks.stream()
-            .map(TaskOrderDto::getNameId)
-            .collect(Collectors.toSet());
+                .map(TaskOrderDto::getNameId)
+                .collect(Collectors.toSet());
         return taskDescriptors.stream()
-            .map(desc -> {
-                UserCodingTaskDto codingTaskDto = new UserCodingTaskDto(desc.getNameId(), desc.getName(), desc.getDescription(), desc.getRating());
-                if (solvedTaskIds.contains(desc.getNameId())) {
-                    codingTaskDto.setSolved(true);
-                }
-                return codingTaskDto;
-            }).collect(Collectors.toList());
+                .map(desc -> {
+                    UserCodingTaskDto codingTaskDto = new UserCodingTaskDto(desc.getNameId(), desc.getName(), desc.getDescription(), desc.getRating());
+                    if (solvedTaskIds.contains(desc.getNameId())) {
+                        codingTaskDto.setSolved(true);
+                    }
+                    return codingTaskDto;
+                }).collect(Collectors.toList());
     }
 }

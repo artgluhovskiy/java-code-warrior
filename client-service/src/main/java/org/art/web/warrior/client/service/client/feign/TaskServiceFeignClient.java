@@ -8,6 +8,6 @@ import static org.art.web.warrior.client.CommonServiceConstants.TASK_SERVICE_NAM
 @FeignClient(TASK_SERVICE_NAME)
 public interface TaskServiceFeignClient {
 
-    @GetMapping("/tasking/tasks/ping")
+    @GetMapping("/tasks/ping")
     String getPingMessage();
 }

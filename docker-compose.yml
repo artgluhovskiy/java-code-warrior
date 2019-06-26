@@ -15,18 +15,18 @@ services:
       SERVICE_REGISTRY_PORT: 8761
 
   # Netflix Zuul Api Gateway
-  api-gateway:
-    container_name: api-gateway
-    depends_on:
-      - service-registry
-    build:
-      context: ./api-gateway
-    ports:
-      - "8080:8080"
-      - "8090:8090"
-    environment:
-      SERVICE_REGISTRY_HOST: service-registry
-      SERVICE_REGISTRY_PORT: 8761
+#  api-gateway:
+#    container_name: api-gateway
+#    depends_on:
+#      - service-registry
+#    build:
+#      context: ./api-gateway
+#    ports:
+#      - "8080:8080"
+#      - "8090:8090"
+#    environment:
+#      SERVICE_REGISTRY_HOST: service-registry
+#      SERVICE_REGISTRY_PORT: 8761
 
   # Client Service
   client-service:
@@ -37,6 +37,9 @@ services:
     build:
       context: ./client-service
     environment:
+      USER_SERVICE_HOST: user-service
+      USER_SERVICE_PORT: 8081
+
       COMPILER_SERVICE_HOST: compiler-service
       COMPILER_SERVICE_PORT: 8082
 
@@ -57,6 +60,27 @@ services:
     ports:
       - "8085:8085"
       - "8095:8095"
+
+  # User Service
+  user-service:
+    container_name: user-service
+    depends_on:
+      - service-registry
+      - mysqldb
+    environment:
+      DATABASE_HOST: mysqldb
+      DATABASE_PORT: 3306
+      DATABASE_USER: root
+      DATABASE_PASSWORD: rootpassword
+      DATABASE_NAME: users
+
+      SERVICE_REGISTRY_HOST: service-registry
+      SERVICE_REGISTRY_PORT: 8761
+    build:
+      context: ./user-service
+    ports:
+      - "8081:8081"
+      - "8091:8091"
 
   # Compiler Service
   compiler-service:

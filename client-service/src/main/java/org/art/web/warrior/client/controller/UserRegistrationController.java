@@ -4,21 +4,22 @@ import lombok.extern.slf4j.Slf4j;
 import org.art.web.warrior.client.exception.ExternalServiceInvocationException;
 import org.art.web.warrior.client.service.client.api.UserServiceClient;
 import org.art.web.warrior.commons.users.dto.UserDto;
+import org.art.web.warrior.commons.users.validation.groups.OnCreate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
 import org.springframework.validation.BindingResult;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.validation.annotation.Validated;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.servlet.ModelAndView;
-
-import javax.servlet.http.HttpSession;
-import javax.validation.Valid;
 
 import static org.art.web.warrior.client.CommonServiceConstants.*;
 
 @Slf4j
 @Controller
-@SessionAttributes(USER_ATTR_NAME)
 @RequestMapping("/user/registration")
 public class UserRegistrationController {
 
@@ -36,7 +37,7 @@ public class UserRegistrationController {
     }
 
     @PostMapping
-    public ModelAndView registerUserAccount(@Valid @ModelAttribute(USER_ATTR_NAME) UserDto userDto, BindingResult result, ModelMap model, HttpSession session) {
+    public ModelAndView registerUserAccount(@Validated(OnCreate.class) @ModelAttribute(USER_ATTR_NAME) UserDto userDto, BindingResult result, ModelMap model) {
         if (!result.hasErrors()) {
             try {
                 userServiceClient.registerNewUserAccount(userDto);

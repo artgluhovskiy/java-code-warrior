@@ -33,9 +33,9 @@ import static org.art.web.warrior.client.CommonServiceConstants.USER_ATTR_NAME;
 @Controller
 @SessionAttributes(USER_ATTR_NAME)
 @RequestMapping(
-    value = "/user",
-    consumes = MediaType.APPLICATION_JSON_UTF8_VALUE,
-    produces = MediaType.APPLICATION_JSON_UTF8_VALUE
+        value = "/user",
+        consumes = MediaType.APPLICATION_JSON_UTF8_VALUE,
+        produces = MediaType.APPLICATION_JSON_UTF8_VALUE
 )
 public class UserCodeSubmissionController {
 
@@ -77,6 +77,7 @@ public class UserCodeSubmissionController {
             ExecutionRequest executionRequest = ServiceRequestUtil.buildExecutionServiceRequest(compiledSolutionData.getCompiledClassBytes(), taskDto.getRunnerClassData());
             execServiceResponse = execServiceClient.executeCode(executionRequest);
             TaskOrderDto taskOrderDto = ServiceRequestUtil.buildTaskOrderDto(taskDto);
+            userDto.getTaskOrders().add(taskOrderDto);
             userServiceClient.addTaskOrder(userDto.getEmail(), taskOrderDto);
             increaseCodingTaskRating(taskDto);
         } catch (ExternalServiceInvocationException e) {

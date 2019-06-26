@@ -54,9 +54,9 @@ public class CommonServiceConstants {
     public static final String TASK_SERVICE_PORT_NO_PROFILE = "8084";
 
     public static final MessageFormat USER_SERVICE_ENDPOINT_FORMAT = new MessageFormat("http://{0}:{1}/users");
+    public static final MessageFormat TASK_SERVICE_ENDPOINT_FORMAT = new MessageFormat("http://{0}:{1}/tasks");
     public static final MessageFormat COMPILATION_SERVICE_ENDPOINT_FORMAT = new MessageFormat("http://{0}:{1}/compiler/compile");
     public static final MessageFormat EXECUTION_SERVICE_ENDPOINT_FORMAT = new MessageFormat("http://{0}:{1}/executor/execute");
-    public static final MessageFormat TASK_SERVICE_ENDPOINT_FORMAT = new MessageFormat("http://{0}:{1}/tasking/tasks");
 
     public static final String INTERNAL_SERVICE_ERROR_MESSAGE = "Internal service error occurred! Service responded with an empty body.";
     public static final String UNEXPECTED_SERVICE_ERROR_MESSAGE = "Unexpected service error occurred! Service responded with unknown status code.";

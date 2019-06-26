@@ -5,6 +5,7 @@ import com.esotericsoftware.kryo.io.Input;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.art.web.warrior.commons.CustomByteClassLoader;
 import org.art.web.warrior.commons.ServiceResponseStatus;
+import org.art.web.warrior.commons.common.CommonApiError;
 import org.art.web.warrior.commons.compiler.dto.CompilationRequest;
 import org.art.web.warrior.commons.compiler.dto.CompilationResponse;
 import org.art.web.warrior.commons.compiler.dto.CompilationUnitDto;
@@ -153,11 +154,13 @@ class CompilerControllerIntegrationTest {
                 .andReturn();
         byte[] binResponseData = result.getResponse().getContentAsByteArray();
         assertNotNull(binResponseData);
-        CompilationResponse compilationResponse = (CompilationResponse) kryo.readClassAndObject(new Input(binResponseData));
-        assertNotNull(compilationResponse);
-        assertEquals(ServiceResponseStatus.BAD_REQUEST.getStatusId(), compilationResponse.getCompilerStatus());
-        assertEquals(ServiceResponseStatus.BAD_REQUEST.getStatusCode(), compilationResponse.getCompilerStatusCode());
-        assertNotNull(compilationResponse.getMessage());
+        Object responseObject = kryo.readClassAndObject(new Input(binResponseData));
+        assertTrue(responseObject instanceof CommonApiError);
+        CommonApiError compilationErrorResponse = (CommonApiError) responseObject;
+        assertNotNull(compilationErrorResponse);
+        assertEquals(ServiceResponseStatus.BAD_REQUEST.getStatusId(), compilationErrorResponse.getRespStatus());
+        assertEquals(ServiceResponseStatus.BAD_REQUEST.getStatusCode(), compilationErrorResponse.getRespStatusCode());
+        assertNotNull(compilationErrorResponse.getMessage());
     }
 
     @Test
@@ -178,10 +181,12 @@ class CompilerControllerIntegrationTest {
                 .andReturn();
         byte[] binResponseData = result.getResponse().getContentAsByteArray();
         assertNotNull(binResponseData);
-        CompilationResponse compilationResponse = (CompilationResponse) kryo.readClassAndObject(new Input(binResponseData));
-        assertEquals(ServiceResponseStatus.BAD_REQUEST.getStatusId(), compilationResponse.getCompilerStatus());
-        assertEquals(ServiceResponseStatus.BAD_REQUEST.getStatusCode(), compilationResponse.getCompilerStatusCode());
-        assertNotNull(compilationResponse.getMessage());
+        Object responseObject = kryo.readClassAndObject(new Input(binResponseData));
+        assertTrue(responseObject instanceof CommonApiError);
+        CommonApiError compilationErrorResponse = (CommonApiError) responseObject;
+        assertEquals(ServiceResponseStatus.BAD_REQUEST.getStatusId(), compilationErrorResponse.getRespStatus());
+        assertEquals(ServiceResponseStatus.BAD_REQUEST.getStatusCode(), compilationErrorResponse.getRespStatusCode());
+        assertNotNull(compilationErrorResponse.getMessage());
     }
 
     @Test

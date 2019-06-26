@@ -10,8 +10,6 @@ spring:
       ddl-auto: update
 server:
   port: 8084
-  servlet:
-    context-path: /tasking
 eureka:
   client:
     service-url:

@@ -2,9 +2,8 @@ package org.art.web.warrior.client.dto;
 
 import lombok.*;
 
-@Getter
+@Data
 @Builder
-@ToString
 @NoArgsConstructor
 @AllArgsConstructor
 public class ClientServiceResponse {

@@ -11,6 +11,10 @@ public class EmailExistsException extends RuntimeException {
 
     @Override
     public String getMessage() {
-        return getMessage() + " Email: " + email;
+        return super.getMessage() + " Email: " + email;
+    }
+
+    public String getEmail() {
+        return email;
     }
 }
