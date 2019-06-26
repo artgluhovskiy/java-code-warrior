@@ -8,6 +8,6 @@ import static org.art.web.warrior.client.CommonServiceConstants.COMPILER_SERVICE
 @FeignClient(COMPILER_SERVICE_NAME)
 public interface CompServiceFeignClient {
 
-    @GetMapping("/compiler/compile/ping")
+    @GetMapping("/compiler/actuator/health")
     String getPingMessage();
 }

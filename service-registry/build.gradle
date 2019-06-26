@@ -46,10 +46,16 @@ test {
 
 dependencies {
          
-    /* *** Spring *** */
+    /* *** Spring Boot *** */
+
+    implementation('org.springframework.boot:spring-boot-starter-actuator')
+    
+    /* *** Spring Cloud *** */
+    
     implementation('org.springframework.cloud:spring-cloud-starter-netflix-eureka-server')
 
-    /* *** Common Libs *** */
+    /* *** Third Parties *** */
+    
     implementation('org.projectlombok:lombok:1.18.4')
     annotationProcessor('org.projectlombok:lombok:1.18.4')
 }

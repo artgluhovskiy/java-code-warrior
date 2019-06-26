@@ -9,7 +9,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.env.Environment;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
@@ -45,9 +44,9 @@ public class ExecServiceClientImpl implements ExecServiceClient {
     private String getServiceEndpointBase() {
         String activeProfile = env.getProperty(SPRING_ACTIVE_PROFILE_ENV_PROP_NAME);
         if (StringUtils.isNotBlank(activeProfile) && ACTIVE_PROFILE_CONTAINER.equals(activeProfile)) {
-            String execHostName = env.getProperty(EXECUTION_SERVICE_HOST_ENV_PROP_NAME);
-            String execHostPort = env.getProperty(EXECUTION_SERVICE_PORT_ENV_PROP_NAME);
-            return EXECUTION_SERVICE_ENDPOINT_FORMAT.format(new Object[]{execHostName, execHostPort});
+            String execServiceHostName = env.getProperty(EXECUTION_SERVICE_HOST_ENV_PROP_NAME);
+            String execServiceHostPort = env.getProperty(EXECUTION_SERVICE_PORT_ENV_PROP_NAME);
+            return EXECUTION_SERVICE_ENDPOINT_FORMAT.format(new Object[]{execServiceHostName, execServiceHostPort});
         } else {
             return EXECUTION_SERVICE_ENDPOINT_FORMAT.format(new Object[]{LOCALHOST, EXEC_SERVICE_PORT_NO_PROFILE});
         }

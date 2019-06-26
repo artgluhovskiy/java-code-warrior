@@ -50,10 +50,10 @@ public class AdminController {
             }
             TaskDto taskDto = ServiceRequestUtil.buildTaskServicePublicationRequest(adminTaskData, getRunnerClassDataFromResponse(compResponse));
             taskServiceClient.publishCodingTask(taskDto);
+            return ServiceResponseUtil.buildClientServiceOkResponse(TASK_PUBLICATION_OK_MESSAGE);
         } catch (ExternalServiceInvocationException e) {
             return ServiceResponseUtil.buildExternalServiceInvocationErrorResponse(e.getApiError());
         }
-        return ServiceResponseUtil.buildClientServiceOkResponse(TASK_PUBLICATION_OK_MESSAGE);
     }
 
     @PutMapping(consumes = MediaType.APPLICATION_JSON_UTF8_VALUE, produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
@@ -67,10 +67,10 @@ public class AdminController {
             }
             TaskDto taskDto = ServiceRequestUtil.buildTaskServicePublicationRequest(adminTaskData, getRunnerClassDataFromResponse(compResponse));
             taskServiceClient.updateCodingTask(taskDto);
+            return ServiceResponseUtil.buildClientServiceOkResponse(TASK_UPDATE_OK_MESSAGE);
         } catch (ExternalServiceInvocationException e) {
             return ServiceResponseUtil.buildExternalServiceInvocationErrorResponse(e.getApiError());
         }
-        return ServiceResponseUtil.buildClientServiceOkResponse(TASK_UPDATE_OK_MESSAGE);
     }
 
     @DeleteMapping(consumes = MediaType.APPLICATION_JSON_UTF8_VALUE, produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
@@ -79,10 +79,10 @@ public class AdminController {
         log.info("Deleting the Coding Task. Task name ID: {}", taskNameId);
         try {
             taskServiceClient.deleteTask(taskNameId);
+            return ServiceResponseUtil.buildClientServiceOkResponse(TASK_DELETE_OK_MESSAGE);
         } catch (ExternalServiceInvocationException e) {
             return ServiceResponseUtil.buildExternalServiceInvocationErrorResponse(e.getApiError());
         }
-        return ServiceResponseUtil.buildClientServiceOkResponse(TASK_DELETE_OK_MESSAGE);
     }
 
     private byte[] getRunnerClassDataFromResponse(CompilationResponse compResponse) {

@@ -19,6 +19,11 @@ public class CommonConstants {
 
     public static final String SPRING_ACTIVE_PROFILE_ENV_PROP_NAME = "spring.profiles.active";
 
+    // Spring Profiles
+    public static final String DEFAULT = "default";
+    public static final String CONTAINER = "container";
+    public static final String RETROFIT_CLIENT = "retrofit";
+
     public static final String ACTIVE_PROFILE_CONTAINER = "container";
 
     public static final String LOCALHOST = "localhost";

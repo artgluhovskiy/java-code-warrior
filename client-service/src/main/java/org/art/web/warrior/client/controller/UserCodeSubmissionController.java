@@ -80,10 +80,10 @@ public class UserCodeSubmissionController {
             userDto.getTaskOrders().add(taskOrderDto);
             userServiceClient.addTaskOrder(userDto.getEmail(), taskOrderDto);
             increaseCodingTaskRating(taskDto);
+            return ServiceResponseUtil.buildUserTaskExecutionResponse(execServiceResponse);
         } catch (ExternalServiceInvocationException e) {
             return ServiceResponseUtil.buildExternalServiceInvocationErrorResponse(e.getApiError());
         }
-        return ServiceResponseUtil.buildUserTaskExecutionResponse(execServiceResponse);
     }
 
     private void increaseCodingTaskRating(TaskDto task) {

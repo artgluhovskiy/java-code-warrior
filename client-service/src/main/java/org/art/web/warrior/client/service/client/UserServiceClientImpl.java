@@ -7,6 +7,7 @@ import org.art.web.warrior.client.service.client.api.UserServiceClient;
 import org.art.web.warrior.commons.users.dto.TaskOrderDto;
 import org.art.web.warrior.commons.users.dto.UserDto;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Profile;
 import org.springframework.core.env.Environment;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
@@ -22,6 +23,7 @@ import static org.art.web.warrior.client.CommonServiceConstants.*;
 import static org.art.web.warrior.commons.CommonConstants.*;
 
 @Slf4j
+@Profile("!" + RETROFIT_CLIENT)
 @Service
 public class UserServiceClientImpl implements UserServiceClient {
 
@@ -86,9 +88,9 @@ public class UserServiceClientImpl implements UserServiceClient {
     private String getServiceEndpointBase() {
         String activeProfile = env.getProperty(SPRING_ACTIVE_PROFILE_ENV_PROP_NAME);
         if (StringUtils.isNotBlank(activeProfile) && ACTIVE_PROFILE_CONTAINER.equals(activeProfile)) {
-            String taskServiceHostName = env.getProperty(USER_SERVICE_HOST_ENV_PROP_NAME);
-            String taskServiceHostPort = env.getProperty(USER_SERVICE_PORT_ENV_PROP_NAME);
-            return USER_SERVICE_ENDPOINT_FORMAT.format(new Object[]{taskServiceHostName, taskServiceHostPort});
+            String userServiceHostName = env.getProperty(USER_SERVICE_HOST_ENV_PROP_NAME);
+            String userServiceHostPort = env.getProperty(USER_SERVICE_PORT_ENV_PROP_NAME);
+            return USER_SERVICE_ENDPOINT_FORMAT.format(new Object[]{userServiceHostName, userServiceHostPort});
         } else {
             return USER_SERVICE_ENDPOINT_FORMAT.format(new Object[]{LOCALHOST, USER_SERVICE_PORT_NO_PROFILE});
         }

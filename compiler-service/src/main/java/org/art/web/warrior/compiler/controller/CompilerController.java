@@ -10,14 +10,16 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
 import javax.validation.Valid;
 import java.util.List;
 
 import static java.util.stream.Collectors.toList;
 import static org.art.web.warrior.commons.CommonConstants.KRYO_CONTENT_TYPE;
-import static org.art.web.warrior.compiler.ServiceCommonConstants.COMPILER_SERVICE_OK_MESSAGE;
 
 @RestController
 @RequestMapping("/compile")
@@ -40,10 +42,5 @@ public class CompilerController {
                 .collect(toList());
         CompilationResult result = compilationService.compileUnits(requestUnits);
         return ServiceUtil.buildCompilationResponse(result);
-    }
-
-    @GetMapping(value = "/ping")
-    public String ping() {
-        return COMPILER_SERVICE_OK_MESSAGE;
     }
 }

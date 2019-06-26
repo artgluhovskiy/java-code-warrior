@@ -14,7 +14,6 @@ import javax.validation.Valid;
 
 import static org.art.web.warrior.commons.CommonConstants.KRYO_CONTENT_TYPE;
 import static org.art.web.warrior.commons.CommonConstants.RUNNER_RUN_METHOD_NAME;
-import static org.art.web.warrior.exec.ServiceCommonConstants.EXECUTION_SERVICE_OK_MESSAGE;
 
 @RestController
 @RequestMapping("/execute")
@@ -33,10 +32,5 @@ public class ExecutionController {
         MethodDescriptor methodDescriptor = new CommonMethodDescriptor(runnerInstance, RUNNER_RUN_METHOD_NAME);
         this.invocationService.invokeMethod(methodDescriptor);
         return ServiceUtil.buildExecutionServiceOkResp();
-    }
-
-    @GetMapping("/ping")
-    public String ping() {
-        return EXECUTION_SERVICE_OK_MESSAGE;
     }
 }

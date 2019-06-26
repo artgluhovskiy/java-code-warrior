@@ -41,11 +41,13 @@ test {
 dependencies {
 
     /* *** Spring Framework *** */
+    
     implementation('org.springframework:spring-beans')
     
     implementation('javax.validation:validation-api')
 
-    /* *** Common Libs *** */
+    /* *** Third Parties *** */
+    
     implementation('org.apache.commons:commons-lang3:3.1')
     implementation('org.apache.commons:commons-collections4:4.0')
     implementation('commons-io:commons-io:2.6')
@@ -58,7 +60,6 @@ dependencies {
     implementation('org.projectlombok:lombok:1.18.4')
     annotationProcessor("org.projectlombok:lombok:1.18.4")
 
-    /* *** TDD *** */
     testImplementation('org.junit.jupiter:junit-jupiter-api:5.3.1')
     testRuntimeOnly('org.junit.jupiter:junit-jupiter-engine:5.3.1')
 

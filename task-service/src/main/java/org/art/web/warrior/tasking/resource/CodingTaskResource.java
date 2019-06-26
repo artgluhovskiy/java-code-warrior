@@ -77,9 +77,4 @@ public class CodingTaskResource {
         log.debug("Making the request for coding task deletion. Task name id: {}", nameId);
         taskService.deleteTaskByNameId(nameId);
     }
-
-    @GetMapping("/ping")
-    public String ping() {
-        return "Task Service: OK!";
-    }
 }

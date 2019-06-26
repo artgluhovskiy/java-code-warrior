@@ -8,6 +8,6 @@ import static org.art.web.warrior.client.CommonServiceConstants.EXECUTION_SERVIC
 @FeignClient(EXECUTION_SERVICE_NAME)
 public interface ExecServiceFeignClient {
 
-    @GetMapping("/executor/execute/ping")
+    @GetMapping("/executor/actuator/health")
     String getPingMessage();
 }

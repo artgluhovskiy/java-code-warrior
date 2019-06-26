@@ -10,7 +10,6 @@ import org.springframework.core.env.Environment;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
@@ -47,9 +46,9 @@ public class CompServiceClientImpl implements CompServiceClient {
     private String getServiceEndpointBase() {
         String activeProfile = env.getProperty(SPRING_ACTIVE_PROFILE_ENV_PROP_NAME);
         if (StringUtils.isNotBlank(activeProfile) && ACTIVE_PROFILE_CONTAINER.equals(activeProfile)) {
-            String compHostName = env.getProperty(COMPILER_SERVICE_HOST_ENV_PROP_NAME);
-            String compHostPort = env.getProperty(COMPILER_SERVICE_PORT_ENV_PROP_NAME);
-            return COMPILATION_SERVICE_ENDPOINT_FORMAT.format(new Object[]{compHostName, compHostPort});
+            String compServiceHostName = env.getProperty(COMPILER_SERVICE_HOST_ENV_PROP_NAME);
+            String compServiceHostPort = env.getProperty(COMPILER_SERVICE_PORT_ENV_PROP_NAME);
+            return COMPILATION_SERVICE_ENDPOINT_FORMAT.format(new Object[]{compServiceHostName, compServiceHostPort});
         } else {
             return COMPILATION_SERVICE_ENDPOINT_FORMAT.format(new Object[]{LOCALHOST, COMP_SERVICE_PORT_NO_PROFILE});
         }

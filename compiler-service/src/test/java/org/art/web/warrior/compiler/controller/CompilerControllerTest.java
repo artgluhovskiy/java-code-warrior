@@ -28,7 +28,6 @@ import static java.util.Collections.singletonList;
 import static java.util.Collections.singletonMap;
 import static org.art.web.warrior.commons.CommonConstants.KRYO_CONTENT_TYPE;
 import static org.art.web.warrior.compiler.CommonTestConstants.COMP_ENTITY_ENDPOINT;
-import static org.art.web.warrior.compiler.ServiceCommonConstants.COMPILER_SERVICE_OK_MESSAGE;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
@@ -61,7 +60,7 @@ class CompilerControllerTest {
     @Test
     @DisplayName("Compiler Service Ping Test (json content type)")
     void test0() throws Exception {
-        MvcResult result = mockMvc.perform(get("/compile/ping")
+        MvcResult result = mockMvc.perform(get("/compile/health")
                 .accept(MediaType.APPLICATION_JSON_UTF8))
                 .andExpect(status().isOk())
                 .andExpect(header().string(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_UTF8_VALUE))
@@ -69,7 +68,7 @@ class CompilerControllerTest {
                 .andReturn();
         String response = result.getResponse().getContentAsString();
         assertNotNull(response);
-        assertTrue(response.contains(COMPILER_SERVICE_OK_MESSAGE));
+        assertTrue(response.contains("UP"));
 
         verify(compilationService, never()).compileUnits(anyList());
     }
