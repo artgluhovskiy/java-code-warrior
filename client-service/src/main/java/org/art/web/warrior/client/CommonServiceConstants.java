@@ -56,9 +56,9 @@ public class CommonServiceConstants {
     public static final String TASK_SERVICE_PORT_NO_PROFILE = "8084";
 
     public static final MessageFormat USER_SERVICE_ENDPOINT_FORMAT = new MessageFormat("http://{0}/users");
-    public static final MessageFormat TASK_SERVICE_ENDPOINT_FORMAT = new MessageFormat("http://{0}:{1}/tasks");
-    public static final MessageFormat COMPILATION_SERVICE_ENDPOINT_FORMAT = new MessageFormat("http://{0}:{1}/compiler/compile");
-    public static final MessageFormat EXECUTION_SERVICE_ENDPOINT_FORMAT = new MessageFormat("http://{0}:{1}/executor/execute");
+    public static final MessageFormat TASK_SERVICE_ENDPOINT_FORMAT = new MessageFormat("http://{0}/tasks");
+    public static final MessageFormat COMPILATION_SERVICE_ENDPOINT_FORMAT = new MessageFormat("http://{0}/compiler/compile");
+    public static final MessageFormat EXECUTION_SERVICE_ENDPOINT_FORMAT = new MessageFormat("http://{0}/executor/execute");
 
     public static final String COMPILATION_ERROR_MESSAGE = "Compilation errors occurred while compiling client source code!";
 

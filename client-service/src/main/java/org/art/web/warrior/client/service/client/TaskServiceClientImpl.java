@@ -99,12 +99,14 @@ public class TaskServiceClientImpl implements TaskServiceClient {
 
     private String getServiceEndpointBase() {
         String activeProfile = env.getProperty(SPRING_ACTIVE_PROFILE_ENV_PROP_NAME);
-        if (StringUtils.isNotBlank(activeProfile) && PROFILE_CONTAINER.equals(activeProfile)) {
+        if (StringUtils.isNotBlank(activeProfile) && (PROFILE_CONTAINER.equals(activeProfile) || PROFILE_SINGLE.equals(activeProfile))) {
             String taskServiceHostName = env.getProperty(TASK_SERVICE_HOST_ENV_PROP_NAME);
-            String taskServiceHostPort = env.getProperty(TASK_SERVICE_PORT_ENV_PROP_NAME);
-            return TASK_SERVICE_ENDPOINT_FORMAT.format(new Object[]{taskServiceHostName, taskServiceHostPort});
+            if (StringUtils.isBlank(taskServiceHostName)) {
+                taskServiceHostName = TASK_SERVICE_NAME;
+            }
+            return TASK_SERVICE_ENDPOINT_FORMAT.format(new Object[]{taskServiceHostName});
         } else {
-            return TASK_SERVICE_ENDPOINT_FORMAT.format(new Object[]{LOCALHOST, TASK_SERVICE_PORT_NO_PROFILE});
+            return TASK_SERVICE_ENDPOINT_FORMAT.format(new Object[]{LOCALHOST + COLON_CH + TASK_SERVICE_PORT_NO_PROFILE});
         }
     }
 }

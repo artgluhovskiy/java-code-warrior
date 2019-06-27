@@ -1,3 +1,5 @@
+info:
+  app: User Service
 spring:
   application:
     name: user-service
