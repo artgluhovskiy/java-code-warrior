@@ -1,3 +1,5 @@
+info:
+  app: Compilation Service
 spring:
   application:
     name: compiler-service

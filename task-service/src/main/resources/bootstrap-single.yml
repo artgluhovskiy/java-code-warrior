@@ -4,9 +4,9 @@ spring:
   application:
     name: task-service
   datasource:
-    url: jdbc:mysql://${DATABASE_HOST}:${DATABASE_PORT}/${DATABASE_NAME}?createDatabaseIfNotExist=true
-    password: ${DATABASE_PASSWORD}
-    username: ${DATABASE_USER}
+    url: jdbc:mysql://localhost:3306/tasks?createDatabaseIfNotExist=true&zeroDateTimeBehavior=CONVERT_TO_NULL&serverTimezone=UTC
+    password: root
+    username: root
   jpa:
     hibernate:
       ddl-auto: update
@@ -18,4 +18,4 @@ eureka:
     prefer-ip-address: true
   client:
     service-url:
-      defaultZone: http://${SERVICE_REGISTRY_HOST}:${SERVICE_REGISTRY_PORT}/eureka
+      defaultZone: http://localhost:8761/eureka

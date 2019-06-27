@@ -12,7 +12,7 @@ import org.springframework.cloud.openfeign.EnableFeignClients;
 @SpringBootApplication
 @EnableDiscoveryClient
 @EnableFeignClients
-@RibbonClient(name = "client-service", configuration = RibbonConfig.class)
+@RibbonClient(name = "user-service", configuration = RibbonConfig.class)
 @EnableConfigurationProperties(ServiceConfigProperties.class)
 public class ClientApplication {
 

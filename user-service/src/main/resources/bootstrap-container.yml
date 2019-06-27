@@ -1,3 +1,5 @@
+info:
+  app: User Service
 spring:
   application:
     name: user-service
@@ -11,10 +13,11 @@ spring:
 server:
   port: 0
 eureka:
+  instance:
+    instance-id: ${spring.cloud.client.hostname}:${spring.application.name}:${random.int[1,999999]}
+    prefer-ip-address: true
   client:
     register-with-eureka: true
     fetch-registry: false
     service-url:
       defaultZone: http://${SERVICE_REGISTRY_HOST}:${SERVICE_REGISTRY_PORT}/eureka
-  instance:
-    prefer-ip-address: true

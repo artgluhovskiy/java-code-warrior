@@ -1,13 +1,16 @@
+info:
+  app: Execution Service
 spring:
   application:
     name: executor-service
 server:
-  port: 8083
+  port: 0
   servlet:
     context-path: /executor
 eureka:
+  instance:
+    instance-id: ${spring.cloud.client.hostname}:${spring.application.name}:${random.int[1,999999]}
+    prefer-ip-address: true
   client:
     service-url:
       defaultZone: http://${SERVICE_REGISTRY_HOST}:${SERVICE_REGISTRY_PORT}/eureka
-  instance:
-    prefer-ip-address: true
