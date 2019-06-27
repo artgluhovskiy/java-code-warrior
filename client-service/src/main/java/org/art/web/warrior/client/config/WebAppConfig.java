@@ -7,6 +7,7 @@ import org.art.web.warrior.client.config.exchandler.CustomRestTemplateErrorHandl
 import org.art.web.warrior.client.config.interceptor.RequestLogger;
 import org.art.web.warrior.client.service.client.retrofit.UserServiceRetroClient;
 import org.springframework.boot.web.client.RestTemplateBuilder;
+import org.springframework.cloud.client.loadbalancer.LoadBalanced;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Profile;
@@ -24,7 +25,7 @@ import static org.art.web.warrior.commons.CommonConstants.*;
 public class WebAppConfig implements WebMvcConfigurer {
 
     @Bean
-    @Profile(RETROFIT_CLIENT)
+    @Profile(PROFILE_RETROFIT)
     public UserServiceRetroClient userServiceRetroClient(Environment env) {
         OkHttpClient.Builder httpClient = new OkHttpClient.Builder();
         Retrofit retrofit = new Retrofit.Builder()
@@ -36,6 +37,7 @@ public class WebAppConfig implements WebMvcConfigurer {
     }
 
     @Bean
+    @LoadBalanced
     public RestTemplate restTemplate(RestTemplateBuilder restTemplateBuilder) {
         return restTemplateBuilder
                 .additionalInterceptors(requestLogger())
@@ -61,7 +63,7 @@ public class WebAppConfig implements WebMvcConfigurer {
         String userServiceHostName;
         String userServiceHostPort;
         String activeProfile = env.getProperty(SPRING_ACTIVE_PROFILE_ENV_PROP_NAME);
-        if (StringUtils.isNotBlank(activeProfile) && ACTIVE_PROFILE_CONTAINER.equals(activeProfile)) {
+        if (StringUtils.isNotBlank(activeProfile) && PROFILE_CONTAINER.equals(activeProfile)) {
             userServiceHostName = env.getProperty(USER_SERVICE_HOST_ENV_PROP_NAME);
             userServiceHostPort = env.getProperty(USER_SERVICE_PORT_ENV_PROP_NAME);
         } else {

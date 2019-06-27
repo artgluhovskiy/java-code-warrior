@@ -23,7 +23,7 @@ import static org.art.web.warrior.client.CommonServiceConstants.*;
 import static org.art.web.warrior.commons.CommonConstants.*;
 
 @Slf4j
-@Profile("!" + RETROFIT_CLIENT)
+@Profile("!" + PROFILE_RETROFIT)
 @Service
 public class UserServiceClientImpl implements UserServiceClient {
 
@@ -87,12 +87,14 @@ public class UserServiceClientImpl implements UserServiceClient {
 
     private String getServiceEndpointBase() {
         String activeProfile = env.getProperty(SPRING_ACTIVE_PROFILE_ENV_PROP_NAME);
-        if (StringUtils.isNotBlank(activeProfile) && ACTIVE_PROFILE_CONTAINER.equals(activeProfile)) {
+        if (StringUtils.isNotBlank(activeProfile) && (PROFILE_CONTAINER.equals(activeProfile) || PROFILE_SINGLE.equals(activeProfile))) {
             String userServiceHostName = env.getProperty(USER_SERVICE_HOST_ENV_PROP_NAME);
-            String userServiceHostPort = env.getProperty(USER_SERVICE_PORT_ENV_PROP_NAME);
-            return USER_SERVICE_ENDPOINT_FORMAT.format(new Object[]{userServiceHostName, userServiceHostPort});
+            if (StringUtils.isBlank(userServiceHostName)) {
+                userServiceHostName = USER_SERVICE_NAME;
+            }
+            return USER_SERVICE_ENDPOINT_FORMAT.format(new Object[]{userServiceHostName});
         } else {
-            return USER_SERVICE_ENDPOINT_FORMAT.format(new Object[]{LOCALHOST, USER_SERVICE_PORT_NO_PROFILE});
+            return USER_SERVICE_ENDPOINT_FORMAT.format(new Object[]{LOCALHOST + COLON_CH + USER_SERVICE_PORT_NO_PROFILE});
         }
     }
 }

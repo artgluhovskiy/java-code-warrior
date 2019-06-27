@@ -45,7 +45,7 @@ public class CompServiceClientImpl implements CompServiceClient {
 
     private String getServiceEndpointBase() {
         String activeProfile = env.getProperty(SPRING_ACTIVE_PROFILE_ENV_PROP_NAME);
-        if (StringUtils.isNotBlank(activeProfile) && ACTIVE_PROFILE_CONTAINER.equals(activeProfile)) {
+        if (StringUtils.isNotBlank(activeProfile) && PROFILE_CONTAINER.equals(activeProfile)) {
             String compServiceHostName = env.getProperty(COMPILER_SERVICE_HOST_ENV_PROP_NAME);
             String compServiceHostPort = env.getProperty(COMPILER_SERVICE_PORT_ENV_PROP_NAME);
             return COMPILATION_SERVICE_ENDPOINT_FORMAT.format(new Object[]{compServiceHostName, compServiceHostPort});

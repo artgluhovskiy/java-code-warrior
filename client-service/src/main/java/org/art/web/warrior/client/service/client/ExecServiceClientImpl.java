@@ -43,7 +43,7 @@ public class ExecServiceClientImpl implements ExecServiceClient {
 
     private String getServiceEndpointBase() {
         String activeProfile = env.getProperty(SPRING_ACTIVE_PROFILE_ENV_PROP_NAME);
-        if (StringUtils.isNotBlank(activeProfile) && ACTIVE_PROFILE_CONTAINER.equals(activeProfile)) {
+        if (StringUtils.isNotBlank(activeProfile) && PROFILE_CONTAINER.equals(activeProfile)) {
             String execServiceHostName = env.getProperty(EXECUTION_SERVICE_HOST_ENV_PROP_NAME);
             String execServiceHostPort = env.getProperty(EXECUTION_SERVICE_PORT_ENV_PROP_NAME);
             return EXECUTION_SERVICE_ENDPOINT_FORMAT.format(new Object[]{execServiceHostName, execServiceHostPort});

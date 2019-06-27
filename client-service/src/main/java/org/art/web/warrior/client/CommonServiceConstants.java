@@ -55,7 +55,7 @@ public class CommonServiceConstants {
     public static final String EXEC_SERVICE_PORT_NO_PROFILE = "8083";
     public static final String TASK_SERVICE_PORT_NO_PROFILE = "8084";
 
-    public static final MessageFormat USER_SERVICE_ENDPOINT_FORMAT = new MessageFormat("http://{0}:{1}/users");
+    public static final MessageFormat USER_SERVICE_ENDPOINT_FORMAT = new MessageFormat("http://{0}/users");
     public static final MessageFormat TASK_SERVICE_ENDPOINT_FORMAT = new MessageFormat("http://{0}:{1}/tasks");
     public static final MessageFormat COMPILATION_SERVICE_ENDPOINT_FORMAT = new MessageFormat("http://{0}:{1}/compiler/compile");
     public static final MessageFormat EXECUTION_SERVICE_ENDPOINT_FORMAT = new MessageFormat("http://{0}:{1}/executor/execute");

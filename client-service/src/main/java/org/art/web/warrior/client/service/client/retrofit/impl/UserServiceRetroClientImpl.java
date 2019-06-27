@@ -18,10 +18,10 @@ import java.io.IOException;
 import java.time.LocalDateTime;
 
 import static org.art.web.warrior.client.CommonServiceConstants.OBJECT_MAPPER;
-import static org.art.web.warrior.commons.CommonConstants.RETROFIT_CLIENT;
+import static org.art.web.warrior.commons.CommonConstants.PROFILE_RETROFIT;
 
 @Service
-@Profile(RETROFIT_CLIENT)
+@Profile(PROFILE_RETROFIT)
 public class UserServiceRetroClientImpl implements UserServiceClient {
 
     private final UserServiceRetroClient userServiceRetroClient;
