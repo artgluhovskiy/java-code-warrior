@@ -10,6 +10,8 @@ spring:
   jpa:
     hibernate:
       ddl-auto: update
+    properties:
+      hibernate.format_sql: true
 server:
   port: 0
 eureka:
@@ -23,4 +25,5 @@ eureka:
       defaultZone: http://localhost:8761/eureka/
 logging:
   level:
-    ROOT: debug
+    org.hibernate.SQL: debug
+    org.hibernate.type.descriptor.sql.BasicBinder: trace
