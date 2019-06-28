@@ -15,12 +15,12 @@ import static org.art.web.warrior.client.CommonServiceConstants.*;
 @SpringBootApplication
 @EnableDiscoveryClient
 @EnableFeignClients
-@RibbonClients({
-        @RibbonClient(name = USER_SERVICE_NAME, configuration = RibbonConfig.class),
-        @RibbonClient(name = TASK_SERVICE_NAME, configuration = RibbonConfig.class),
-        @RibbonClient(name = COMPILER_SERVICE_NAME, configuration = RibbonConfig.class),
-        @RibbonClient(name = EXECUTION_SERVICE_NAME, configuration = RibbonConfig.class)
-})
+@RibbonClients(value = {
+        @RibbonClient(name = USER_SERVICE_NAME),
+        @RibbonClient(name = TASK_SERVICE_NAME),
+        @RibbonClient(name = COMPILER_SERVICE_NAME),
+        @RibbonClient(name = EXECUTION_SERVICE_NAME)},
+        defaultConfiguration = RibbonConfig.class)
 @EnableConfigurationProperties(ServiceConfigProperties.class)
 public class ClientApplication {
 
