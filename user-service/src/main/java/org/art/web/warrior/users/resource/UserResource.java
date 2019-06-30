@@ -26,7 +26,6 @@ import javax.validation.Valid;
 import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
 import java.nio.charset.StandardCharsets;
-import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
@@ -100,7 +99,6 @@ public class UserResource {
                 .orElseThrow(() -> new UserNotFoundException("Cannot find user with such email.", email));
         TaskOrder taskOrder = ServiceMapper.mapToTaskOrder(taskOrderDto);
         if (!user.getTaskOrders().contains(taskOrder)) {
-            taskOrder.setRegDate(LocalDateTime.now());
             taskOrder.setUser(user);
             user.getTaskOrders().add(taskOrder);
             userRepository.save(user);

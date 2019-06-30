@@ -1,6 +1,9 @@
 package org.art.web.warrior.tasking.model;
 
-import lombok.*;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import javax.persistence.Column;
 import javax.persistence.Embeddable;
@@ -12,12 +15,15 @@ import javax.persistence.Embeddable;
 @Embeddable
 public class CodingTaskDescriptor {
 
-    @Column(unique = true)
+    @Column(name = "name_id", unique = true, nullable = false)
     private String nameId;
 
+    @Column(name = "name", nullable = false)
     private String name;
 
+    @Column(name = "description", nullable = false)
     private String description;
 
-    private int rating;
+    @Column(name = "rating")
+    private int rating = 0;
 }

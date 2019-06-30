@@ -4,7 +4,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.*;
 
 import javax.persistence.*;
-import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
 import java.time.LocalDateTime;
 
 @Data
@@ -19,25 +19,31 @@ public class TaskOrder {
     @GeneratedValue
     private Long id;
 
+    @NotNull
     @Column(name = "task_name_id")
-    @NotBlank
     private String nameId;
 
+    @NotNull
     @Column(name = "task_name")
-    @NotBlank
     private String name;
 
+    @NotNull
     @Column(name = "task_description")
     private String description;
 
-    @Column(name = "reg_date")
     @EqualsAndHashCode.Exclude
+    @Column(name = "reg_date")
     private LocalDateTime regDate;
 
-    @ManyToOne
-    @JoinColumn(name = "user_id")
     @EqualsAndHashCode.Exclude
     @ToString.Exclude
     @JsonIgnore
+    @ManyToOne
+    @JoinColumn(name = "user_id")
     private User user;
+
+    @PrePersist
+    protected void onRegistration() {
+        this.regDate = LocalDateTime.now();
+    }
 }

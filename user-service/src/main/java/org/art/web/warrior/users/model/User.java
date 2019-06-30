@@ -4,7 +4,7 @@ import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
 
 import javax.persistence.*;
-import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
 import java.time.LocalDateTime;
 import java.util.*;
 
@@ -23,18 +23,20 @@ public class User {
     @Column(name = "enabled")
     private boolean enabled;
 
+    @NotNull
     @Column(name = "first_name")
     private String firstName;
 
+    @NotNull
     @Column(name = "last_name")
     private String lastName;
 
+    @NotNull
     @Column(name = "email")
-    @NotBlank
     private String email;
 
+    @NotNull
     @Column(name = "password")
-    @NotBlank
     private String password;
 
     @Builder.Default
@@ -55,4 +57,9 @@ public class User {
     @CreationTimestamp
     @EqualsAndHashCode.Exclude
     private LocalDateTime regDate;
+
+    @PrePersist
+    protected void onRegistration() {
+        this.regDate = LocalDateTime.now();
+    }
 }

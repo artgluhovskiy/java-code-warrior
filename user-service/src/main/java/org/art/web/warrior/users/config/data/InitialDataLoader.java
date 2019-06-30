@@ -65,8 +65,7 @@ public class InitialDataLoader implements ApplicationListener<ContextRefreshedEv
                 .firstName("Admin")
                 .lastName("Admin")
                 .password(encoder.encode("admin"))
-                .email(email)
-                .regDate(LocalDateTime.now());
+                .email(email);
             Role adminRole = roleRepository.findByName(CommonServiceConstants.ROLE_ADMIN)
                 .orElseThrow(() -> new RuntimeException("Cannot find ROLE_ADMIN in the repository during ADMIN initialization!"));
             builder.roles(Collections.singletonList(adminRole));
@@ -85,8 +84,7 @@ public class InitialDataLoader implements ApplicationListener<ContextRefreshedEv
                 .firstName("User")
                 .lastName("User")
                 .password(encoder.encode("user"))
-                .email(email)
-                .regDate(LocalDateTime.now());
+                .email(email);
             Role adminRole = roleRepository.findByName(CommonServiceConstants.ROLE_USER)
                 .orElseThrow(() -> new RuntimeException("Cannot find ROLE_USER in the repository during USER initialization!"));
             builder.roles(Collections.singletonList(adminRole));
@@ -96,7 +94,6 @@ public class InitialDataLoader implements ApplicationListener<ContextRefreshedEv
                 .nameId("task1")
                 .name("Task 1")
                 .description("Task 1 Description")
-                .regDate(LocalDateTime.now())
                 .user(user)
                 .build();
 
@@ -104,7 +101,6 @@ public class InitialDataLoader implements ApplicationListener<ContextRefreshedEv
                 .nameId("task2")
                 .name("Task 2")
                 .description("Task 2 Description")
-                .regDate(LocalDateTime.now())
                 .user(user)
                 .build();
 

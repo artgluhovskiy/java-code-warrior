@@ -6,13 +6,15 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
+import javax.validation.constraints.NotNull;
 import java.time.LocalDateTime;
 
 @Data
-@Entity
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
+@Entity
+@Table(name = "coding_tasks")
 public class CodingTask {
 
     @Id
@@ -22,13 +24,19 @@ public class CodingTask {
     @Embedded
     private CodingTaskDescriptor descriptor;
 
+    @NotNull
+    @Column(name = "methodSign")
     private String methodSign;
 
+    @NotNull
     @Lob
+    @Column(name = "binary_data")
     private byte[] runnerClassData;
 
+    @Column(name = "publication_date")
     private LocalDateTime publicationDate;
 
+    @Column(name = "modification_date")
     private LocalDateTime updateDate;
 
     @PrePersist
