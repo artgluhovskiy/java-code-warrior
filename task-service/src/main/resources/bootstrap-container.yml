@@ -10,6 +10,8 @@ spring:
   jpa:
     hibernate:
       ddl-auto: update
+      naming:
+        physical-strategy: org.art.web.warrior.tasking.config.hibernate.CustomPhysicalNamingStrategy
 server:
   port: 0
 eureka:

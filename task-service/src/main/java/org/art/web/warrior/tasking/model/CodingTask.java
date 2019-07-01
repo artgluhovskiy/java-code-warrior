@@ -18,7 +18,7 @@ import java.time.LocalDateTime;
 public class CodingTask {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue
     private Long id;
 
     @Embedded

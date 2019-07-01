@@ -6,7 +6,10 @@ import org.hibernate.annotations.CreationTimestamp;
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 import java.time.LocalDateTime;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 
 @Data
 @Builder
@@ -50,12 +53,12 @@ public class User {
     private List<Role> roles = new ArrayList<>();
 
     @Builder.Default
-    @OneToMany(cascade = CascadeType.ALL)
     @EqualsAndHashCode.Exclude
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
     private Set<TaskOrder> taskOrders = new HashSet<>();
 
-    @CreationTimestamp
     @EqualsAndHashCode.Exclude
+    @CreationTimestamp
     private LocalDateTime regDate;
 
     @PrePersist

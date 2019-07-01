@@ -10,6 +10,8 @@ spring:
   jpa:
     hibernate:
       ddl-auto: update
+      naming:
+        physical-strategy: org.art.web.warrior.users.config.hibernate.CustomPhysicalNamingStrategy
     properties:
       hibernate.format_sql: true
 server:
