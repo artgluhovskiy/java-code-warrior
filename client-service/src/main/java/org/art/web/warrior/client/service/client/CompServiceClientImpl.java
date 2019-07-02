@@ -5,6 +5,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.art.web.warrior.client.service.client.api.CompServiceClient;
 import org.art.web.warrior.commons.compiler.dto.CompilationRequest;
 import org.art.web.warrior.commons.compiler.dto.CompilationResponse;
+import org.art.web.warrior.commons.execution.dto.ExecutionResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.env.Environment;
 import org.springframework.http.HttpEntity;
@@ -41,6 +42,12 @@ public class CompServiceClientImpl implements CompServiceClient {
         HttpEntity<CompilationRequest> reqEntity = new HttpEntity<>(compRequestData, headers);
         log.debug("Making the request to the Compilation service. Endpoint: {}, request data: {}", serviceEndpointBase, compRequestData);
         return restTemplate.postForEntity(serviceEndpointBase, reqEntity, CompilationResponse.class).getBody();
+    }
+
+    @Override
+    public CompilationResponse getServiceInfo() {
+        log.debug("Making the info request to the Compilation service. Endpoint: {}", serviceEndpointBase);
+        return restTemplate.getForEntity(serviceEndpointBase, CompilationResponse.class).getBody();
     }
 
     private String getServiceEndpointBase() {

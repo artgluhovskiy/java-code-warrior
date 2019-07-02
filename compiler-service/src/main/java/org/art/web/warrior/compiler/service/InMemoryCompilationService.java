@@ -1,13 +1,12 @@
 package org.art.web.warrior.compiler.service;
 
+import lombok.extern.slf4j.Slf4j;
 import org.art.web.warrior.commons.ServiceResponseStatus;
 import org.art.web.warrior.compiler.domain.CompilationMessage;
 import org.art.web.warrior.compiler.domain.CompilationResult;
 import org.art.web.warrior.compiler.domain.CompilationUnit;
 import org.art.web.warrior.compiler.exception.CompilationServiceException;
 import org.art.web.warrior.compiler.service.api.CompilationService;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
 import javax.lang.model.SourceVersion;
@@ -28,19 +27,18 @@ import static org.art.web.warrior.compiler.ServiceCommonConstants.*;
  * Internally uses custom class loader for every compilation task
  * in order to define a compiled class.
  */
+@Slf4j
 @Service
 public class InMemoryCompilationService implements CompilationService {
-
-    private static final Logger LOG = LoggerFactory.getLogger(InMemoryCompilationService.class);
 
     private final JavaCompiler compiler;
 
     public InMemoryCompilationService() {
-        LOG.info("Compilation service initialization...");
+        log.info("Compilation service initialization...");
         this.compiler = ToolProvider.getSystemJavaCompiler();
-        if (LOG.isInfoEnabled()) {
+        if (log.isInfoEnabled()) {
             Set<SourceVersion> supportedVersions = compiler.getSourceVersions();
-            LOG.info("Supported Java source code versions: {}", supportedVersions);
+            log.info("Supported Java source code versions: {}", supportedVersions);
         }
     }
 
@@ -48,7 +46,7 @@ public class InMemoryCompilationService implements CompilationService {
     public CompilationResult compileUnits(List<CompilationUnit> units) {
         Objects.requireNonNull(units, COMP_UNITS_ARG_SHOULD_NOT_BE_NULL_MESSAGE);
         validateCompilationUnits(units);
-        LOG.debug("Compiling units: {}", units);
+        log.debug("Compiling units: {}", units);
         DiagnosticCollector<JavaFileObject> diagnostics = new DiagnosticCollector<>();
         StandardJavaFileManager stdFileManager = compiler.getStandardFileManager(diagnostics, null, null);
         CustomClassFileManager fileManager = new CustomClassFileManager(stdFileManager);
@@ -57,10 +55,10 @@ public class InMemoryCompilationService implements CompilationService {
             JavaCompiler.CompilationTask task = compiler.getTask(null, fileManager, diagnostics, null, null, compilationUnits);
             boolean compResult = task.call();
             if (compResult) {
-                LOG.debug("Compilation units were successfully compiled!");
+                log.debug("Compilation units were successfully compiled!");
                 return buildCompilationResult(true, diagnostics.getDiagnostics(), units, retrieveClassBinData(fileManager));
             } else {
-                LOG.warn("Compilation failed! Units: {}", units);
+                log.warn("Compilation failed! Units: {}", units);
                 return buildCompilationResult(false, diagnostics.getDiagnostics(), units, null);
             }
         } catch (Exception e) {
@@ -82,11 +80,11 @@ public class InMemoryCompilationService implements CompilationService {
 
     private List<JavaFileObject> generateSourceFileObjects(List<CompilationUnit> units) {
         return units.stream()
-            .map(unit -> {
-                String className = unit.getClassName();
-                CharSequence srcCode = unit.getSrcCode();
-                return new CharSeqJavaSourceFileObject(className, srcCode);
-            }).collect(toList());
+                .map(unit -> {
+                    String className = unit.getClassName();
+                    CharSequence srcCode = unit.getSrcCode();
+                    return new CharSeqJavaSourceFileObject(className, srcCode);
+                }).collect(toList());
     }
 
     private CompilationResult buildCompilationResult(boolean result,
@@ -97,8 +95,8 @@ public class InMemoryCompilationService implements CompilationService {
         if (result) {
             compilationResult = new CompilationResult(ServiceResponseStatus.SUCCESS);
             Map<String, CompilationUnit> unitResults = units.stream()
-                .map(unit -> mapToUnitResult(unit, compiledClassData))
-                .collect(toMap(CompilationUnit::getClassName, Function.identity()));
+                    .map(unit -> mapToUnitResult(unit, compiledClassData))
+                    .collect(toMap(CompilationUnit::getClassName, Function.identity()));
             compilationResult.setCompUnitResults(unitResults);
         } else {
             compilationResult = new CompilationResult(ServiceResponseStatus.COMPILATION_ERROR);
@@ -107,8 +105,8 @@ public class InMemoryCompilationService implements CompilationService {
                 Diagnostic diagnostic = diagnostics.get(diagnostics.size() - 1);
                 compilationResult.setMessage(buildCompErrorMessage(diagnostic));
                 Map<String, CompilationUnit> unitResults = units.stream()
-                    .map(unit -> mapToUnitResult(unit, null))
-                    .collect(toMap(CompilationUnit::getClassName, Function.identity()));
+                        .map(unit -> mapToUnitResult(unit, null))
+                        .collect(toMap(CompilationUnit::getClassName, Function.identity()));
                 compilationResult.setCompUnitResults(unitResults);
             }
         }
@@ -117,7 +115,7 @@ public class InMemoryCompilationService implements CompilationService {
 
     private CompilationUnit mapToUnitResult(CompilationUnit unit, Map<String, byte[]> compClassData) {
         String className = unit.getClassName();
-        String srcCode = unit.getSrcCode().toString();
+        String srcCode = unit.getSrcCode();
         CompilationUnit compUnit = new CompilationUnit(className, srcCode);
         if (compClassData != null) {
             compUnit.setCompiledClassBytes(compClassData.get(className));
@@ -127,20 +125,20 @@ public class InMemoryCompilationService implements CompilationService {
 
     private CompilationMessage buildCompErrorMessage(Diagnostic diagnostic) {
         return CompilationMessage
-            .builder()
-            .kind(diagnostic.getKind())
-            .errorCode(diagnostic.getCode())
-            .position(diagnostic.getPosition())
-            .codeLine(diagnostic.getLineNumber())
-            .columnNumber(diagnostic.getColumnNumber())
-            .causeMessage(diagnostic.getMessage(Locale.US))
-            .build();
+                .builder()
+                .kind(diagnostic.getKind())
+                .errorCode(diagnostic.getCode())
+                .position(diagnostic.getPosition())
+                .codeLine(diagnostic.getLineNumber())
+                .columnNumber(diagnostic.getColumnNumber())
+                .causeMessage(diagnostic.getMessage(Locale.US))
+                .build();
     }
 
     private Map<String, byte[]> retrieveClassBinData(CustomClassFileManager fileManager) {
         return fileManager.getClassFiles()
-            .entrySet()
-            .stream()
-            .collect(toMap(Map.Entry::getKey, entry -> entry.getValue().getBytes()));
+                .entrySet()
+                .stream()
+                .collect(toMap(Map.Entry::getKey, entry -> entry.getValue().getBytes()));
     }
 }

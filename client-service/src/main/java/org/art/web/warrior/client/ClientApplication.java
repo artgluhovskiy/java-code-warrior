@@ -5,6 +5,7 @@ import org.art.web.warrior.client.config.properties.ServiceConfigProperties;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
+import org.springframework.cloud.client.circuitbreaker.EnableCircuitBreaker;
 import org.springframework.cloud.client.discovery.EnableDiscoveryClient;
 import org.springframework.cloud.netflix.ribbon.RibbonClient;
 import org.springframework.cloud.netflix.ribbon.RibbonClients;
@@ -21,6 +22,7 @@ import static org.art.web.warrior.client.CommonServiceConstants.*;
         @RibbonClient(name = COMPILER_SERVICE_NAME),
         @RibbonClient(name = EXECUTION_SERVICE_NAME)},
         defaultConfiguration = RibbonConfig.class)
+@EnableCircuitBreaker
 @EnableConfigurationProperties(ServiceConfigProperties.class)
 public class ClientApplication {
 

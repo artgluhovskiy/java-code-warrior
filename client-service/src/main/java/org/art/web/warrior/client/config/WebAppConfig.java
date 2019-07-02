@@ -8,10 +8,13 @@ import org.art.web.warrior.client.config.interceptor.RequestLogger;
 import org.art.web.warrior.client.service.client.retrofit.UserServiceRetroClient;
 import org.springframework.boot.web.client.RestTemplateBuilder;
 import org.springframework.cloud.client.loadbalancer.LoadBalanced;
+import org.springframework.cloud.client.loadbalancer.LoadBalancedRetryFactory;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Profile;
 import org.springframework.core.env.Environment;
+import org.springframework.retry.backoff.BackOffPolicy;
+import org.springframework.retry.backoff.ExponentialBackOffPolicy;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.servlet.config.annotation.ViewControllerRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
@@ -25,6 +28,26 @@ import static org.art.web.warrior.commons.CommonConstants.*;
 public class WebAppConfig implements WebMvcConfigurer {
 
     @Bean
+    @LoadBalanced
+    public RestTemplate restTemplate(RestTemplateBuilder restTemplateBuilder) {
+        return restTemplateBuilder
+                .additionalInterceptors(requestLogger())
+                .additionalMessageConverters(new KryoHttpMessageConverter())
+                .errorHandler(new CustomRestTemplateErrorHandler())
+                .build();
+    }
+
+    @Bean
+    public LoadBalancedRetryFactory retryFactory() {
+        return  new LoadBalancedRetryFactory() {
+            @Override
+            public BackOffPolicy createBackOffPolicy(String service) {
+                return new ExponentialBackOffPolicy();
+            }
+        };
+    }
+
+    @Bean
     @Profile(PROFILE_RETROFIT)
     public UserServiceRetroClient userServiceRetroClient(Environment env) {
         OkHttpClient.Builder httpClient = new OkHttpClient.Builder();
@@ -34,16 +57,6 @@ public class WebAppConfig implements WebMvcConfigurer {
                 .client(httpClient.build())
                 .build();
         return retrofit.create(UserServiceRetroClient.class);
-    }
-
-    @Bean
-    @LoadBalanced
-    public RestTemplate restTemplate(RestTemplateBuilder restTemplateBuilder) {
-        return restTemplateBuilder
-                .additionalInterceptors(requestLogger())
-                .additionalMessageConverters(new KryoHttpMessageConverter())
-                .errorHandler(new CustomRestTemplateErrorHandler())
-                .build();
     }
 
     @Bean

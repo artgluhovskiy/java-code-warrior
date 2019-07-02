@@ -1,12 +1,11 @@
 package org.art.web.warrior.exec.service;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.tuple.Pair;
 import org.art.web.warrior.commons.driver.exception.ClientCodeExecutionException;
 import org.art.web.warrior.exec.domain.api.MethodDescriptor;
 import org.art.web.warrior.exec.exception.MethodInvocationException;
 import org.art.web.warrior.exec.service.api.MethodInvocationService;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
 import java.lang.invoke.MethodHandle;
@@ -23,10 +22,9 @@ import java.util.stream.Collectors;
  * which encapsulates all necessary data.
  * Current implementation is based on Java Method Handle API.
  */
+@Slf4j
 @Service
 public class MethodHandleInvocationService implements MethodInvocationService {
-
-    private static final Logger LOG = LoggerFactory.getLogger(MethodHandleInvocationService.class);
 
     private static final MethodHandles.Lookup PUBLIC_LOOKUP = MethodHandles.publicLookup();
 
@@ -44,7 +42,7 @@ public class MethodHandleInvocationService implements MethodInvocationService {
         if (retType == null) {
             retType = void.class;
         }
-        LOG.debug("Method invocation. Class: {}, method: {}, ret type: {}, args: {}", clazz.getName(), methodName, retType, args);
+        log.debug("Method invocation. Class: {}, method: {}, ret type: {}, args: {}", clazz.getName(), methodName, retType, args);
         List<Class<?>> inTypes = retrieveInputTypes(args);
         List<Object> inArgValues = retrieveInputArgValues(args);
         try {
@@ -55,7 +53,7 @@ public class MethodHandleInvocationService implements MethodInvocationService {
         } catch (ClientCodeExecutionException e) {
             throw e;
         } catch (Throwable t) {
-            LOG.warn("Internal invocation error. MethodInvocationException is thrown!");
+            log.warn("Internal invocation error. MethodInvocationException is thrown!");
             throw new MethodInvocationException("Internal invocation error!", descriptor, t);
         }
     }

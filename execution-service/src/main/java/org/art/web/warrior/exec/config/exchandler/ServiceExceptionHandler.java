@@ -1,4 +1,4 @@
-package org.art.web.warrior.exec.exchandler;
+package org.art.web.warrior.exec.config.exchandler;
 
 import org.art.web.warrior.commons.ServiceResponseStatus;
 import org.art.web.warrior.commons.common.CommonApiError;

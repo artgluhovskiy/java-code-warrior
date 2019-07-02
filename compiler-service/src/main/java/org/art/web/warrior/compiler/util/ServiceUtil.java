@@ -1,5 +1,6 @@
 package org.art.web.warrior.compiler.util;
 
+import org.art.web.warrior.commons.ServiceResponseStatus;
 import org.art.web.warrior.commons.compiler.dto.CompilationResponse;
 import org.art.web.warrior.commons.compiler.dto.CompilationUnitDto;
 import org.art.web.warrior.compiler.domain.CompilationResult;
@@ -39,5 +40,13 @@ public class ServiceUtil {
                     compUnitDto.setCompiledClassBytes(compUnit.getCompiledClassBytes());
                     return compUnitDto;
                 }));
+    }
+
+    public static CompilationResponse buildExecutionServiceInfoResp(String localPort, String appName, String appInfo) {
+        String message = "Application name: " + appName + ". Local server port: " + localPort + ". Application info: " + appInfo;
+        return CompilationResponse.builder()
+                .compilerStatus(ServiceResponseStatus.SUCCESS.getStatusId())
+                .message(message)
+                .build();
     }
 }

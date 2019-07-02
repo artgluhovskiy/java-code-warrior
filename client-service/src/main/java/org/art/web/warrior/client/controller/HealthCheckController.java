@@ -1,10 +1,14 @@
 package org.art.web.warrior.client.controller;
 
+import org.art.web.warrior.client.service.client.api.CompServiceClient;
+import org.art.web.warrior.client.service.client.api.ExecServiceClient;
 import org.art.web.warrior.client.service.client.feign.CompServiceFeignClient;
 import org.art.web.warrior.client.service.client.feign.ExecServiceFeignClient;
 import org.art.web.warrior.client.service.client.feign.TaskServiceFeignClient;
 import org.art.web.warrior.client.service.client.feign.UserServiceFeignClient;
 import org.art.web.warrior.commons.CommonConstants;
+import org.art.web.warrior.commons.compiler.dto.CompilationResponse;
+import org.art.web.warrior.commons.execution.dto.ExecutionResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cloud.client.ServiceInstance;
 import org.springframework.cloud.client.discovery.DiscoveryClient;
@@ -19,37 +23,45 @@ import static org.art.web.warrior.client.CommonServiceConstants.*;
 
 @RestController
 @RequestMapping("/admin/health")
-public class HealthCheckFeignController {
+public class HealthCheckController {
 
     private static final String INSTANCES_PREF = "Instances: ";
 
     private DiscoveryClient discoveryClient;
 
-    private final UserServiceFeignClient userServiceClient;
+    private final UserServiceFeignClient userServiceFeignClient;
 
-    private final ExecServiceFeignClient execServiceClient;
+    private final ExecServiceClient execServiceRestTempClient;
 
-    private final CompServiceFeignClient compServiceClient;
+    private final ExecServiceFeignClient execServiceFeignClient;
 
-    private final TaskServiceFeignClient taskServiceClient;
+    private final CompServiceClient compServiceRestTempClient;
+
+    private final CompServiceFeignClient compServiceFeignClient;
+
+    private final TaskServiceFeignClient taskServiceFeignClient;
 
     @Autowired
-    public HealthCheckFeignController(UserServiceFeignClient userServiceClient,
-                                      ExecServiceFeignClient execServiceClient,
-                                      CompServiceFeignClient compServiceClient,
-                                      TaskServiceFeignClient taskServiceClient,
-                                      DiscoveryClient discoveryClient) {
-        this.userServiceClient = userServiceClient;
-        this.execServiceClient = execServiceClient;
-        this.compServiceClient = compServiceClient;
-        this.taskServiceClient = taskServiceClient;
+    public HealthCheckController(UserServiceFeignClient userServiceFeignClient,
+                                 ExecServiceClient execServiceRestTempClient,
+                                 ExecServiceFeignClient execServiceFeignClient,
+                                 CompServiceClient compServiceRestTempClient,
+                                 CompServiceFeignClient compServiceFeignClient,
+                                 TaskServiceFeignClient taskServiceFeignClient,
+                                 DiscoveryClient discoveryClient) {
+        this.userServiceFeignClient = userServiceFeignClient;
+        this.execServiceRestTempClient = execServiceRestTempClient;
+        this.execServiceFeignClient = execServiceFeignClient;
+        this.compServiceRestTempClient = compServiceRestTempClient;
+        this.compServiceFeignClient = compServiceFeignClient;
+        this.taskServiceFeignClient = taskServiceFeignClient;
         this.discoveryClient = discoveryClient;
     }
 
     @GetMapping("/users")
     public String pingUserService() {
         String message = "Ping message from the Users Service: ";
-        message = message + userServiceClient.getPingMessage() + CommonConstants.NEW_LINE;
+        message = message + userServiceFeignClient.getPingMessage() + CommonConstants.NEW_LINE;
         message = message + INSTANCES_PREF + stringifyInstances(USER_SERVICE_NAME);
         return message;
     }
@@ -57,23 +69,33 @@ public class HealthCheckFeignController {
     @GetMapping("/exec")
     public String pingExecService() {
         String message = "Ping message from the Execution Service: ";
-        message = message + execServiceClient.getPingMessage() + CommonConstants.NEW_LINE;
+        message = message + execServiceFeignClient.getPingMessage() + CommonConstants.NEW_LINE;
         message = message + INSTANCES_PREF + stringifyInstances(EXECUTION_SERVICE_NAME);
         return message;
+    }
+
+    @GetMapping("/exec/info")
+    public ExecutionResponse getExecServiceInfo() {
+        return execServiceRestTempClient.getServiceInfo();
     }
 
     @GetMapping("/comp")
     public String pingCompService() {
         String message = "Ping message from the Compiler Service: ";
-        message = message + compServiceClient.getPingMessage() + CommonConstants.NEW_LINE;
+        message = message + compServiceFeignClient.getPingMessage() + CommonConstants.NEW_LINE;
         message = message + INSTANCES_PREF + stringifyInstances(COMPILER_SERVICE_NAME);
         return message;
+    }
+
+    @GetMapping("/comp/info")
+    public CompilationResponse getCompServiceInfo() {
+        return compServiceRestTempClient.getServiceInfo();
     }
 
     @GetMapping("/tasks")
     public String pingTaskService() {
         String message = "Ping message from the Tasks Service: ";
-        message = message + taskServiceClient.getPingMessage() + CommonConstants.NEW_LINE;
+        message = message + taskServiceFeignClient.getPingMessage() + CommonConstants.NEW_LINE;
         message = message + INSTANCES_PREF + stringifyInstances(TASK_SERVICE_NAME);
         return message;
     }

@@ -1,7 +1,6 @@
 package org.art.web.warrior.compiler.service;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import lombok.extern.slf4j.Slf4j;
 
 import javax.tools.FileObject;
 import javax.tools.ForwardingJavaFileManager;
@@ -14,9 +13,8 @@ import java.util.Map;
  * A simple implementation of a wrapper for {@link StandardJavaFileManager}.
  * Stores a Java file object as an output for compiled source code.
  */
+@Slf4j
 public final class CustomClassFileManager extends ForwardingJavaFileManager<StandardJavaFileManager> {
-
-    private static final Logger LOG = LoggerFactory.getLogger(CustomClassFileManager.class);
 
     private final Map<String, OutputJavaClassFileObject> classFiles;
 
@@ -31,7 +29,7 @@ public final class CustomClassFileManager extends ForwardingJavaFileManager<Stan
                                                           OutputJavaClassFileObject.Kind kind,
                                                           FileObject sibling) {
         OutputJavaClassFileObject classFileObject = new OutputJavaClassFileObject(className, kind);
-        LOG.debug("Java class file object was instantiated: class name - {}", className);
+        log.debug("Java class file object was instantiated: class name - {}", className);
         classFiles.put(className, classFileObject);
         return classFileObject;
     }

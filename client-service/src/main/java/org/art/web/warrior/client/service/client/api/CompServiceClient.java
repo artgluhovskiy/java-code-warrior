@@ -6,4 +6,6 @@ import org.art.web.warrior.commons.compiler.dto.CompilationResponse;
 public interface CompServiceClient {
 
     CompilationResponse compileSrc(CompilationRequest compRequestData);
+
+    CompilationResponse getServiceInfo();
 }

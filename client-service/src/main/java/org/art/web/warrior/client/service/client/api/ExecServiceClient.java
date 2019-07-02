@@ -6,4 +6,6 @@ import org.art.web.warrior.commons.execution.dto.ExecutionResponse;
 public interface ExecServiceClient {
 
     ExecutionResponse executeCode(ExecutionRequest execRequestData);
+
+    ExecutionResponse getServiceInfo();
 }

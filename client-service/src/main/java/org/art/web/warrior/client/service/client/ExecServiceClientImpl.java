@@ -1,8 +1,10 @@
 package org.art.web.warrior.client.service.client;
 
+import com.netflix.hystrix.contrib.javanica.annotation.HystrixCommand;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.art.web.warrior.client.service.client.api.ExecServiceClient;
+import org.art.web.warrior.commons.ServiceResponseStatus;
 import org.art.web.warrior.commons.execution.dto.ExecutionRequest;
 import org.art.web.warrior.commons.execution.dto.ExecutionResponse;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -11,6 +13,8 @@ import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
+
+import java.util.Random;
 
 import static org.art.web.warrior.client.CommonServiceConstants.*;
 import static org.art.web.warrior.commons.CommonConstants.*;
@@ -39,6 +43,20 @@ public class ExecServiceClientImpl implements ExecServiceClient {
         HttpEntity<ExecutionRequest> reqEntity = new HttpEntity<>(execRequestData, headers);
         log.debug("Making the request to the Executor service. Request data: {}, endpoint: {}", execRequestData, serviceEndpointBase);
         return restTemplate.postForEntity(serviceEndpointBase, reqEntity, ExecutionResponse.class).getBody();
+    }
+
+    @HystrixCommand(fallbackMethod = "fallbackServiceInfo")
+    @Override
+    public ExecutionResponse getServiceInfo() {
+        log.debug("Making the info request to the Executor service. Endpoint: {}", serviceEndpointBase);
+        return restTemplate.getForEntity(serviceEndpointBase, ExecutionResponse.class).getBody();
+    }
+
+    public ExecutionResponse fallbackServiceInfo() {
+        return ExecutionResponse.builder()
+                .respStatus(ServiceResponseStatus.INTERNAL_SERVICE_ERROR.getStatusId())
+                .message("Fallback Response Message")
+                .build();
     }
 
     private String getServiceEndpointBase() {

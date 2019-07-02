@@ -44,4 +44,12 @@ public class ServiceUtil {
                 .message(CLIENT_CODE_EXEC_OK_MESSAGE)
                 .build();
     }
+
+    public static ExecutionResponse buildExecutionServiceInfoResp(String localPort, String appName, String appInfo) {
+        String message = "Application name: " + appName + ". Local server port: " + localPort + ". Application info: " + appInfo;
+        return ExecutionResponse.builder()
+                .respStatus(ServiceResponseStatus.SUCCESS.getStatusId())
+                .message(message)
+                .build();
+    }
 }

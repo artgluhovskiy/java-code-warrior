@@ -18,6 +18,9 @@ public class CommonConstants {
     public static final String SPACE = " ";
 
     public static final String SPRING_ACTIVE_PROFILE_ENV_PROP_NAME = "spring.profiles.active";
+    public static final String SPRING_LOCAL_PORT_PROP_NAME = "local.server.port";
+    public static final String SPRING_INFO_APP_PROP_NAME = "info.app";
+    public static final String SPRING_APPLICATION_NAME_PROP_NAME = "spring.application.name";
 
     // Spring Profiles
     public static final String PROFILE_CONTAINER = "container";
