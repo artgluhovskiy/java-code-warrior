@@ -4,7 +4,9 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.Id;
+import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 import java.time.LocalDateTime;
@@ -25,15 +27,9 @@ public class CodingTask {
 
     private byte[] runnerClassData;
 
+    @CreatedDate
     private LocalDateTime publicationDate;
 
+    @LastModifiedDate
     private LocalDateTime updateDate;
-
-    protected void onPublish() {
-        this.publicationDate = LocalDateTime.now();
-    }
-
-    protected void noUpdate() {
-        this.updateDate = LocalDateTime.now();
-    }
 }
