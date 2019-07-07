@@ -5,9 +5,9 @@ spring:
     name: task-service
   data:
     mongodb:
-      host: localhost
-      port: 27017
-      database: tasks
+      host: ${DATABASE_HOST}
+      port: ${DATABASE_PORT}
+      database: ${DATABASE_NAME}
   main:
     allow-bean-definition-overriding: true
 server:

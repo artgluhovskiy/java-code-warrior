@@ -39,7 +39,7 @@ services:
     environment:
       USER_SERVICE_HOST: user-service
       COMPILER_SERVICE_HOST: compiler-service
-      EXECUTION_SERVICE_HOST: execution-service
+      EXECUTION_SERVICE_HOST: executor-service
       TASK_SERVICE_HOST: task-service
 
       DATABASE_HOST: mysqldb
@@ -110,12 +110,10 @@ services:
     container_name: task-service
     depends_on:
       - service-registry
-      - mysqldb
+      - mongodb
     environment:
-      DATABASE_HOST: mysqldb
-      DATABASE_PORT: 3306
-      DATABASE_USER: root
-      DATABASE_PASSWORD: rootpassword
+      DATABASE_HOST: mongodb
+      DATABASE_PORT: 27017
       DATABASE_NAME: tasks
 
       SERVICE_REGISTRY_HOST: service-registry
@@ -126,7 +124,14 @@ services:
       - "8084:8084"
       - "8094:8094"
 
-  # MySQL DB
+  # MongoDB
+  mongodb:
+    image: mongo:4.0
+    container_name: mongodb
+    ports:
+      - "27017:27017"
+
+  # MySQL
   mysqldb:
     image: mysql:5.7
     container_name: mysqldb

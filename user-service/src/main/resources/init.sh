@@ -1,5 +1,10 @@
 #!/usr/bin/env sh
-echo "Task Service is launching..."
+echo "User Service is launching..."
+while ! (nc -z ${SERVICE_REGISTRY_HOST} ${SERVICE_REGISTRY_PORT}); do
+    echo "Trying to connect to Service Registry at ${SERVICE_REGISTRY_HOST}:${SERVICE_REGISTRY_PORT}..."
+    sleep 10
+done
+echo ">> connected to Service Registry! <<"
 while ! (nc -z ${DATABASE_HOST} ${DATABASE_PORT}); do
     echo "Trying to connect to MySQL at ${DATABASE_HOST}:${DATABASE_PORT}..."
     sleep 10
