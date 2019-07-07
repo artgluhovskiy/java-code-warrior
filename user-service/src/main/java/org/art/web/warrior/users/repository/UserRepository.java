@@ -1,4 +1,4 @@
-package org.art.web.warrior.users.repository.mysql;
+package org.art.web.warrior.users.repository;
 
 import org.art.web.warrior.users.model.User;
 import org.springframework.data.jpa.repository.JpaRepository;

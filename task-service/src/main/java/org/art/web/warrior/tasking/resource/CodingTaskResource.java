@@ -45,7 +45,7 @@ public class CodingTaskResource {
         return ServiceMapper.mapToTaskDescriptorDto(codingTask.getDescriptor());
     }
 
-    @GetMapping(value = "/{nameId}", produces = KRYO_CONTENT_TYPE)
+    @GetMapping(value = "/{nameId}", produces = {KRYO_CONTENT_TYPE, MediaType.APPLICATION_JSON_UTF8_VALUE})
     public TaskDto getTaskByNameId(@PathVariable String nameId) {
         log.debug("Making the request for the coding task by its name id. Task name id: {}", nameId);
         CodingTask codingTask = taskService.getTaskByNameId(nameId)
@@ -53,7 +53,7 @@ public class CodingTaskResource {
         return ServiceMapper.mapToTaskDto(codingTask);
     }
 
-    @GetMapping(produces = KRYO_CONTENT_TYPE)
+    @GetMapping(produces = {KRYO_CONTENT_TYPE, MediaType.APPLICATION_JSON_UTF8_VALUE})
     public List<TaskDto> getAllTasks() {
         log.debug("Making the request for all coding tasks");
         List<CodingTask> codingTasks = taskService.getAllTasks();

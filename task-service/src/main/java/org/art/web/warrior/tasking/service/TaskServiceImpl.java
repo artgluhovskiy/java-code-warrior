@@ -3,7 +3,7 @@ package org.art.web.warrior.tasking.service;
 import org.art.web.warrior.tasking.exception.TaskNotFoundException;
 import org.art.web.warrior.tasking.model.CodingTask;
 import org.art.web.warrior.tasking.model.CodingTaskDescriptor;
-import org.art.web.warrior.tasking.repository.CodingTaskRepository;
+import org.art.web.warrior.tasking.repository.mongo.CodingTaskMongoRepository;
 import org.art.web.warrior.tasking.service.api.TaskService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -16,40 +16,40 @@ import java.util.Optional;
 @Transactional
 public class TaskServiceImpl implements TaskService {
 
-    private final CodingTaskRepository taskRepository;
+    private final CodingTaskMongoRepository taskMongoRepository;
 
     @Autowired
-    public TaskServiceImpl(CodingTaskRepository taskRepository) {
-        this.taskRepository = taskRepository;
+    public TaskServiceImpl(CodingTaskMongoRepository taskMongoRepository) {
+        this.taskMongoRepository = taskMongoRepository;
     }
 
     @Override
     public CodingTask publishTask(CodingTask task) {
-        return taskRepository.save(task);
+        return taskMongoRepository.save(task);
     }
 
     @Override
     public CodingTask updateTask(CodingTask modifiedTask) {
         String targetTaskNameId = modifiedTask.getDescriptor().getNameId();
-        CodingTask targetTask = taskRepository.getCodingTaskByNameId(targetTaskNameId)
-                .orElseThrow(() -> new TaskNotFoundException("Cannot find a coding task with such name ID!", targetTaskNameId));
+        CodingTask targetTask = taskMongoRepository.getCodingTaskByNameId(targetTaskNameId)
+            .orElseThrow(() -> new TaskNotFoundException("Cannot find a coding task with such name ID!", targetTaskNameId));
         updateTargetTask(modifiedTask, targetTask);
-        return taskRepository.save(targetTask);
+        return taskMongoRepository.save(targetTask);
     }
 
     @Override
     public Optional<CodingTask> getTaskByNameId(String nameId) {
-        return taskRepository.getCodingTaskByNameId(nameId);
+        return taskMongoRepository.getCodingTaskByNameId(nameId);
     }
 
     @Override
     public List<CodingTask> getAllTasks() {
-        return taskRepository.findAll();
+        return taskMongoRepository.findAll();
     }
 
     @Override
     public void deleteTaskByNameId(String nameId) {
-        taskRepository.deleteByNameId(nameId);
+        taskMongoRepository.deleteByNameId(nameId);
     }
 
     private void updateTargetTask(CodingTask modifiedTask, CodingTask targetTask) {

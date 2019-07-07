@@ -4,8 +4,8 @@ import org.art.web.warrior.users.CommonServiceConstants;
 import org.art.web.warrior.users.model.Role;
 import org.art.web.warrior.users.model.TaskOrder;
 import org.art.web.warrior.users.model.User;
-import org.art.web.warrior.users.repository.mysql.RoleRepository;
-import org.art.web.warrior.users.repository.mysql.UserRepository;
+import org.art.web.warrior.users.repository.RoleRepository;
+import org.art.web.warrior.users.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationListener;
 import org.springframework.context.event.ContextRefreshedEvent;
@@ -13,7 +13,6 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.time.LocalDateTime;
 import java.util.*;
 
 @Component

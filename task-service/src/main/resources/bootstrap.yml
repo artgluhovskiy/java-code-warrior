@@ -3,15 +3,13 @@ info:
 spring:
   application:
     name: task-service
-  datasource:
-    url: jdbc:mysql://localhost:3306/tasks?createDatabaseIfNotExist=true&zeroDateTimeBehavior=CONVERT_TO_NULL&serverTimezone=UTC
-    password: root
-    username: root
-  jpa:
-    hibernate:
-      ddl-auto: update
-      naming:
-        physical-strategy: org.art.web.warrior.tasking.config.hibernate.CustomPhysicalNamingStrategy
+  data:
+    mongodb:
+      host: localhost
+      port: 27017
+      database: tasks
+  main:
+    allow-bean-definition-overriding: true
 server:
   port: 8084
 eureka:
