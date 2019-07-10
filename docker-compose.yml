@@ -14,20 +14,6 @@ services:
       SERVICE_REGISTRY_HOST: service-registry
       SERVICE_REGISTRY_PORT: 8761
 
-  # Netflix Zuul Api Gateway
-#  api-gateway:
-#    container_name: api-gateway
-#    depends_on:
-#      - service-registry
-#    build:
-#      context: ./api-gateway
-#    ports:
-#      - "8080:8080"
-#      - "8090:8090"
-#    environment:
-#      SERVICE_REGISTRY_HOST: service-registry
-#      SERVICE_REGISTRY_PORT: 8761
-
   # Client Service
   client-service:
     container_name: client-service
@@ -60,6 +46,8 @@ services:
     depends_on:
       - service-registry
       - mysqldb
+    build:
+      context: ./user-service
     environment:
       DATABASE_HOST: mysqldb
       DATABASE_PORT: 3306
@@ -69,8 +57,6 @@ services:
 
       SERVICE_REGISTRY_HOST: service-registry
       SERVICE_REGISTRY_PORT: 8761
-    build:
-      context: ./user-service
     ports:
       - "8081:8081"
       - "8091:8091"
@@ -111,6 +97,8 @@ services:
     depends_on:
       - service-registry
       - mongodb
+    build:
+      context: ./task-service
     environment:
       DATABASE_HOST: mongodb
       DATABASE_PORT: 27017
@@ -118,18 +106,46 @@ services:
 
       SERVICE_REGISTRY_HOST: service-registry
       SERVICE_REGISTRY_PORT: 8761
-    build:
-      context: ./task-service
+
+      KAFKA_BOOTSTRAP_HOST: kafka
+      KAFKA_BOOTSTRAP_PORT: 9093
     ports:
       - "8084:8084"
       - "8094:8094"
 
-  # MongoDB
-  mongodb:
-    image: mongo:4.0
-    container_name: mongodb
+  # Logs Aggregator
+  logs-aggregator:
+    container_name: logs-aggregator
+    build:
+      context: ./logs-aggregator
+    environment:
+      KAFKA_BOOTSTRAP_HOST: kafka
+      KAFKA_BOOTSTRAP_PORT: 9093
     ports:
-      - "27017:27017"
+      - "8086:8086"
+      - "8096:8096"
+
+  # Zookeeper
+  zookeeper:
+    image: wurstmeister/zookeeper:latest
+    expose:
+      - "2181"
+
+  # Kafka
+  kafka:
+    image: wurstmeister/kafka:2.12-2.0.1
+    depends_on:
+      - zookeeper
+    ports:
+      - "9092:9092"
+    expose:
+      - "9093"
+    environment:
+      KAFKA_ADVERTISED_LISTENERS: INSIDE://kafka:9093,OUTSIDE://localhost:9092
+      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: INSIDE:PLAINTEXT,OUTSIDE:PLAINTEXT
+      KAFKA_LISTENERS: INSIDE://0.0.0.0:9093,OUTSIDE://0.0.0.0:9092
+      KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
+      KAFKA_INTER_BROKER_LISTENER_NAME: INSIDE
 
   # MySQL
   mysqldb:
@@ -139,3 +155,10 @@ services:
       - "3306:3306"
     environment:
       MYSQL_ROOT_PASSWORD: rootpassword
+
+  # MongoDB
+  mongodb:
+    image: mongo:4.0
+    container_name: mongodb
+    ports:
+      - "27017:27017"

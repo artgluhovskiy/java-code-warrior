@@ -2,7 +2,7 @@ info:
   app: Task Service
 
 server:
-  port: 0
+  port: 8084
 
 spring:
   application:
@@ -15,7 +15,7 @@ spring:
       database: ${DATABASE_NAME}
 
   kafka:
-    bootstrap-servers: localhost:9092
+    bootstrap-servers: ${KAFKA_BOOTSTRAP_HOST}:${KAFKA_BOOTSTRAP_PORT}
 
 eureka:
   instance:
