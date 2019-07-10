@@ -40,4 +40,9 @@ public class CommonConstants {
     public static final String RUNNER_RUN_METHOD_NAME = "run";
 
     public static final String EMAIL_REGEXP = "^[a-z0-9._%+-]+@[a-z0-9.-]+\\.[a-z]{2,6}$";
+
+    //Kafka
+    public static final String TASK_SERVICE_TOPIC_NAME = "taskService1";
+
+    public static final String TASK_SERVICE_CONSUMER_GROUP = "taskServiceConsumers";
 }

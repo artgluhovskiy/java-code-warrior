@@ -1,17 +1,22 @@
 info:
   app: Task Service
+
+server:
+  port: 0
+
 spring:
   application:
     name: task-service
+
   data:
     mongodb:
       host: ${DATABASE_HOST}
       port: ${DATABASE_PORT}
       database: ${DATABASE_NAME}
-  main:
-    allow-bean-definition-overriding: true
-server:
-  port: 0
+
+  kafka:
+    bootstrap-servers: localhost:9092
+
 eureka:
   instance:
     instance-id: ${spring.cloud.client.hostname}:${spring.application.name}:${random.int[1,999999]}

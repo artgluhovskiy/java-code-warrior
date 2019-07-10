@@ -1,0 +1,12 @@
+info:
+  app: Logs Aggregator
+
+server:
+  port: 8086
+
+spring:
+  application:
+    name: logs-aggregator
+
+  kafka:
+    bootstrap-servers: localhost:9092

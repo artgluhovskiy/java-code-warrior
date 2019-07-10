@@ -1,17 +1,22 @@
 info:
   app: Task Service
+
+server:
+  port: 8084
+
 spring:
   application:
     name: task-service
+
   data:
     mongodb:
       host: localhost
       port: 27017
       database: tasks
-  main:
-    allow-bean-definition-overriding: true
-server:
-  port: 8084
+
+  kafka:
+    bootstrap-servers: localhost:9092
+
 eureka:
   instance:
     prefer-ip-address: true
