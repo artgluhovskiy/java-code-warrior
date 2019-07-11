@@ -1,8 +1,13 @@
 info:
   app: User Service
+
+server:
+  port: 8081
+
 spring:
   application:
     name: user-service
+
   datasource:
     url: jdbc:mysql://${DATABASE_HOST}:${DATABASE_PORT}/${DATABASE_NAME}?createDatabaseIfNotExist=true
     password: ${DATABASE_PASSWORD}
@@ -14,8 +19,7 @@ spring:
         physical-strategy: org.art.web.warrior.users.config.hibernate.CustomPhysicalNamingStrategy
     properties:
       hibernate.format_sql: true
-server:
-  port: 8081
+
 eureka:
   instance:
     instance-id: ${spring.cloud.client.hostname}:${spring.application.name}:${random.int[1,999999]}

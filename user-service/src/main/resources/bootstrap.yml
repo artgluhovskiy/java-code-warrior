@@ -1,8 +1,13 @@
 info:
   app: User Service
+
+server:
+  port: 8081
+
 spring:
   application:
     name: user-service
+
   datasource:
     url: jdbc:mysql://localhost:3306/users?createDatabaseIfNotExist=true&zeroDateTimeBehavior=CONVERT_TO_NULL&serverTimezone=UTC
     password: root
@@ -14,8 +19,7 @@ spring:
         physical-strategy: org.art.web.warrior.users.config.hibernate.CustomPhysicalNamingStrategy
     properties:
       hibernate.format_sql: true
-server:
-  port: 8081
+
 eureka:
   client:
     register-with-eureka: true
@@ -24,7 +28,3 @@ eureka:
       defaultZone: http://localhost:8761/eureka/
   instance:
     prefer-ip-address: true
-logging:
-  level:
-    org.hibernate.SQL: debug
-    org.hibernate.type.descriptor.sql.BasicBinder: trace

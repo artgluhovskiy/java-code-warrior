@@ -19,7 +19,6 @@ services:
     container_name: client-service
     depends_on:
       - service-registry
-      - mysqldb
     build:
       context: ./client-service
     environment:
@@ -27,12 +26,6 @@ services:
       COMPILER_SERVICE_HOST: compiler-service
       EXECUTION_SERVICE_HOST: executor-service
       TASK_SERVICE_HOST: task-service
-
-      DATABASE_HOST: mysqldb
-      DATABASE_PORT: 3306
-      DATABASE_USER: root
-      DATABASE_PASSWORD: rootpassword
-      DATABASE_NAME: users
 
       SERVICE_REGISTRY_HOST: service-registry
       SERVICE_REGISTRY_PORT: 8761

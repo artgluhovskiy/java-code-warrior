@@ -52,7 +52,7 @@ public class ServiceMapper {
             .build();
     }
 
-    public static TaskPublicationMessage mapToTaskPubEvent(CodingTask publishedTask) {
+    public static TaskPublicationMessage mapToTaskPubMessage(CodingTask publishedTask) {
         Objects.requireNonNull(publishedTask, "Published task instance, passed to the mapper, should not be null!");
         return TaskPublicationMessage.builder()
                 .message("taskService.publication")

@@ -34,7 +34,7 @@ public class TaskServiceImpl implements TaskService {
     @Override
     public CodingTask publishTask(CodingTask task) {
         CodingTask publishedTask = taskMongoRepository.save(task);
-        kafkaTemplate.send(TASK_SERVICE_TOPIC_NAME, ServiceMapper.mapToTaskPubEvent(publishedTask));
+        kafkaTemplate.send(TASK_SERVICE_TOPIC_NAME, ServiceMapper.mapToTaskPubMessage(publishedTask));
         return publishedTask;
     }
 
