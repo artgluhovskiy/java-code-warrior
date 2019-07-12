@@ -59,6 +59,7 @@ public class User {
 
     @EqualsAndHashCode.Exclude
     @CreationTimestamp
+    @Column(name = "reg_date")
     private LocalDateTime regDate;
 
     @PrePersist

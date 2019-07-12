@@ -1,0 +1,17 @@
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+                   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.1.xsd">
+
+    <changeSet author="Art Gl" id="2">
+        <update tableName="users">
+            <column name="first_name" value="New User"/>
+            <where>first_name='User'</where>
+        </update>
+        <rollback>
+            <update tableName="users">
+                <column name="first_name" value="User"/>
+                <where>first_name='New User'</where>
+            </update>
+        </rollback>
+    </changeSet>
+</databaseChangeLog>

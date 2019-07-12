@@ -2,7 +2,7 @@ info:
   app: Task Service
 
 server:
-  port: 8084
+  port: 0
 
 spring:
   application:

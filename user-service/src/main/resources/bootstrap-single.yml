@@ -20,6 +20,10 @@ spring:
     properties:
       hibernate.format_sql: true
 
+  liquibase:
+    enabled: false
+#    change-log: classpath:db/db.changelog-master.xml
+
 eureka:
   instance:
     instance-id: ${spring.cloud.client.hostname}:${spring.application.name}:${random.int[1,999999]}

@@ -4,7 +4,7 @@ spring:
   application:
     name: executor-service
 server:
-  port: 8083
+  port: 0
   servlet:
     context-path: /executor
 eureka:

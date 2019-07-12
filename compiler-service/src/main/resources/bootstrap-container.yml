@@ -4,7 +4,7 @@ spring:
   application:
     name: compiler-service
 server:
-  port: 8082
+  port: 0
   servlet:
     context-path: /compiler
 eureka:
