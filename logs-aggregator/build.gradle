@@ -59,10 +59,16 @@ dependencies {
     implementation('org.springframework.boot:spring-boot-starter')
 
     implementation('org.springframework.boot:spring-boot-starter-actuator')
+
+    annotationProcessor('org.springframework.boot:spring-boot-configuration-processor')
     
     implementation('org.springframework.kafka:spring-kafka')
     
     testImplementation('org.springframework.boot:spring-boot-starter-test')
+
+    /* *** Cassandra *** */
+    
+    implementation('com.datastax.cassandra:cassandra-driver-core:3.7.0')
 
     /* *** Third Parties *** */
     

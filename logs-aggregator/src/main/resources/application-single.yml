@@ -10,3 +10,7 @@ spring:
 
   kafka:
     bootstrap-servers: localhost:9092
+
+cassandra:
+  host: 127.0.0.1
+  port: 9042

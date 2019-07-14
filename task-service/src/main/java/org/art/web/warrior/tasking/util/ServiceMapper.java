@@ -2,7 +2,7 @@ package org.art.web.warrior.tasking.util;
 
 import org.art.web.warrior.commons.tasking.dto.TaskDescriptorDto;
 import org.art.web.warrior.commons.tasking.dto.TaskDto;
-import org.art.web.warrior.commons.tasking.event.TaskPublicationMessage;
+import org.art.web.warrior.commons.tasking.message.TaskPublicationMessage;
 import org.art.web.warrior.tasking.model.CodingTask;
 import org.art.web.warrior.tasking.model.CodingTaskDescriptor;
 
@@ -56,7 +56,6 @@ public class ServiceMapper {
         Objects.requireNonNull(publishedTask, "Published task instance, passed to the mapper, should not be null!");
         return TaskPublicationMessage.builder()
                 .message("taskService.publication")
-                .pubDate(LocalDateTime.now())
                 .nameId(publishedTask.getDescriptor().getNameId())
                 .name(publishedTask.getDescriptor().getName())
                 .description(publishedTask.getDescriptor().getDescription())
