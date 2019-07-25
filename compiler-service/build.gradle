@@ -29,12 +29,6 @@ targetCompatibility = 1.8
 
 bootJar {
     baseName = 'compiler-service-boot'
-    
-    //Hack to load the class (which should be seen by the System Compiler) via system class loader rather than Spring Boot classloader by copying class file to the root of boot jar
-    with copySpec {
-        from "$projectDir/../commons/build/classes/java/main/org/art/web/warrior/commons/driver/exception"
-        into 'org/art/web/warrior/commons/driver/exception'
-    }
 }
 
 repositories {
@@ -57,11 +51,11 @@ test {
 dependencies {
 
     /* *** JCW *** */
-    
+
     implementation project(':commons')
-        
+
     /* *** Spring Boot  *** */
-    
+
     implementation('org.springframework.boot:spring-boot-starter')
     implementation('org.springframework.boot:spring-boot-starter-web')
 
@@ -74,11 +68,11 @@ dependencies {
     implementation('org.springframework.cloud:spring-cloud-starter-netflix-eureka-client')
 
     /* *** Third Parties *** */
-    
+
     implementation('com.esotericsoftware:kryo:4.0.0')
     implementation('org.apache.commons:commons-lang3:3.1')
     implementation('org.apache.commons:commons-collections4:4.0')
-    
+
     implementation('ch.qos.logback:logback-core:1.2.3')
     implementation('org.slf4j:slf4j-api:1.7.26')
 
@@ -99,10 +93,28 @@ dependencyManagement {
 }
 
 task collectResourcesToDir(type: Copy, dependsOn: build) {
-    println "Copying project resources to the directory '$targetResourceDir'"
-    from "$buildDir/libs", "$projectDir/src/main/resources"
-    include "*.jar", "*.sh"
-    into "$projectDir$targetResourceDir"
+    println "Copying project resources to the \'resource collection\' directory '$targetResourceDir'"
+
+    /* Copying application jar and init script */
+    copy {
+        from "$buildDir/libs", "$projectDir/src/main/resources"
+        include "*.jar", "*.sh"
+        into "$projectDir$targetResourceDir"
+    }
+
+    /* Copying "commons" jar (contains jars for the dynamic code compilation) */
+    copy {
+        from "$projectDir/../commons/build/libs"
+        include "*.jar"
+        into "$projectDir$targetResourceDir/bin"
+    }
+
+    /* Copying additional jars (contains external libs for the dynamic code compilation) */
+    copy {
+        from "$projectDir/src/main/resources/bin"
+        include "*.jar"
+        into "$projectDir$targetResourceDir/bin"
+    }
 }
 
 task runBuild(dependsOn: collectResourcesToDir) {

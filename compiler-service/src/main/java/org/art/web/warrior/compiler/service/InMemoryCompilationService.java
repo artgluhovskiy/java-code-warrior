@@ -1,6 +1,7 @@
 package org.art.web.warrior.compiler.service;
 
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
 import org.art.web.warrior.commons.ServiceResponseStatus;
 import org.art.web.warrior.compiler.domain.CompilationMessage;
 import org.art.web.warrior.compiler.domain.CompilationResult;
@@ -19,7 +20,7 @@ import static java.util.stream.Collectors.toMap;
 import static org.art.web.warrior.compiler.ServiceCommonConstants.*;
 
 /**
- * Compilation service implementation, based on Java Compiler API.
+ * Compilation service implementation, based on a Java Compiler API.
  * Provides compilation of {@link CompilationUnit}, which represents
  * a service task, containing java source code and corresponding class name.
  * The result of compilation is contained in {@link CompilationResult},
@@ -51,8 +52,9 @@ public class InMemoryCompilationService implements CompilationService {
         StandardJavaFileManager stdFileManager = compiler.getStandardFileManager(diagnostics, null, null);
         CustomClassFileManager fileManager = new CustomClassFileManager(stdFileManager);
         List<JavaFileObject> compilationUnits = new ArrayList<>(generateSourceFileObjects(units));
+        List<String> compOptions = buildCompilationOptions();
         try {
-            JavaCompiler.CompilationTask task = compiler.getTask(null, fileManager, diagnostics, null, null, compilationUnits);
+            JavaCompiler.CompilationTask task = compiler.getTask(null, fileManager, diagnostics, compOptions, null, compilationUnits);
             boolean compResult = task.call();
             if (compResult) {
                 log.debug("Compilation units were successfully compiled!");
@@ -64,6 +66,18 @@ public class InMemoryCompilationService implements CompilationService {
         } catch (Exception e) {
             throw new CompilationServiceException(UNEXPECTED_INTERNAL_ERROR_MESSAGE, units, e);
         }
+    }
+
+    private List<String> buildCompilationOptions() {
+        List<String> options = new ArrayList<>();
+        String osName = System.getProperty("os.name");
+        log.info("OS: {}", osName);
+        if (StringUtils.contains(osName, "Linux")) {
+            String classPathDir = System.getProperty("user.dir") + "/bin";
+            options.addAll(Arrays.asList("-classpath", "/usr/app/bin/commons-0.0.1-SNAPSHOT.jar"));
+        }
+        log.info("Compilation options were used: {}", options);
+        return options;
     }
 
     private void validateCompilationUnits(List<? extends CompilationUnit> units) {

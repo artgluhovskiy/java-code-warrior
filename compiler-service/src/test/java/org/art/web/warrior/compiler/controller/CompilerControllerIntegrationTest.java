@@ -72,7 +72,7 @@ class CompilerControllerIntegrationTest {
         assertNotNull(compilationResponse);
         assertEquals(ServiceResponseStatus.SUCCESS.getStatusId(), compilationResponse.getCompilerStatus());
         CompilationUnitDto compUnitResult = compilationResponse.getCompUnitResults().get(className);
-        CustomByteClassLoader loader = new CustomByteClassLoader();
+        CustomByteClassLoader loader = new CustomByteClassLoader(getClass().getClassLoader());
         loader.addClassData(className, compUnitResult.getCompiledClassBytes());
         Class<?> clazz = loader.loadClass(className);
         assertNotNull(clazz);
@@ -101,7 +101,7 @@ class CompilerControllerIntegrationTest {
         assertNotNull(compilationResponse);
         assertEquals(ServiceResponseStatus.SUCCESS.getStatusId(), compilationResponse.getCompilerStatus());
         CompilationUnitDto compUnitResult = compilationResponse.getCompUnitResults().get(className);
-        CustomByteClassLoader loader = new CustomByteClassLoader();
+        CustomByteClassLoader loader = new CustomByteClassLoader(getClass().getClassLoader());
         loader.addClassData(className, compUnitResult.getCompiledClassBytes());
         Class<?> clazz = loader.loadClass(className);
         assertNotNull(clazz);
@@ -210,7 +210,7 @@ class CompilerControllerIntegrationTest {
         CompilationResponse compilationResponse = (CompilationResponse) kryo.readClassAndObject(new Input(binResponseData));
         assertNotNull(compilationResponse);
         assertEquals(ServiceResponseStatus.SUCCESS.getStatusId(), compilationResponse.getCompilerStatus());
-        CustomByteClassLoader loader = new CustomByteClassLoader();
+        CustomByteClassLoader loader = new CustomByteClassLoader(getClass().getClassLoader());
         loader.addClassData(className, compilationResponse.getCompUnitResults().get(className).getCompiledClassBytes());
         Class<?> clazz = loader.loadClass(className);
         assertNotNull(clazz);

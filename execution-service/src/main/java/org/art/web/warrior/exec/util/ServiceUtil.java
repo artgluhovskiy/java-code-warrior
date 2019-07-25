@@ -22,7 +22,7 @@ public class ServiceUtil {
         byte[] solutionClassBytes = requestData.getSolutionClassData();
         String runnerClassName = requestData.getRunnerClassName();
         byte[] runnerClassBytes = requestData.getRunnerClassData();
-        CustomByteClassLoader classLoader = new CustomByteClassLoader();
+        CustomByteClassLoader classLoader = new CustomByteClassLoader(ServiceUtil.class.getClassLoader());
         classLoader.addClassData(solutionClassName, solutionClassBytes);
         classLoader.addClassData(runnerClassName, runnerClassBytes);
         Object runnerInstance = null;
