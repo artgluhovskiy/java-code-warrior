@@ -1,7 +1,6 @@
 package org.art.web.warrior.compiler.service;
 
-import lombok.extern.slf4j.Slf4j;
-
+import javax.tools.JavaFileManager;
 import javax.tools.SimpleJavaFileObject;
 import java.io.ByteArrayOutputStream;
 import java.io.OutputStream;
@@ -9,24 +8,21 @@ import java.net.URI;
 
 import static org.art.web.warrior.commons.CommonConstants.DOT_CH;
 import static org.art.web.warrior.commons.CommonConstants.SLASH_CH;
+import static org.art.web.warrior.compiler.ServiceCommonConstants.JAVA_STRING_SCHEME;
 
 /**
- * Provides a simple implementation of a Java file object based on byte stream.
- * Is used as an input/output file object for File Manager in Java Compiler API.
+ * Provides a simple implementation of a java class file.
+ * Is used as a dependency class file object for a {@link JavaFileManager}.
  */
-@Slf4j
-public final class OutputJavaClassFileObject extends SimpleJavaFileObject {
-
-    private static final String JAVA_STRING_SCHEME = "string:///";
+public final class CustomJavaClassFileObject extends SimpleJavaFileObject {
 
     private final String name;
 
     private final ByteArrayOutputStream out = new ByteArrayOutputStream();
 
-    public OutputJavaClassFileObject(String name, Kind kind) {
+    public CustomJavaClassFileObject(String name, Kind kind) {
         super(URI.create(JAVA_STRING_SCHEME + name.replace(DOT_CH, SLASH_CH) + kind.extension), kind);
         this.name = name;
-        log.debug("Creating output java class file object for '{}' with kind '{}'", name, kind);
     }
 
     public byte[] getBytes() {

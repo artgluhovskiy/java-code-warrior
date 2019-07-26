@@ -2,6 +2,7 @@ package org.art.web.warrior.compiler.service;
 
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
+import org.art.web.warrior.commons.CommonConstants;
 import org.art.web.warrior.commons.ServiceResponseStatus;
 import org.art.web.warrior.compiler.domain.CompilationMessage;
 import org.art.web.warrior.compiler.domain.CompilationResult;
@@ -12,11 +13,13 @@ import org.springframework.stereotype.Service;
 
 import javax.lang.model.SourceVersion;
 import javax.tools.*;
+import java.io.File;
 import java.util.*;
 import java.util.function.Function;
+import java.util.stream.Stream;
 
-import static java.util.stream.Collectors.toList;
-import static java.util.stream.Collectors.toMap;
+import static java.util.stream.Collectors.*;
+import static org.art.web.warrior.commons.CommonConstants.*;
 import static org.art.web.warrior.compiler.ServiceCommonConstants.*;
 
 /**
@@ -52,9 +55,9 @@ public class InMemoryCompilationService implements CompilationService {
         StandardJavaFileManager stdFileManager = compiler.getStandardFileManager(diagnostics, null, null);
         CustomClassFileManager fileManager = new CustomClassFileManager(stdFileManager);
         List<JavaFileObject> compilationUnits = new ArrayList<>(generateSourceFileObjects(units));
-        List<String> compOptions = buildCompilationOptions();
+        List<String> cpOptions = buildClassPathOptions();
         try {
-            JavaCompiler.CompilationTask task = compiler.getTask(null, fileManager, diagnostics, compOptions, null, compilationUnits);
+            JavaCompiler.CompilationTask task = compiler.getTask(null, fileManager, diagnostics, cpOptions, null, compilationUnits);
             boolean compResult = task.call();
             if (compResult) {
                 log.debug("Compilation units were successfully compiled!");
@@ -68,16 +71,32 @@ public class InMemoryCompilationService implements CompilationService {
         }
     }
 
-    private List<String> buildCompilationOptions() {
-        List<String> options = new ArrayList<>();
-        String osName = System.getProperty("os.name");
-        log.info("OS: {}", osName);
-        if (StringUtils.contains(osName, "Linux")) {
-            String classPathDir = System.getProperty("user.dir") + "/bin";
-            options.addAll(Arrays.asList("-classpath", "/usr/app/bin/commons-0.0.1-SNAPSHOT.jar"));
+    private List<String> buildClassPathOptions() {
+        List<String> cpOptions = new ArrayList<>();
+        String osName = System.getProperty(OS_NAME_SYS_PROP_NAME);
+        if (StringUtils.contains(osName, LINUX_OS_PROP_VALUE)) {
+            String classPathDir = System.getProperty(USER_DIR_SYS_PROP_NAME) + "/bin";
+            String cp = getClassPathDependenciesAsString(classPathDir);
+            if (StringUtils.isNotBlank(cp)) {
+                cpOptions.addAll(Arrays.asList("-classpath", cp));
+            }
         }
-        log.info("Compilation options were used: {}", options);
-        return options;
+        log.info("Class path options: {}", cpOptions);
+        return cpOptions;
+    }
+
+    private String getClassPathDependenciesAsString(String targetDir) {
+        String dependencies = StringUtils.EMPTY;
+        File dir = new File(targetDir);
+        if (dir.exists()) {
+            File[] listFiles = dir.listFiles();
+            if (listFiles != null && listFiles.length > 0) {
+                dependencies = Stream.of(listFiles)
+                        .map(File::getName)
+                        .collect(joining(CommonConstants.COMMA));
+            }
+        }
+        return dependencies;
     }
 
     private void validateCompilationUnits(List<? extends CompilationUnit> units) {
@@ -97,7 +116,7 @@ public class InMemoryCompilationService implements CompilationService {
                 .map(unit -> {
                     String className = unit.getClassName();
                     CharSequence srcCode = unit.getSrcCode();
-                    return new CharSeqJavaSourceFileObject(className, srcCode);
+                    return new CustomJavaSourceFileObject(className, srcCode);
                 }).collect(toList());
     }
 
