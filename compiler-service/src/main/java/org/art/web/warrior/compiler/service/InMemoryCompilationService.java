@@ -1,10 +1,6 @@
 package org.art.web.warrior.compiler.service;
 
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.lang3.StringUtils;
-import org.art.web.warrior.commons.CommonConstants;
-import org.art.web.warrior.commons.ServiceResponseStatus;
-import org.art.web.warrior.compiler.domain.CompilationMessage;
 import org.art.web.warrior.compiler.domain.CompilationResult;
 import org.art.web.warrior.compiler.domain.CompilationUnit;
 import org.art.web.warrior.compiler.exception.CompilationServiceException;
@@ -13,13 +9,10 @@ import org.springframework.stereotype.Service;
 
 import javax.lang.model.SourceVersion;
 import javax.tools.*;
-import java.io.File;
 import java.util.*;
-import java.util.function.Function;
-import java.util.stream.Stream;
 
-import static java.util.stream.Collectors.*;
-import static org.art.web.warrior.commons.CommonConstants.*;
+import static java.util.stream.Collectors.toList;
+import static java.util.stream.Collectors.toMap;
 import static org.art.web.warrior.compiler.ServiceCommonConstants.*;
 
 /**
@@ -55,48 +48,20 @@ public class InMemoryCompilationService implements CompilationService {
         StandardJavaFileManager stdFileManager = compiler.getStandardFileManager(diagnostics, null, null);
         CustomClassFileManager fileManager = new CustomClassFileManager(stdFileManager);
         List<JavaFileObject> compilationUnits = new ArrayList<>(generateSourceFileObjects(units));
-        List<String> cpOptions = buildClassPathOptions();
+        List<String> cpOptions = CompilationServiceHelper.buildCompilerOptions();
         try {
             JavaCompiler.CompilationTask task = compiler.getTask(null, fileManager, diagnostics, cpOptions, null, compilationUnits);
             boolean compResult = task.call();
             if (compResult) {
                 log.debug("Compilation units were successfully compiled!");
-                return buildCompilationResult(true, diagnostics.getDiagnostics(), units, retrieveClassBinData(fileManager));
+                return CompilationResultHelper.buildResults(true, diagnostics.getDiagnostics(), units, retrieveClassBinData(fileManager));
             } else {
                 log.warn("Compilation failed! Units: {}", units);
-                return buildCompilationResult(false, diagnostics.getDiagnostics(), units, null);
+                return CompilationResultHelper.buildResults(false, diagnostics.getDiagnostics(), units, null);
             }
         } catch (Exception e) {
             throw new CompilationServiceException(UNEXPECTED_INTERNAL_ERROR_MESSAGE, units, e);
         }
-    }
-
-    private List<String> buildClassPathOptions() {
-        List<String> cpOptions = new ArrayList<>();
-        String osName = System.getProperty(OS_NAME_SYS_PROP_NAME);
-        if (StringUtils.contains(osName, LINUX_OS_PROP_VALUE)) {
-            String classPathDir = System.getProperty(USER_DIR_SYS_PROP_NAME) + "/bin";
-            String cp = getClassPathDependenciesAsString(classPathDir);
-            if (StringUtils.isNotBlank(cp)) {
-                cpOptions.addAll(Arrays.asList("-classpath", cp));
-            }
-        }
-        log.info("Class path options: {}", cpOptions);
-        return cpOptions;
-    }
-
-    private String getClassPathDependenciesAsString(String targetDir) {
-        String dependencies = StringUtils.EMPTY;
-        File dir = new File(targetDir);
-        if (dir.exists()) {
-            File[] listFiles = dir.listFiles();
-            if (listFiles != null && listFiles.length > 0) {
-                dependencies = Stream.of(listFiles)
-                        .map(File::getName)
-                        .collect(joining(CommonConstants.COMMA));
-            }
-        }
-        return dependencies;
     }
 
     private void validateCompilationUnits(List<? extends CompilationUnit> units) {
@@ -113,65 +78,17 @@ public class InMemoryCompilationService implements CompilationService {
 
     private List<JavaFileObject> generateSourceFileObjects(List<CompilationUnit> units) {
         return units.stream()
-                .map(unit -> {
-                    String className = unit.getClassName();
-                    CharSequence srcCode = unit.getSrcCode();
-                    return new CustomJavaSourceFileObject(className, srcCode);
-                }).collect(toList());
-    }
-
-    private CompilationResult buildCompilationResult(boolean result,
-                                                     List<Diagnostic<? extends JavaFileObject>> diagnostics,
-                                                     List<? extends CompilationUnit> units,
-                                                     Map<String, byte[]> compiledClassData) {
-        CompilationResult compilationResult;
-        if (result) {
-            compilationResult = new CompilationResult(ServiceResponseStatus.SUCCESS);
-            Map<String, CompilationUnit> unitResults = units.stream()
-                    .map(unit -> mapToUnitResult(unit, compiledClassData))
-                    .collect(toMap(CompilationUnit::getClassName, Function.identity()));
-            compilationResult.setCompUnitResults(unitResults);
-        } else {
-            compilationResult = new CompilationResult(ServiceResponseStatus.COMPILATION_ERROR);
-            if (!diagnostics.isEmpty()) {
-                //Reporting the last diagnostic item
-                Diagnostic diagnostic = diagnostics.get(diagnostics.size() - 1);
-                compilationResult.setMessage(buildCompErrorMessage(diagnostic));
-                Map<String, CompilationUnit> unitResults = units.stream()
-                        .map(unit -> mapToUnitResult(unit, null))
-                        .collect(toMap(CompilationUnit::getClassName, Function.identity()));
-                compilationResult.setCompUnitResults(unitResults);
-            }
-        }
-        return compilationResult;
-    }
-
-    private CompilationUnit mapToUnitResult(CompilationUnit unit, Map<String, byte[]> compClassData) {
-        String className = unit.getClassName();
-        String srcCode = unit.getSrcCode();
-        CompilationUnit compUnit = new CompilationUnit(className, srcCode);
-        if (compClassData != null) {
-            compUnit.setCompiledClassBytes(compClassData.get(className));
-        }
-        return compUnit;
-    }
-
-    private CompilationMessage buildCompErrorMessage(Diagnostic diagnostic) {
-        return CompilationMessage
-                .builder()
-                .kind(diagnostic.getKind())
-                .errorCode(diagnostic.getCode())
-                .position(diagnostic.getPosition())
-                .codeLine(diagnostic.getLineNumber())
-                .columnNumber(diagnostic.getColumnNumber())
-                .causeMessage(diagnostic.getMessage(Locale.US))
-                .build();
+            .map(unit -> {
+                String className = unit.getClassName();
+                CharSequence srcCode = unit.getSrcCode();
+                return new CustomJavaSourceFileObject(className, srcCode);
+            }).collect(toList());
     }
 
     private Map<String, byte[]> retrieveClassBinData(CustomClassFileManager fileManager) {
         return fileManager.getClassFiles()
-                .entrySet()
-                .stream()
-                .collect(toMap(Map.Entry::getKey, entry -> entry.getValue().getBytes()));
+            .entrySet()
+            .stream()
+            .collect(toMap(Map.Entry::getKey, entry -> entry.getValue().getBytes()));
     }
 }

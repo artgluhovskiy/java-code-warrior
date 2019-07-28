@@ -22,6 +22,7 @@ public class CommonConstants {
     public static final String USER_DIR_SYS_PROP_NAME = "user.dir";
 
     public static final String LINUX_OS_PROP_VALUE = "Linux";
+    public static final String WINDOWS_OS_PROP_VALUE = "Windows";
 
     // Spring Properties
     public static final String SPRING_ACTIVE_PROFILE_ENV_PROP_NAME = "spring.profiles.active";
